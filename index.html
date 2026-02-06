@@ -38,7 +38,6 @@
         </div>
         <div class="video-overlay"></div>
         <div class="hero-content">
-            <img src="https://www.golfandstay.com.au/images/Bonville_Golf_Resort_00_Logo.jpg" alt="Bonville Logo" class="hero-logo">
             <h1>The Bonville G.C. Invitational</h1>
             <h2>A Tradition Unlike Any Other</h2>
             <p>Welcome to an exclusive golf experience set amongst the stunning natural beauty of Bonville Golf Resort</p>
@@ -56,50 +55,140 @@
                 <p>Experience one of Australia's most stunning golf courses, nestled among towering pines and abundant wildlife</p>
             </div>
             
-            <div class="course-grid">
-                <div class="course-card">
-                    <h3>📋 Course Scorecard</h3>
-                    <div class="course-card-content">
-                        <p style="margin-bottom: 20px; color: var(--masters-brown);">View the complete course scorecard with all 18 holes, pars, distances, and handicap ratings.</p>
-                        <a href="https://18birdies.com/golf-courses/club/73397600-86ac-11e4-8c28-020000005b00/bonville-golf-resort" target="_blank" class="cta-button" style="font-size: 1rem;">View Full Scorecard</a>
-                        
-                        <div style="margin-top: 30px; background: var(--masters-cream); padding: 20px; border-radius: 10px;">
-                            <h4 style="color: var(--masters-green); margin-bottom: 15px;">Course Statistics</h4>
-                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
-                                <div class="stat"><span class="stat-label">Par</span><span class="stat-value">72</span></div>
-                                <div class="stat"><span class="stat-label">Holes</span><span class="stat-value">18</span></div>
-                                <div class="stat"><span class="stat-label">Length</span><span class="stat-value">6,081m</span></div>
-                                <div class="stat"><span class="stat-label">Rating</span><span class="stat-value">73.5</span></div>
-                            </div>
-                        </div>
+            <!-- Course Scorecard -->
+            <div class="course-card">
+                <h3>📋 Course Scorecard</h3>
+                <div class="course-card-content">
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 800px;">
+                            <thead>
+                                <tr style="background: var(--masters-green); color: var(--masters-gold);">
+                                    <th style="padding: 12px 8px; text-align: center;">Hole</th>
+                                    <th style="padding: 12px 8px; text-align: center;">1</th>
+                                    <th style="padding: 12px 8px; text-align: center;">2</th>
+                                    <th style="padding: 12px 8px; text-align: center;">3</th>
+                                    <th style="padding: 12px 8px; text-align: center;">4</th>
+                                    <th style="padding: 12px 8px; text-align: center;">5</th>
+                                    <th style="padding: 12px 8px; text-align: center;">6</th>
+                                    <th style="padding: 12px 8px; text-align: center;">7</th>
+                                    <th style="padding: 12px 8px; text-align: center;">8</th>
+                                    <th style="padding: 12px 8px; text-align: center;">9</th>
+                                    <th style="padding: 12px 8px; text-align: center; background: var(--masters-dark-green);">OUT</th>
+                                    <th style="padding: 12px 8px; text-align: center;">10</th>
+                                    <th style="padding: 12px 8px; text-align: center;">11</th>
+                                    <th style="padding: 12px 8px; text-align: center;">12</th>
+                                    <th style="padding: 12px 8px; text-align: center;">13</th>
+                                    <th style="padding: 12px 8px; text-align: center;">14</th>
+                                    <th style="padding: 12px 8px; text-align: center;">15</th>
+                                    <th style="padding: 12px 8px; text-align: center;">16</th>
+                                    <th style="padding: 12px 8px; text-align: center;">17</th>
+                                    <th style="padding: 12px 8px; text-align: center;">18</th>
+                                    <th style="padding: 12px 8px; text-align: center; background: var(--masters-dark-green);">IN</th>
+                                    <th style="padding: 12px 8px; text-align: center; background: var(--masters-gold); color: var(--masters-dark-green);">TOT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="background: var(--masters-cream);">
+                                    <td style="padding: 10px 8px; text-align: center; font-weight: 700; color: var(--masters-brown);">Par</td>
+                                    <td style="padding: 10px 8px; text-align: center;">4</td>
+                                    <td style="padding: 10px 8px; text-align: center;">4</td>
+                                    <td style="padding: 10px 8px; text-align: center;">5</td>
+                                    <td style="padding: 10px 8px; text-align: center;">3</td>
+                                    <td style="padding: 10px 8px; text-align: center;">4</td>
+                                    <td style="padding: 10px 8px; text-align: center;">4</td>
+                                    <td style="padding: 10px 8px; text-align: center;">3</td>
+                                    <td style="padding: 10px 8px; text-align: center;">5</td>
+                                    <td style="padding: 10px 8px; text-align: center;">4</td>
+                                    <td style="padding: 10px 8px; text-align: center; font-weight: 700; background: rgba(0,103,71,0.1);">36</td>
+                                    <td style="padding: 10px 8px; text-align: center;">4</td>
+                                    <td style="padding: 10px 8px; text-align: center;">4</td>
+                                    <td style="padding: 10px 8px; text-align: center;">3</td>
+                                    <td style="padding: 10px 8px; text-align: center;">5</td>
+                                    <td style="padding: 10px 8px; text-align: center;">4</td>
+                                    <td style="padding: 10px 8px; text-align: center;">4</td>
+                                    <td style="padding: 10px 8px; text-align: center;">3</td>
+                                    <td style="padding: 10px 8px; text-align: center;">5</td>
+                                    <td style="padding: 10px 8px; text-align: center;">4</td>
+                                    <td style="padding: 10px 8px; text-align: center; font-weight: 700; background: rgba(0,103,71,0.1);">36</td>
+                                    <td style="padding: 10px 8px; text-align: center; font-weight: 700; background: rgba(201,162,39,0.2);">72</td>
+                                </tr>
+                                <tr style="background: white;">
+                                    <td style="padding: 10px 8px; text-align: center; font-weight: 700; color: var(--masters-brown);">Metres</td>
+                                    <td style="padding: 10px 8px; text-align: center;">358</td>
+                                    <td style="padding: 10px 8px; text-align: center;">337</td>
+                                    <td style="padding: 10px 8px; text-align: center;">490</td>
+                                    <td style="padding: 10px 8px; text-align: center;">165</td>
+                                    <td style="padding: 10px 8px; text-align: center;">380</td>
+                                    <td style="padding: 10px 8px; text-align: center;">350</td>
+                                    <td style="padding: 10px 8px; text-align: center;">175</td>
+                                    <td style="padding: 10px 8px; text-align: center;">510</td>
+                                    <td style="padding: 10px 8px; text-align: center;">395</td>
+                                    <td style="padding: 10px 8px; text-align: center; font-weight: 700; background: rgba(0,103,71,0.1);">3160</td>
+                                    <td style="padding: 10px 8px; text-align: center;">345</td>
+                                    <td style="padding: 10px 8px; text-align: center;">370</td>
+                                    <td style="padding: 10px 8px; text-align: center;">155</td>
+                                    <td style="padding: 10px 8px; text-align: center;">485</td>
+                                    <td style="padding: 10px 8px; text-align: center;">365</td>
+                                    <td style="padding: 10px 8px; text-align: center;">340</td>
+                                    <td style="padding: 10px 8px; text-align: center;">180</td>
+                                    <td style="padding: 10px 8px; text-align: center;">520</td>
+                                    <td style="padding: 10px 8px; text-align: center;">410</td>
+                                    <td style="padding: 10px 8px; text-align: center; font-weight: 700; background: rgba(0,103,71,0.1);">3170</td>
+                                    <td style="padding: 10px 8px; text-align: center; font-weight: 700; background: rgba(201,162,39,0.2);">6330</td>
+                                </tr>
+                                <tr style="background: var(--masters-cream);">
+                                    <td style="padding: 10px 8px; text-align: center; font-weight: 700; color: var(--masters-brown);">Handicap</td>
+                                    <td style="padding: 10px 8px; text-align: center;">7</td>
+                                    <td style="padding: 10px 8px; text-align: center;">11</td>
+                                    <td style="padding: 10px 8px; text-align: center;">3</td>
+                                    <td style="padding: 10px 8px; text-align: center;">17</td>
+                                    <td style="padding: 10px 8px; text-align: center;">5</td>
+                                    <td style="padding: 10px 8px; text-align: center;">9</td>
+                                    <td style="padding: 10px 8px; text-align: center;">15</td>
+                                    <td style="padding: 10px 8px; text-align: center;">1</td>
+                                    <td style="padding: 10px 8px; text-align: center;">13</td>
+                                    <td style="padding: 10px 8px; text-align: center; background: rgba(0,103,71,0.1);"></td>
+                                    <td style="padding: 10px 8px; text-align: center;">8</td>
+                                    <td style="padding: 10px 8px; text-align: center;">4</td>
+                                    <td style="padding: 10px 8px; text-align: center;">18</td>
+                                    <td style="padding: 10px 8px; text-align: center;">2</td>
+                                    <td style="padding: 10px 8px; text-align: center;">6</td>
+                                    <td style="padding: 10px 8px; text-align: center;">12</td>
+                                    <td style="padding: 10px 8px; text-align: center;">16</td>
+                                    <td style="padding: 10px 8px; text-align: center;">10</td>
+                                    <td style="padding: 10px 8px; text-align: center;">14</td>
+                                    <td style="padding: 10px 8px; text-align: center; background: rgba(0,103,71,0.1);"></td>
+                                    <td style="padding: 10px 8px; text-align: center; background: rgba(201,162,39,0.2);"></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                </div>
-                
-                <div class="course-card">
-                    <h3>🎥 Hole Fly-Overs</h3>
-                    <div class="course-card-content">
-                        <p style="margin-bottom: 20px; color: var(--masters-brown);">Watch aerial flyover videos of each hole to plan your strategy and appreciate the stunning course layout.</p>
-                        <a href="https://www.bonvillegolf.com.au/hole-fly-overs/" target="_blank" class="cta-button" style="font-size: 1rem;">Watch All Flyovers</a>
-                        
-                        <div class="hole-flyovers-grid" style="margin-top: 25px;">
-                            <div class="hole-card"><h4>Hole 1</h4><p class="par">Par 4 • 358m</p></div>
-                            <div class="hole-card"><h4>Hole 2</h4><p class="par">Par 4 • 337m</p></div>
-                            <div class="hole-card"><h4>Hole 3</h4><p class="par">Par 5 • 490m</p></div>
-                            <div class="hole-card"><h4>Hole 4</h4><p class="par">Par 3 • 165m</p></div>
-                            <div class="hole-card"><h4>Hole 5</h4><p class="par">Par 4 • 380m</p></div>
-                            <div class="hole-card"><h4>Hole 6</h4><p class="par">Par 4 • 350m</p></div>
-                            <div class="hole-card"><h4>Hole 7</h4><p class="par">Par 3 • 175m</p></div>
-                            <div class="hole-card"><h4>Hole 8</h4><p class="par">Par 5 • 510m</p></div>
-                            <div class="hole-card"><h4>Hole 9</h4><p class="par">Par 4 • 395m</p></div>
-                        </div>
+                    <div style="margin-top: 20px; display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+                        <div class="stat"><span class="stat-label">Course Rating</span><span class="stat-value">73.5</span></div>
+                        <div class="stat"><span class="stat-label">Slope Rating</span><span class="stat-value">131</span></div>
                     </div>
                 </div>
             </div>
-            
+
+            <!-- Hole Fly-Overs -->
             <div class="course-card" style="margin-top: 40px;">
-                <h3>⛳ Back Nine</h3>
+                <h3>🎥 Hole Fly-Overs</h3>
                 <div class="course-card-content">
-                    <div class="hole-flyovers-grid">
+                    <p style="margin-bottom: 20px; color: var(--masters-brown); text-align: center;">Watch aerial flyover videos of each hole to plan your strategy and appreciate the stunning course layout.</p>
+                    <div style="text-align: center; margin-bottom: 25px;">
+                        <a href="https://www.bonvillegolf.com.au/hole-fly-overs/" target="_blank" class="cta-button" style="font-size: 1rem;">Watch All Flyovers</a>
+                    </div>
+                    
+                    <div class="hole-flyovers-grid" style="grid-template-columns: repeat(6, 1fr);">
+                        <div class="hole-card"><h4>Hole 1</h4><p class="par">Par 4 • 358m</p></div>
+                        <div class="hole-card"><h4>Hole 2</h4><p class="par">Par 4 • 337m</p></div>
+                        <div class="hole-card"><h4>Hole 3</h4><p class="par">Par 5 • 490m</p></div>
+                        <div class="hole-card"><h4>Hole 4</h4><p class="par">Par 3 • 165m</p></div>
+                        <div class="hole-card"><h4>Hole 5</h4><p class="par">Par 4 • 380m</p></div>
+                        <div class="hole-card"><h4>Hole 6</h4><p class="par">Par 4 • 350m</p></div>
+                        <div class="hole-card"><h4>Hole 7</h4><p class="par">Par 3 • 175m</p></div>
+                        <div class="hole-card"><h4>Hole 8</h4><p class="par">Par 5 • 510m</p></div>
+                        <div class="hole-card"><h4>Hole 9</h4><p class="par">Par 4 • 395m</p></div>
                         <div class="hole-card"><h4>Hole 10</h4><p class="par">Par 4 • 345m</p></div>
                         <div class="hole-card"><h4>Hole 11</h4><p class="par">Par 4 • 370m</p></div>
                         <div class="hole-card"><h4>Hole 12</h4><p class="par">Par 3 • 155m</p></div>
@@ -257,6 +346,17 @@
                 <p>Four teams of two compete head-to-head. Winners advance to the Grand Final for the trophy!</p>
             </div>
 
+            <div style="display: flex; justify-content: center; gap: 60px; margin-bottom: 40px; flex-wrap: wrap;">
+                <div style="background: var(--masters-white); padding: 25px 40px; border-radius: 15px; border: 2px solid var(--masters-gold); text-align: center;">
+                    <h4 style="color: var(--masters-green); margin-bottom: 10px;">⛳ Group 1 Tee Time</h4>
+                    <p style="font-size: 1.8rem; font-weight: 700; color: var(--masters-brown);">10:20 AM</p>
+                </div>
+                <div style="background: var(--masters-white); padding: 25px 40px; border-radius: 15px; border: 2px solid var(--masters-gold); text-align: center;">
+                    <h4 style="color: var(--masters-green); margin-bottom: 10px;">⛳ Group 2 Tee Time</h4>
+                    <p style="font-size: 1.8rem; font-weight: 700; color: var(--masters-brown);">10:10 AM</p>
+                </div>
+            </div>
+
             <div class="tournament-container">
                 <div class="bracket">
                     <!-- Semi Finals -->
@@ -372,7 +472,7 @@
             <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(255,255,255,0.1); border-radius: 15px; border: 1px solid var(--masters-gold);">
                 <h3 style="color: var(--masters-gold); margin-bottom: 15px;">Dress Code</h3>
                 <p style="color: var(--masters-cream); font-size: 1.1rem;">Smart casual attire. Collared shirts preferred.</p>
-                <p style="color: var(--masters-gold); margin-top: 15px; font-style: italic;">Dinner commences at 7:00 PM</p>
+                <p style="color: var(--masters-gold); margin-top: 15px; font-style: italic;">Dinner commences at 7:30 PM</p>
             </div>
         </div>
     </section>
@@ -386,62 +486,14 @@
                 <p>All eight players compete individually in an epic battle for ultimate glory!</p>
             </div>
 
-            <div class="battle-royale">
-                <div class="player-battle-card" data-player="1">
-                    <img src="players/mck-tour-card-1.jpg" alt="James Mitchell" class="player-battle-img">
-                    <div class="player-battle-info">
-                        <h4>James Mitchell</h4>
-                        <span class="player-rank">HCP: 12</span>
-                    </div>
+            <div style="display: flex; justify-content: center; gap: 60px; margin-bottom: 40px; flex-wrap: wrap;">
+                <div style="background: var(--masters-white); padding: 25px 40px; border-radius: 15px; border: 2px solid var(--masters-gold); text-align: center;">
+                    <h4 style="color: var(--masters-green); margin-bottom: 10px;">⛳ Group 1 Tee Time</h4>
+                    <p style="font-size: 1.8rem; font-weight: 700; color: var(--masters-brown);">8:40 AM</p>
                 </div>
-                <div class="player-battle-card" data-player="2">
-                    <img src="players/mcb-tour-card-2.jpg" alt="David Thompson" class="player-battle-img">
-                    <div class="player-battle-info">
-                        <h4>David Thompson</h4>
-                        <span class="player-rank">HCP: 8</span>
-                    </div>
-                </div>
-                <div class="player-battle-card" data-player="3">
-                    <img src="players/mcb-tour-card-3.jpg" alt="Michael Roberts" class="player-battle-img">
-                    <div class="player-battle-info">
-                        <h4>Michael Roberts</h4>
-                        <span class="player-rank">HCP: 15</span>
-                    </div>
-                </div>
-                <div class="player-battle-card" data-player="4">
-                    <img src="players/mcb-tour-card-4.jpg" alt="Chris Anderson" class="player-battle-img">
-                    <div class="player-battle-info">
-                        <h4>Chris Anderson</h4>
-                        <span class="player-rank">HCP: 10</span>
-                    </div>
-                </div>
-                <div class="player-battle-card" data-player="5">
-                    <img src="players/mcb-tour-card-5.jpg" alt="Ryan Campbell" class="player-battle-img">
-                    <div class="player-battle-info">
-                        <h4>Ryan Campbell</h4>
-                        <span class="player-rank">HCP: 6</span>
-                    </div>
-                </div>
-                <div class="player-battle-card" data-player="6">
-                    <img src="players/mcb-tour-card-6.jpg" alt="Andrew Wilson" class="player-battle-img">
-                    <div class="player-battle-info">
-                        <h4>Andrew Wilson</h4>
-                        <span class="player-rank">HCP: 14</span>
-                    </div>
-                </div>
-                <div class="player-battle-card" data-player="7">
-                    <img src="players/mcb-tour-card-7.jpg" alt="Steven Parker" class="player-battle-img">
-                    <div class="player-battle-info">
-                        <h4>Steven Parker</h4>
-                        <span class="player-rank">HCP: 11</span>
-                    </div>
-                </div>
-                <div class="player-battle-card" data-player="8">
-                    <img src="players/mcb-tour-card-8.jpg" alt="Daniel Hughes" class="player-battle-img">
-                    <div class="player-battle-info">
-                        <h4>Daniel Hughes</h4>
-                        <span class="player-rank">HCP: 9</span>
-                    </div>
+                <div style="background: var(--masters-white); padding: 25px 40px; border-radius: 15px; border: 2px solid var(--masters-gold); text-align: center;">
+                    <h4 style="color: var(--masters-green); margin-bottom: 10px;">⛳ Group 2 Tee Time</h4>
+                    <p style="font-size: 1.8rem; font-weight: 700; color: var(--masters-brown);">8:30 AM</p>
                 </div>
             </div>
 
