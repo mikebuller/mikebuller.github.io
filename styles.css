@@ -1,0 +1,243 @@
+/* Masters-themed Golf Event Website Styles */
+:root {
+    --masters-green: #006747;
+    --masters-dark-green: #004d35;
+    --masters-gold: #c9a227;
+    --masters-light-gold: #d4af37;
+    --masters-white: #ffffff;
+    --masters-cream: #f5f5dc;
+    --masters-brown: #8b4513;
+    --masters-light-brown: #a0522d;
+    --masters-dark-brown: #5c3317;
+    --text-dark: #1a1a1a;
+    --text-light: #f0f0f0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background-color: var(--masters-cream);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+/* Navigation */
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: linear-gradient(135deg, var(--masters-dark-green) 0%, var(--masters-green) 100%);
+    padding: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    border-bottom: 3px solid var(--masters-gold);
+}
+
+.nav-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 0;
+}
+
+.nav-logo img {
+    height: 50px;
+    border-radius: 5px;
+}
+
+.nav-logo h1 {
+    color: var(--masters-gold);
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    font-style: italic;
+}
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 5px;
+}
+
+.nav-links li a {
+    display: block;
+    color: var(--masters-white);
+    text-decoration: none;
+    padding: 20px 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+}
+
+.nav-links li a:hover,
+.nav-links li a.active {
+    background: rgba(255, 255, 255, 0.1);
+    border-bottom: 3px solid var(--masters-gold);
+    color: var(--masters-gold);
+}
+
+/* Hero Section / Welcome Page */
+.hero-section {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.video-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.video-background iframe {
+    width: 100vw;
+    height: 56.25vw;
+    min-height: 100vh;
+    min-width: 177.78vh;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 103, 71, 0.7) 0%,
+        rgba(0, 77, 53, 0.5) 50%,
+        rgba(0, 103, 71, 0.7) 100%
+    );
+    z-index: 0;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: var(--masters-white);
+    padding: 40px;
+}
+
+.hero-logo {
+    width: 200px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    margin-bottom: 30px;
+    border: 4px solid var(--masters-gold);
+}
+
+.hero-content h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--masters-gold);
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+.hero-content h2 {
+    font-size: 2rem;
+    font-weight: 400;
+    color: var(--masters-white);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-bottom: 30px;
+}
+
+.hero-content p {
+    font-size: 1.3rem;
+    max-width: 600px;
+    margin: 0 auto 40px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 15px 40px;
+    background: linear-gradient(135deg, var(--masters-gold) 0%, var(--masters-light-gold) 100%);
+    color: var(--masters-dark-green);
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(201, 162, 39, 0.4);
+}
+
+.cta-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(201, 162, 39, 0.6);
+}
+
+/* Page Sections */
+.page-section {
+    min-height: 100vh;
+    padding: 100px 20px 60px;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-header h2 {
+    font-size: 3rem;
+    color: var(--masters-green);
+    margin-bottom: 15px;
+    font-style: italic;
+}
+
+.section-header .divider {
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--masters-gold) 0%, var(--masters-brown) 100%);
+    margin: 0 auto 20px;
+    border-radius: 2px;
+}
+
+.section-header p {
+    font-size: 1.2rem;
+    color: var(--masters-brown);
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}

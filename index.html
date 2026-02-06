@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Bonville G.C. Invitational</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles-part2.css">
+    <link rel="stylesheet" href="styles-part3.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="https://www.golfandstay.com.au/images/Bonville_Golf_Resort_00_Logo.jpg" alt="Bonville Golf Resort">
+                <h1>The Bonville G.C. Invitational</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#welcome" class="active">Welcome</a></li>
+                <li><a href="#course">Course</a></li>
+                <li><a href="#players">Players</a></li>
+                <li><a href="#day1">Day 1</a></li>
+                <li><a href="#dinner">Dinner</a></li>
+                <li><a href="#day2">Day 2</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Welcome Section -->
+    <section id="welcome" class="hero-section">
+        <div class="video-background">
+            <iframe src="https://www.youtube.com/embed/PdBEFTMmnYA?autoplay=1&mute=1&loop=1&playlist=PdBEFTMmnYA&controls=0&showinfo=0&rel=0&modestbranding=1" 
+                    frameborder="0" 
+                    allow="autoplay; encrypted-media" 
+                    allowfullscreen></iframe>
+        </div>
+        <div class="video-overlay"></div>
+        <div class="hero-content">
+            <img src="https://www.golfandstay.com.au/images/Bonville_Golf_Resort_00_Logo.jpg" alt="Bonville Logo" class="hero-logo">
+            <h1>The Bonville G.C. Invitational</h1>
+            <h2>A Tradition Unlike Any Other</h2>
+            <p>Welcome to an exclusive golf experience set amongst the stunning natural beauty of Bonville Golf Resort</p>
+            <a href="#course" class="cta-button">Explore the Course</a>
+        </div>
+        <div class="scroll-indicator">▼</div>
+    </section>
+
+    <!-- Course Section -->
+    <section id="course" class="page-section course-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>The Course</h2>
+                <div class="divider"></div>
+                <p>Experience one of Australia's most stunning golf courses, nestled among towering pines and abundant wildlife</p>
+            </div>
+            
+            <div class="course-grid">
+                <div class="course-card">
+                    <h3>📋 Course Scorecard</h3>
+                    <div class="course-card-content">
+                        <p style="margin-bottom: 20px; color: var(--masters-brown);">View the complete course scorecard with all 18 holes, pars, distances, and handicap ratings.</p>
+                        <a href="https://18birdies.com/golf-courses/club/73397600-86ac-11e4-8c28-020000005b00/bonville-golf-resort" target="_blank" class="cta-button" style="font-size: 1rem;">View Full Scorecard</a>
+                        
+                        <div style="margin-top: 30px; background: var(--masters-cream); padding: 20px; border-radius: 10px;">
+                            <h4 style="color: var(--masters-green); margin-bottom: 15px;">Course Statistics</h4>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                                <div class="stat"><span class="stat-label">Par</span><span class="stat-value">72</span></div>
+                                <div class="stat"><span class="stat-label">Holes</span><span class="stat-value">18</span></div>
+                                <div class="stat"><span class="stat-label">Length</span><span class="stat-value">6,081m</span></div>
+                                <div class="stat"><span class="stat-label">Rating</span><span class="stat-value">73.5</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="course-card">
+                    <h3>🎥 Hole Fly-Overs</h3>
+                    <div class="course-card-content">
+                        <p style="margin-bottom: 20px; color: var(--masters-brown);">Watch aerial flyover videos of each hole to plan your strategy and appreciate the stunning course layout.</p>
+                        <a href="https://www.bonvillegolf.com.au/hole-fly-overs/" target="_blank" class="cta-button" style="font-size: 1rem;">Watch All Flyovers</a>
+                        
+                        <div class="hole-flyovers-grid" style="margin-top: 25px;">
+                            <div class="hole-card"><h4>Hole 1</h4><p class="par">Par 4 • 358m</p></div>
+                            <div class="hole-card"><h4>Hole 2</h4><p class="par">Par 4 • 337m</p></div>
+                            <div class="hole-card"><h4>Hole 3</h4><p class="par">Par 5 • 490m</p></div>
+                            <div class="hole-card"><h4>Hole 4</h4><p class="par">Par 3 • 165m</p></div>
+                            <div class="hole-card"><h4>Hole 5</h4><p class="par">Par 4 • 380m</p></div>
+                            <div class="hole-card"><h4>Hole 6</h4><p class="par">Par 4 • 350m</p></div>
+                            <div class="hole-card"><h4>Hole 7</h4><p class="par">Par 3 • 175m</p></div>
+                            <div class="hole-card"><h4>Hole 8</h4><p class="par">Par 5 • 510m</p></div>
+                            <div class="hole-card"><h4>Hole 9</h4><p class="par">Par 4 • 395m</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="course-card" style="margin-top: 40px;">
+                <h3>⛳ Back Nine</h3>
+                <div class="course-card-content">
+                    <div class="hole-flyovers-grid">
+                        <div class="hole-card"><h4>Hole 10</h4><p class="par">Par 4 • 345m</p></div>
+                        <div class="hole-card"><h4>Hole 11</h4><p class="par">Par 4 • 370m</p></div>
+                        <div class="hole-card"><h4>Hole 12</h4><p class="par">Par 3 • 155m</p></div>
+                        <div class="hole-card"><h4>Hole 13</h4><p class="par">Par 5 • 485m</p></div>
+                        <div class="hole-card"><h4>Hole 14</h4><p class="par">Par 4 • 365m</p></div>
+                        <div class="hole-card"><h4>Hole 15</h4><p class="par">Par 4 • 340m</p></div>
+                        <div class="hole-card"><h4>Hole 16</h4><p class="par">Par 3 • 180m</p></div>
+                        <div class="hole-card"><h4>Hole 17</h4><p class="par">Par 5 • 520m</p></div>
+                        <div class="hole-card"><h4>Hole 18</h4><p class="par">Par 4 • 410m</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Players Section -->
+    <section id="players" class="page-section players-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>The Players</h2>
+                <div class="divider"></div>
+                <p>Meet the eight competitors vying for glory at The Bonville G.C. Invitational</p>
+            </div>
+            
+            <div class="players-grid">
+                <!-- Player 1 -->
+                <div class="player-card">
+                    <img src="players/mck-tour-card-1.jpg" alt="Player 1" class="player-image">
+                    <div class="player-info">
+                        <h3>James Mitchell</h3>
+                        <span class="handicap">HCP: 12</span>
+                        <div class="player-stats">
+                            <div class="stat"><span class="stat-label">Avg Score</span><span class="stat-value">84</span></div>
+                            <div class="stat"><span class="stat-label">Best Round</span><span class="stat-value">78</span></div>
+                            <div class="stat"><span class="stat-label">Fairways</span><span class="stat-value">62%</span></div>
+                            <div class="stat"><span class="stat-label">GIR</span><span class="stat-value">44%</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player 2 -->
+                <div class="player-card">
+                    <img src="players/mcb-tour-card-2.jpg" alt="Player 2" class="player-image">
+                    <div class="player-info">
+                        <h3>David Thompson</h3>
+                        <span class="handicap">HCP: 8</span>
+                        <div class="player-stats">
+                            <div class="stat"><span class="stat-label">Avg Score</span><span class="stat-value">80</span></div>
+                            <div class="stat"><span class="stat-label">Best Round</span><span class="stat-value">74</span></div>
+                            <div class="stat"><span class="stat-label">Fairways</span><span class="stat-value">68%</span></div>
+                            <div class="stat"><span class="stat-label">GIR</span><span class="stat-value">52%</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player 3 -->
+                <div class="player-card">
+                    <img src="players/mcb-tour-card-3.jpg" alt="Player 3" class="player-image">
+                    <div class="player-info">
+                        <h3>Michael Roberts</h3>
+                        <span class="handicap">HCP: 15</span>
+                        <div class="player-stats">
+                            <div class="stat"><span class="stat-label">Avg Score</span><span class="stat-value">87</span></div>
+                            <div class="stat"><span class="stat-label">Best Round</span><span class="stat-value">82</span></div>
+                            <div class="stat"><span class="stat-label">Fairways</span><span class="stat-value">55%</span></div>
+                            <div class="stat"><span class="stat-label">GIR</span><span class="stat-value">38%</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player 4 -->
+                <div class="player-card">
+                    <img src="players/mcb-tour-card-4.jpg" alt="Player 4" class="player-image">
+                    <div class="player-info">
+                        <h3>Chris Anderson</h3>
+                        <span class="handicap">HCP: 10</span>
+                        <div class="player-stats">
+                            <div class="stat"><span class="stat-label">Avg Score</span><span class="stat-value">82</span></div>
+                            <div class="stat"><span class="stat-label">Best Round</span><span class="stat-value">76</span></div>
+                            <div class="stat"><span class="stat-label">Fairways</span><span class="stat-value">64%</span></div>
+                            <div class="stat"><span class="stat-label">GIR</span><span class="stat-value">48%</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player 5 -->
+                <div class="player-card">
+                    <img src="players/mcb-tour-card-5.jpg" alt="Player 5" class="player-image">
+                    <div class="player-info">
+                        <h3>Ryan Campbell</h3>
+                        <span class="handicap">HCP: 6</span>
+                        <div class="player-stats">
+                            <div class="stat"><span class="stat-label">Avg Score</span><span class="stat-value">78</span></div>
+                            <div class="stat"><span class="stat-label">Best Round</span><span class="stat-value">72</span></div>
+                            <div class="stat"><span class="stat-label">Fairways</span><span class="stat-value">72%</span></div>
+                            <div class="stat"><span class="stat-label">GIR</span><span class="stat-value">58%</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player 6 -->
+                <div class="player-card">
+                    <img src="players/mcb-tour-card-6.jpg" alt="Player 6" class="player-image">
+                    <div class="player-info">
+                        <h3>Andrew Wilson</h3>
+                        <span class="handicap">HCP: 14</span>
+                        <div class="player-stats">
+                            <div class="stat"><span class="stat-label">Avg Score</span><span class="stat-value">86</span></div>
+                            <div class="stat"><span class="stat-label">Best Round</span><span class="stat-value">80</span></div>
+                            <div class="stat"><span class="stat-label">Fairways</span><span class="stat-value">58%</span></div>
+                            <div class="stat"><span class="stat-label">GIR</span><span class="stat-value">40%</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player 7 -->
+                <div class="player-card">
+                    <img src="players/mcb-tour-card-7.jpg" alt="Player 7" class="player-image">
+                    <div class="player-info">
+                        <h3>Steven Parker</h3>
+                        <span class="handicap">HCP: 11</span>
+                        <div class="player-stats">
+                            <div class="stat"><span class="stat-label">Avg Score</span><span class="stat-value">83</span></div>
+                            <div class="stat"><span class="stat-label">Best Round</span><span class="stat-value">77</span></div>
+                            <div class="stat"><span class="stat-label">Fairways</span><span class="stat-value">60%</span></div>
+                            <div class="stat"><span class="stat-label">GIR</span><span class="stat-value">46%</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player 8 -->
+                <div class="player-card">
+                    <img src="players/mcb-tour-card-8.jpg" alt="Player 8" class="player-image">
+                    <div class="player-info">
+                        <h3>Daniel Hughes</h3>
+                        <span class="handicap">HCP: 9</span>
+                        <div class="player-stats">
+                            <div class="stat"><span class="stat-label">Avg Score</span><span class="stat-value">81</span></div>
+                            <div class="stat"><span class="stat-label">Best Round</span><span class="stat-value">75</span></div>
+                            <div class="stat"><span class="stat-label">Fairways</span><span class="stat-value">66%</span></div>
+                            <div class="stat"><span class="stat-label">GIR</span><span class="stat-value">50%</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Day 1 Section - Team Tournament -->
+    <section id="day1" class="page-section tournament-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Day 1 - Team Championship</h2>
+                <div class="divider"></div>
+                <p>Four teams of two compete head-to-head. Winners advance to the Grand Final for the trophy!</p>
+            </div>
+
+            <div class="tournament-container">
+                <div class="bracket">
+                    <!-- Semi Finals -->
+                    <div class="round">
+                        <h3 class="round-title">Semi Finals</h3>
+                        <div class="match" id="match1">
+                            <div class="match-header">Match 1</div>
+                            <div class="team" data-team="1">
+                                <span class="team-name">Team Eagles<br><small>Mitchell & Thompson</small></span>
+                                <input type="number" class="team-score-input" placeholder="Score" min="0" style="width: 70px; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
+                            </div>
+                            <div class="team" data-team="2">
+                                <span class="team-name">Team Birdies<br><small>Roberts & Anderson</small></span>
+                                <input type="number" class="team-score-input" placeholder="Score" min="0" style="width: 70px; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
+                            </div>
+                        </div>
+                        <div class="match" id="match2">
+                            <div class="match-header">Match 2</div>
+                            <div class="team" data-team="3">
+                                <span class="team-name">Team Albatross<br><small>Campbell & Wilson</small></span>
+                                <input type="number" class="team-score-input" placeholder="Score" min="0" style="width: 70px; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
+                            </div>
+                            <div class="team" data-team="4">
+                                <span class="team-name">Team Condors<br><small>Parker & Hughes</small></span>
+                                <input type="number" class="team-score-input" placeholder="Score" min="0" style="width: 70px; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Connector -->
+                    <div class="connector"></div>
+
+                    <!-- Finals -->
+                    <div class="round">
+                        <h3 class="round-title">🏆 Grand Final</h3>
+                        <div class="match" id="final">
+                            <div class="match-header">Championship Match</div>
+                            <div class="team" data-team="winner1">
+                                <span class="team-name" id="finalist1">Winner Match 1</span>
+                                <input type="number" class="team-score-input" placeholder="Score" min="0" style="width: 70px; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
+                            </div>
+                            <div class="team" data-team="winner2">
+                                <span class="team-name" id="finalist2">Winner Match 2</span>
+                                <input type="number" class="team-score-input" placeholder="Score" min="0" style="width: 70px; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="trophy-icon">🏆</div>
+                <p style="text-align: center; color: var(--masters-green); font-size: 1.2rem; font-style: italic;">The winning team will be crowned Day 1 Champions!</p>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <button onclick="calculateDay1Winners()" class="cta-button" style="cursor: pointer; border: none;">Calculate Winners</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dinner Section -->
+    <section id="dinner" class="page-section dinner-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Tournament Dinner</h2>
+                <div class="divider"></div>
+                <p>An evening of fine dining and celebration at Bonville's acclaimed restaurant</p>
+            </div>
+
+            <div class="dinner-grid">
+                <div class="dinner-card">
+                    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&h=400&fit=crop" alt="Fine Dining" class="dinner-image">
+                    <div class="dinner-info">
+                        <h3>Flooded Gums Restaurant</h3>
+                        <p>Experience contemporary Australian cuisine in an elegant setting overlooking the championship course. Our award-winning chefs prepare seasonal dishes using the finest local produce.</p>
+                        <p>Located within the stunning Bonville Golf Resort, the restaurant offers panoramic views of the lush fairways and native bushland.</p>
+                        <a href="https://www.bonvillegolf.com.au/dining/#bynight" target="_blank" class="cta-button" style="margin-top: 20px; display: inline-block;">View Full Menu</a>
+                    </div>
+                </div>
+
+                <div class="dinner-card">
+                    <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&h=400&fit=crop" alt="Evening Ambiance" class="dinner-image">
+                    <div class="dinner-info">
+                        <h3>Tournament Dinner Menu</h3>
+                        <ul class="menu-list">
+                            <li><span class="menu-item">🥗 Entrée: Moreton Bay Bug Tail</span></li>
+                            <li><span class="menu-item">🥩 Main: Wagyu Beef Tenderloin</span></li>
+                            <li><span class="menu-item">🍰 Dessert: Dark Chocolate Fondant</span></li>
+                            <li><span class="menu-item">🧀 Cheese Selection & Port</span></li>
+                            <li><span class="menu-item">🍷 Premium Wine Pairing</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dinner-features">
+                <div class="feature">
+                    <div class="feature-icon">🌅</div>
+                    <h4>Sunset Views</h4>
+                    <p>Dine as the sun sets over the stunning Bonville landscape, creating an unforgettable atmosphere.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🍾</div>
+                    <h4>Premium Beverages</h4>
+                    <p>Extensive wine list featuring Australia's finest vintages paired with each course.</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🏆</div>
+                    <h4>Awards Ceremony</h4>
+                    <p>Day 1 champions will be celebrated with the presentation of prizes and recognition.</p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(255,255,255,0.1); border-radius: 15px; border: 1px solid var(--masters-gold);">
+                <h3 style="color: var(--masters-gold); margin-bottom: 15px;">Dress Code</h3>
+                <p style="color: var(--masters-cream); font-size: 1.1rem;">Smart casual attire. Collared shirts preferred.</p>
+                <p style="color: var(--masters-gold); margin-top: 15px; font-style: italic;">Dinner commences at 7:00 PM</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Day 2 Section - Individual Battle Royale -->
+    <section id="day2" class="page-section tournament-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Day 2 - Individual Championship</h2>
+                <div class="divider"></div>
+                <p>All eight players compete individually in an epic battle for ultimate glory!</p>
+            </div>
+
+            <div class="battle-royale">
+                <div class="player-battle-card" data-player="1">
+                    <img src="players/mck-tour-card-1.jpg" alt="James Mitchell" class="player-battle-img">
+                    <div class="player-battle-info">
+                        <h4>James Mitchell</h4>
+                        <span class="player-rank">HCP: 12</span>
+                    </div>
+                </div>
+                <div class="player-battle-card" data-player="2">
+                    <img src="players/mcb-tour-card-2.jpg" alt="David Thompson" class="player-battle-img">
+                    <div class="player-battle-info">
+                        <h4>David Thompson</h4>
+                        <span class="player-rank">HCP: 8</span>
+                    </div>
+                </div>
+                <div class="player-battle-card" data-player="3">
+                    <img src="players/mcb-tour-card-3.jpg" alt="Michael Roberts" class="player-battle-img">
+                    <div class="player-battle-info">
+                        <h4>Michael Roberts</h4>
+                        <span class="player-rank">HCP: 15</span>
+                    </div>
+                </div>
+                <div class="player-battle-card" data-player="4">
+                    <img src="players/mcb-tour-card-4.jpg" alt="Chris Anderson" class="player-battle-img">
+                    <div class="player-battle-info">
+                        <h4>Chris Anderson</h4>
+                        <span class="player-rank">HCP: 10</span>
+                    </div>
+                </div>
+                <div class="player-battle-card" data-player="5">
+                    <img src="players/mcb-tour-card-5.jpg" alt="Ryan Campbell" class="player-battle-img">
+                    <div class="player-battle-info">
+                        <h4>Ryan Campbell</h4>
+                        <span class="player-rank">HCP: 6</span>
+                    </div>
+                </div>
+                <div class="player-battle-card" data-player="6">
+                    <img src="players/mcb-tour-card-6.jpg" alt="Andrew Wilson" class="player-battle-img">
+                    <div class="player-battle-info">
+                        <h4>Andrew Wilson</h4>
+                        <span class="player-rank">HCP: 14</span>
+                    </div>
+                </div>
+                <div class="player-battle-card" data-player="7">
+                    <img src="players/mcb-tour-card-7.jpg" alt="Steven Parker" class="player-battle-img">
+                    <div class="player-battle-info">
+                        <h4>Steven Parker</h4>
+                        <span class="player-rank">HCP: 11</span>
+                    </div>
+                </div>
+                <div class="player-battle-card" data-player="8">
+                    <img src="players/mcb-tour-card-8.jpg" alt="Daniel Hughes" class="player-battle-img">
+                    <div class="player-battle-info">
+                        <h4>Daniel Hughes</h4>
+                        <span class="player-rank">HCP: 9</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Score Entry Form -->
+            <div class="score-form">
+                <h3>Enter Player Scores</h3>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                    <div class="form-group">
+                        <label>James Mitchell</label>
+                        <input type="number" id="score1" placeholder="Gross Score" min="50" max="150">
+                    </div>
+                    <div class="form-group">
+                        <label>David Thompson</label>
+                        <input type="number" id="score2" placeholder="Gross Score" min="50" max="150">
+                    </div>
+                    <div class="form-group">
+                        <label>Michael Roberts</label>
+                        <input type="number" id="score3" placeholder="Gross Score" min="50" max="150">
+                    </div>
+                    <div class="form-group">
+                        <label>Chris Anderson</label>
+                        <input type="number" id="score4" placeholder="Gross Score" min="50" max="150">
+                    </div>
+                    <div class="form-group">
+                        <label>Ryan Campbell</label>
+                        <input type="number" id="score5" placeholder="Gross Score" min="50" max="150">
+                    </div>
+                    <div class="form-group">
+                        <label>Andrew Wilson</label>
+                        <input type="number" id="score6" placeholder="Gross Score" min="50" max="150">
+                    </div>
+                    <div class="form-group">
+                        <label>Steven Parker</label>
+                        <input type="number" id="score7" placeholder="Gross Score" min="50" max="150">
+                    </div>
+                    <div class="form-group">
+                        <label>Daniel Hughes</label>
+                        <input type="number" id="score8" placeholder="Gross Score" min="50" max="150">
+                    </div>
+                </div>
+                <button onclick="calculateLeaderboard()" class="submit-btn">Update Leaderboard</button>
+            </div>
+
+            <!-- Leaderboard -->
+            <div class="leaderboard" style="margin-top: 50px;">
+                <div class="leaderboard-header">🏆 Day 2 Leaderboard</div>
+                <div class="leaderboard-row header">
+                    <span>Pos</span>
+                    <span>Player</span>
+                    <span>Gross</span>
+                    <span>Net</span>
+                </div>
+                <div id="leaderboard-body">
+                    <div class="leaderboard-row"><span class="position">1</span><span>-</span><span>-</span><span>-</span></div>
+                    <div class="leaderboard-row"><span class="position">2</span><span>-</span><span>-</span><span>-</span></div>
+                    <div class="leaderboard-row"><span class="position">3</span><span>-</span><span>-</span><span>-</span></div>
+                    <div class="leaderboard-row"><span class="position">4</span><span>-</span><span>-</span><span>-</span></div>
+                    <div class="leaderboard-row"><span class="position">5</span><span>-</span><span>-</span><span>-</span></div>
+                    <div class="leaderboard-row"><span class="position">6</span><span>-</span><span>-</span><span>-</span></div>
+                    <div class="leaderboard-row"><span class="position">7</span><span>-</span><span>-</span><span>-</span></div>
+                    <div class="leaderboard-row"><span class="position">8</span><span>-</span><span>-</span><span>-</span></div>
+                </div>
+            </div>
+
+            <div class="trophy-icon">👑</div>
+            <p style="text-align: center; color: var(--masters-green); font-size: 1.2rem; font-style: italic; margin-top: 20px;">The lowest net score claims the Individual Championship!</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <h3>The Bonville G.C. Invitational</h3>
+        <p>A Tradition Unlike Any Other</p>
+        <p style="margin-top: 10px;">Bonville Golf Resort, NSW Australia</p>
+        <img src="https://www.golfandstay.com.au/images/Bonville_Golf_Resort_00_Logo.jpg" alt="Bonville Logo" class="footer-logo">
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.8;">© 2026 The Bonville G.C. Invitational. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                    // Update active nav link
+                    document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        // Update active nav on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-links a');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (scrollY >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Day 1 Team Tournament Calculator
+        function calculateDay1Winners() {
+            const match1 = document.getElementById('match1');
+            const match2 = document.getElementById('match2');
+            const scores1 = match1.querySelectorAll('.team-score-input');
+            const scores2 = match2.querySelectorAll('.team-score-input');
+            
+            const teams = {
+                'Team Eagles': { players: 'Mitchell & Thompson', score: parseInt(scores1[0].value) || 0 },
+                'Team Birdies': { players: 'Roberts & Anderson', score: parseInt(scores1[1].value) || 0 },
+                'Team Albatross': { players: 'Campbell & Wilson', score: parseInt(scores2[0].value) || 0 },
+                'Team Condors': { players: 'Parker & Hughes', score: parseInt(scores2[1].value) || 0 }
+            };
+
+            // In golf, lower score wins
+            let winner1 = teams['Team Eagles'].score <= teams['Team Birdies'].score ? 'Team Eagles' : 'Team Birdies';
+            let winner2 = teams['Team Albatross'].score <= teams['Team Condors'].score ? 'Team Albatross' : 'Team Condors';
+
+            if (teams['Team Eagles'].score > 0 && teams['Team Birdies'].score > 0) {
+                document.getElementById('finalist1').innerHTML = winner1 + '<br><small>' + teams[winner1].players + '</small>';
+                match1.querySelectorAll('.team').forEach(t => t.classList.remove('winner'));
+                match1.querySelector(`[data-team="${winner1 === 'Team Eagles' ? '1' : '2'}"]`).classList.add('winner');
+            }
+
+            if (teams['Team Albatross'].score > 0 && teams['Team Condors'].score > 0) {
+                document.getElementById('finalist2').innerHTML = winner2 + '<br><small>' + teams[winner2].players + '</small>';
+                match2.querySelectorAll('.team').forEach(t => t.classList.remove('winner'));
+                match2.querySelector(`[data-team="${winner2 === 'Team Albatross' ? '3' : '4'}"]`).classList.add('winner');
+            }
+        }
+
+        // Day 2 Individual Leaderboard Calculator
+        const players = [
+            { id: 1, name: 'James Mitchell', handicap: 12 },
+            { id: 2, name: 'David Thompson', handicap: 8 },
+            { id: 3, name: 'Michael Roberts', handicap: 15 },
+            { id: 4, name: 'Chris Anderson', handicap: 10 },
+            { id: 5, name: 'Ryan Campbell', handicap: 6 },
+            { id: 6, name: 'Andrew Wilson', handicap: 14 },
+            { id: 7, name: 'Steven Parker', handicap: 11 },
+            { id: 8, name: 'Daniel Hughes', handicap: 9 }
+        ];
+
+        function calculateLeaderboard() {
+            const results = players.map(player => {
+                const gross = parseInt(document.getElementById('score' + player.id).value) || 0;
+                const net = gross > 0 ? gross - player.handicap : 0;
+                return { ...player, gross, net };
+            }).filter(p => p.gross > 0);
+
+            // Sort by net score (lowest first)
+            results.sort((a, b) => a.net - b.net);
+
+            const leaderboardBody = document.getElementById('leaderboard-body');
+            leaderboardBody.innerHTML = '';
+
+            for (let i = 0; i < 8; i++) {
+                const player = results[i];
+                const positionClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+                const rowClass = i === 0 ? 'first' : '';
+                
+                if (player) {
+                    leaderboardBody.innerHTML += `
+                        <div class="leaderboard-row ${rowClass}">
+                            <span class="position ${positionClass}">${i + 1}</span>
+                            <span>${player.name}</span>
+                            <span>${player.gross}</span>
+                            <span>${player.net}</span>
+                        </div>
+                    `;
+                    
+                    // Highlight winner card
+                    document.querySelectorAll('.player-battle-card').forEach(card => {
+                        card.classList.remove('champion');
+                        if (i === 0 && card.dataset.player == player.id) {
+                            card.classList.add('champion');
+                        }
+                    });
+                } else {
+                    leaderboardBody.innerHTML += `
+                        <div class="leaderboard-row">
+                            <span class="position">${i + 1}</span>
+                            <span>-</span>
+                            <span>-</span>
+                            <span>-</span>
+                        </div>
+                    `;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
