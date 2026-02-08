@@ -2017,12 +2017,14 @@
             if (!currentRound) return;
             const hole = currentRound.currentHole;
             const holeData = courseData.holes[hole];
+            const tees = currentRound.tees || 'tallwood';
+            const distance = holeData[tees];
             const modal = document.getElementById('hole-image-modal');
             const img = document.getElementById('hole-image-display');
             const caption = document.getElementById('hole-image-caption');
             
             img.src = `holes/hole-${hole}.jpg`;
-            caption.textContent = `Hole ${hole} - Par ${holeData.par} • SI ${holeData.si}`;
+            caption.textContent = `Hole ${hole} - Par ${holeData.par} • SI ${holeData.si} • ${distance}m`;
             modal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
