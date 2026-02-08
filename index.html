@@ -1875,6 +1875,89 @@
                     </div>
                 `;
             }).join('');
+            
+            // Start auto-scroll if needed (desktop only)
+            setTimeout(() => startLeaderboardAutoScroll(), 500);
+        }
+        
+        // Auto-scroll variables
+        let autoScrollInterval = null;
+        let autoScrollPaused = false;
+        
+        // Media query for desktop detection
+        const desktopMediaQuery = window.matchMedia('(min-width: 993px)');
+        
+        // Listen for screen size changes to start/stop auto-scroll
+        desktopMediaQuery.addEventListener('change', (e) => {
+            if (e.matches) {
+                // Switched to desktop - start auto-scroll
+                startLeaderboardAutoScroll();
+            } else {
+                // Switched to mobile - stop auto-scroll and reset position
+                stopLeaderboardAutoScroll();
+                const container = document.getElementById('header-leaderboard-content');
+                if (container) {
+                    container.scrollLeft = 0;
+                }
+            }
+        });
+        
+        // Start auto-scroll for leaderboard on large screens
+        function startLeaderboardAutoScroll() {
+            const container = document.getElementById('header-leaderboard-content');
+            if (!container) return;
+            
+            // Clear existing interval
+            if (autoScrollInterval) {
+                clearInterval(autoScrollInterval);
+                autoScrollInterval = null;
+            }
+            
+            // Only on larger screens (desktop)
+            if (!desktopMediaQuery.matches) return;
+            
+            // Check if content overflows horizontally
+            if (container.scrollWidth <= container.clientWidth) return;
+            
+            // Scroll speed: pixels per interval
+            const scrollSpeed = 1;
+            const scrollInterval = 50; // milliseconds
+            
+            // Pause on hover
+            container.onmouseenter = () => { autoScrollPaused = true; };
+            container.onmouseleave = () => { autoScrollPaused = false; };
+            
+            // Auto-scroll function
+            autoScrollInterval = setInterval(() => {
+                if (autoScrollPaused) return;
+                
+                // Scroll right
+                container.scrollLeft += scrollSpeed;
+                
+                // Reset to start when reaching the end
+                if (container.scrollLeft >= container.scrollWidth - container.clientWidth) {
+                    // Pause briefly at the end, then reset
+                    autoScrollPaused = true;
+                    setTimeout(() => {
+                        container.scrollLeft = 0;
+                        autoScrollPaused = false;
+                    }, 2000);
+                }
+            }, scrollInterval);
+        }
+        
+        // Stop auto-scroll
+        function stopLeaderboardAutoScroll() {
+            if (autoScrollInterval) {
+                clearInterval(autoScrollInterval);
+                autoScrollInterval = null;
+            }
+            // Clear hover handlers when stopping
+            const container = document.getElementById('header-leaderboard-content');
+            if (container) {
+                container.onmouseenter = null;
+                container.onmouseleave = null;
+            }
         }
         
         // Modal state
