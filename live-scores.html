@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Scores - The Bonville G.C. Invitational</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles-part2.css">
+    <link rel="stylesheet" href="styles-part3.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">
+                    <img src="images/bonville-logo.jpg" alt="Bonville Golf Resort">
+                </a>
+                <h1>Live Scores</h1>
+            </div>
+            <a href="index.html" class="back-link" style="color: var(--masters-gold); text-decoration: none; font-weight: 600;">← Back to Home</a>
+        </div>
+    </nav>
+
+    <!-- Header Live Leaderboard -->
+    <div id="header-leaderboard" class="header-leaderboard" style="display: none;">
+        <div class="header-leaderboard-container">
+            <div class="header-leaderboard-title">🏆 Live Leaderboard</div>
+            <div class="header-leaderboard-content" id="header-leaderboard-content"></div>
+            <button onclick="toggleHeaderLeaderboard()" class="header-leaderboard-toggle" id="header-leaderboard-toggle">▲</button>
+        </div>
+    </div>
+
+    <!-- Live Scores Section -->
+    <section id="live-scores" class="page-section live-scores-section" style="padding-top: 120px;">
+        <div class="container">
+            <div class="section-header">
+                <h2>Live Scores</h2>
+                <div class="divider"></div>
+                <p>Enter your scores hole-by-hole during your round</p>
+            </div>
+
+            <!-- Round Setup -->
+            <div id="round-setup" class="round-setup-container">
+                <div class="setup-card">
+                    <h3>Start a Round</h3>
+                    
+                    <div class="setup-field">
+                        <label>Entry Type</label>
+                        <div class="entry-type-options">
+                            <label class="entry-type-option">
+                                <input type="radio" name="entry-type" value="player" checked onchange="toggleEntryType()">
+                                <span class="entry-type-label">Player</span>
+                            </label>
+                            <label class="entry-type-option">
+                                <input type="radio" name="entry-type" value="team" onchange="toggleEntryType()">
+                                <span class="entry-type-label">Team</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setup-field" id="player-select-field">
+                        <label for="score-player">Player</label>
+                        <select id="score-player" class="setup-select">
+                            <option value="">Select Player</option>
+                        </select>
+                    </div>
+
+                    <div class="setup-field" id="team-name-field" style="display: none;">
+                        <label for="team-name">Team Name</label>
+                        <input type="text" id="team-name" class="setup-input" placeholder="Enter team name">
+                    </div>
+
+                    <div class="setup-field">
+                        <label for="score-date">Date</label>
+                        <input type="date" id="score-date" class="setup-input">
+                    </div>
+
+                    <div class="setup-field">
+                        <label>Tees</label>
+                        <div class="tee-options">
+                            <label class="tee-option">
+                                <input type="radio" name="tees" value="tallwood" checked>
+                                <span class="tee-label">Tallwood (6,146m)</span>
+                            </label>
+                            <label class="tee-option">
+                                <input type="radio" name="tees" value="bloodwood">
+                                <span class="tee-label">Bloodwood (5,664m)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button onclick="startRound()" class="cta-button start-round-btn">Start Round</button>
+                </div>
+            </div>
+
+            <!-- Hole-by-Hole Score Entry (Hidden initially) -->
+            <div id="score-entry" class="score-entry-container" style="display: none;">
+                <!-- Player Info Bar -->
+                <div class="score-player-bar">
+                    <span id="current-player-name">Player Name</span>
+                    <span id="current-tees-display">Tallwood</span>
+                    <button onclick="exitRound()" class="exit-round-btn">✕</button>
+                </div>
+
+                <!-- Hole Navigation -->
+                <div class="hole-navigation">
+                    <button onclick="prevHole()" class="hole-nav-btn" id="prev-hole-btn">◀</button>
+                    <div class="current-hole-info">
+                        <h3 id="current-hole-number">Hole 1</h3>
+                        <p id="current-hole-details">Par 4 • SI 2</p>
+                        <p id="current-hole-distance">380m</p>
+                    </div>
+                    <button onclick="nextHole()" class="hole-nav-btn" id="next-hole-btn">▶</button>
+                </div>
+
+                <!-- Score Input -->
+                <div class="score-input-container">
+                    <div class="score-input-row">
+                        <label>Score</label>
+                        <div class="score-stepper">
+                            <button onclick="adjustScore(-1)" class="stepper-btn">−</button>
+                            <span id="current-score" class="stepper-value">-</span>
+                            <button onclick="adjustScore(1)" class="stepper-btn">+</button>
+                        </div>
+                    </div>
+                    <div class="score-input-row">
+                        <label>Putts</label>
+                        <div class="score-stepper">
+                            <button onclick="adjustPutts(-1)" class="stepper-btn">−</button>
+                            <span id="current-putts" class="stepper-value">-</span>
+                            <button onclick="adjustPutts(1)" class="stepper-btn">+</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Running Totals -->
+                <div class="running-totals">
+                    <div class="total-item">
+                        <span class="total-label">Front 9</span>
+                        <span id="front-9-total" class="total-value">-</span>
+                    </div>
+                    <div class="total-item">
+                        <span class="total-label">Back 9</span>
+                        <span id="back-9-total" class="total-value">-</span>
+                    </div>
+                    <div class="total-item total-gross">
+                        <span class="total-label">Gross</span>
+                        <span id="gross-total" class="total-value">-</span>
+                    </div>
+                    <div class="total-item total-net">
+                        <span class="total-label">Net</span>
+                        <span id="net-total" class="total-value">-</span>
+                    </div>
+                </div>
+
+                <!-- Hole Quick Nav -->
+                <div class="hole-quick-nav">
+                    <div class="quick-nav-grid" id="quick-nav-grid"></div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="save-round-container">
+                    <button onclick="saveRound()" class="cta-button save-round-btn">Save Round</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Player Scorecard Modal -->
+    <div id="scorecard-modal" class="scorecard-modal" style="display: none;">
+        <div class="scorecard-modal-overlay" onclick="closeScorecardModal()"></div>
+        <div class="scorecard-modal-content">
+            <div class="score-player-bar">
+                <span id="modal-player-name">Player Name</span>
+                <button onclick="closeScorecardModal()" class="exit-round-btn">✕</button>
+            </div>
+            <div class="modal-scorecard-wrapper">
+                <div id="modal-scorecard-table"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <h3>The Bonville G.C. Invitational</h3>
+        <p>A Tradition Unlike Any Other</p>
+        <p style="margin-top: 10px;">Bonville Golf Resort, NSW Australia</p>
+        <img src="images/bonville-logo.jpg" alt="Bonville Logo" class="footer-logo">
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.8;">© 2026 The Bonville G.C. Invitational. All rights reserved.</p>
+    </footer>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, query, where, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyCY24IeSpAl4nArkpCFmzGQ9cekAuqJ2iY",
+            authDomain: "mcb-bonville.firebaseapp.com",
+            projectId: "mcb-bonville",
+            storageBucket: "mcb-bonville.firebasestorage.app",
+            messagingSenderId: "1060458454674",
+            appId: "1:1060458454674:web:92aa694e423d069809104b",
+            measurementId: "G-PTR8FER1NW"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        window.db = db;
+        window.firestoreHelpers = { collection, doc, getDoc, getDocs, setDoc, updateDoc, query, where, orderBy, onSnapshot };
+    </script>
+    <script src="live-scores.js"></script>
+</body>
+</html>

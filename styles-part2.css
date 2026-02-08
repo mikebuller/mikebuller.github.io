@@ -271,6 +271,8 @@ a.hole-info:active {
 /* Tournament Ladder Styles */
 .tournament-section {
     background: linear-gradient(180deg, var(--masters-cream) 0%, #e8e4d0 100%);
+    min-height: auto;
+    padding-bottom: 80px;
 }
 
 /* Team Configuration Section */
