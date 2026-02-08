@@ -27,7 +27,7 @@
 }
 
 .course-card-content {
-    padding: 30px;
+    padding: 15px;
 }
 
 .scorecard-embed, .flyover-embed {
@@ -38,10 +38,17 @@
 }
 
 .hole-flyovers-grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 20px;
     margin-top: 20px;
+}
+
+.hole-flyovers-grid .hole-card {
+    flex: 0 1 calc(50% - 20px);
+    max-width: 400px;
+    min-width: 280px;
 }
 
 /* Tee Times Container */
@@ -50,7 +57,7 @@
     justify-content: center;
     gap: 60px;
     margin-bottom: 40px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 .tee-time-box {
@@ -64,6 +71,7 @@
 .tee-time-box h4 {
     color: var(--masters-green);
     margin-bottom: 10px;
+    white-space: nowrap;
 }
 
 .tee-time-box .tee-time {
@@ -73,28 +81,97 @@
 }
 
 .hole-card {
-    background: var(--masters-cream);
+    background: var(--masters-white);
     border-radius: 10px;
-    padding: 20px;
     text-align: center;
     border: 2px solid var(--masters-brown);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
 }
 
 .hole-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.hole-card:active {
+    transform: scale(0.98);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.hole-card:focus-within {
+    outline: none;
+}
+
+.hole-video {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    background: #000;
+}
+
+.hole-video iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.hole-info {
+    display: block;
+    padding: 12px 10px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+}
+
+a.hole-info:hover {
+    background: var(--masters-cream);
+}
+
+a.hole-info:focus {
+    outline: none;
+    background: var(--masters-cream);
+}
+
+a.hole-info:focus:not(:focus-visible) {
+    background: transparent;
+}
+
+a.hole-info:active {
+    background: var(--masters-cream);
+    transition: background 0s;
 }
 
 .hole-card h4 {
     color: var(--masters-green);
-    font-size: 1.3rem;
-    margin-bottom: 10px;
+    font-size: 1rem;
+    margin-bottom: 3px;
 }
 
 .hole-card .par {
     color: var(--masters-brown);
     font-weight: 600;
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+.hole-card.par3 {
+    border: 2px solid var(--masters-gold);
+}
+
+.hole-card.par3 .hole-info {
+    background: linear-gradient(135deg, var(--masters-white) 0%, rgba(201, 162, 39, 0.2) 100%);
+}
+
+.hole-card.longest-drive {
+    border: 2px solid var(--masters-green);
+}
+
+.hole-card.longest-drive .hole-info {
+    background: linear-gradient(135deg, var(--masters-white) 0%, rgba(0, 103, 71, 0.15) 100%);
 }
 
 /* Players Section */
@@ -150,6 +227,15 @@
     margin-bottom: 15px;
 }
 
+.player-skill {
+    margin-top: 10px;
+    font-size: 0.95rem;
+    color: var(--masters-brown);
+    font-style: italic;
+    line-height: 1.5;
+    padding: 0 5px;
+}
+
 .player-stats {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -180,6 +266,140 @@
     background: linear-gradient(180deg, var(--masters-cream) 0%, #e8e4d0 100%);
 }
 
+/* Team Configuration Section */
+.team-config-container {
+    background: var(--masters-white);
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 40px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    border: 2px solid var(--masters-gold);
+}
+
+.config-title {
+    color: var(--masters-green);
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+}
+
+.groups-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+}
+
+.group-config {
+    background: var(--masters-cream);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(0,103,71,0.2);
+}
+
+.group-config h4 {
+    color: var(--masters-green);
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.team-config {
+    margin-bottom: 15px;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid rgba(201,162,39,0.3);
+}
+
+.team-config label {
+    display: block;
+    color: var(--masters-brown);
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.team-players {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.team-players span {
+    color: var(--masters-green);
+    font-weight: 700;
+}
+
+.player-select {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 12px;
+    border: 2px solid var(--masters-green);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: white;
+    color: var(--masters-dark-green);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.player-select:hover {
+    border-color: var(--masters-gold);
+}
+
+.player-select:focus {
+    outline: none;
+    border-color: var(--masters-gold);
+    box-shadow: 0 0 0 3px rgba(201,162,39,0.2);
+}
+
+.player-select:disabled,
+.player-select option:disabled {
+    color: #999;
+    background-color: #f0f0f0;
+}
+
+/* Team name configuration within bracket */
+.team-name-config {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+    flex: 1;
+}
+
+.team-name-config .player-select {
+    flex: 1;
+    min-width: 80px;
+    max-width: 140px;
+    padding: 8px 10px;
+    font-size: 0.85rem;
+}
+
+.team-ampersand {
+    color: var(--masters-gold);
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+/* Score input styling */
+.team-score-input {
+    width: 70px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 2px solid #ccc;
+    font-size: 1rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.team-score-input:focus {
+    outline: none;
+    border-color: var(--masters-gold);
+    box-shadow: 0 0 0 3px rgba(201,162,39,0.2);
+}
+
 .tournament-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -188,8 +408,8 @@
 .bracket {
     display: flex;
     justify-content: center;
-    gap: 60px;
-    padding: 40px 0;
+    gap: 30px;
+    padding: 0px 0;
 }
 
 .round {
@@ -203,7 +423,7 @@
     text-align: center;
     color: var(--masters-green);
     font-size: 1.5rem;
-    margin-bottom: 20px;
+    margin-bottom: 2px;
     font-style: italic;
 }
 

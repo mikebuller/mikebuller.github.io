@@ -12,6 +12,22 @@
     color: var(--masters-cream);
 }
 
+/* Dinner Details */
+.dinner-details {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.dinner-details p {
+    color: var(--masters-cream);
+    font-size: 1.15rem;
+    margin: 8px 0;
+}
+
+.dinner-details strong {
+    color: var(--masters-gold);
+}
+
 .dinner-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -182,11 +198,48 @@
 
 .leaderboard-row {
     display: grid;
-    grid-template-columns: 60px 1fr 100px 100px;
+    grid-template-columns: 45px 1fr 45px 70px 60px;
     padding: 15px 20px;
     border-bottom: 1px solid var(--masters-cream);
     align-items: center;
     transition: background 0.3s ease;
+}
+
+/* Team leaderboard 3-column layout */
+#team-leaderboard .leaderboard-row {
+    display: grid;
+    grid-template-columns: 30px 1fr 55px;
+}
+
+#team-leaderboard .leaderboard-row.header {
+    display: grid;
+    grid-template-columns: 30px 1fr 55px;
+}
+
+#team-leaderboard .team-name-config {
+    display: flex;
+    justify-content: flex-start;
+    min-width: 0;
+    overflow: visible;
+}
+
+#team-leaderboard .team-name-config .player-select {
+    min-width: 0;
+    flex: 1;
+    max-width: none;
+}
+
+#team-leaderboard .team-score {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    color: inherit;
+    padding: 0;
+}
+
+#team-leaderboard .team-score-input {
+    width: 50px;
 }
 
 .leaderboard-row:hover {
@@ -199,8 +252,17 @@
     color: var(--masters-brown);
 }
 
-.leaderboard-row.first {
-    background: linear-gradient(90deg, rgba(201, 162, 39, 0.3) 0%, transparent 100%);
+.leaderboard-row.first,
+.leaderboard-row.gold {
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.3) 0%, transparent 100%);
+}
+
+.leaderboard-row.silver {
+    background: linear-gradient(90deg, rgba(192, 192, 192, 0.3) 0%, transparent 100%);
+}
+
+.leaderboard-row.bronze {
+    background: linear-gradient(90deg, rgba(205, 127, 50, 0.3) 0%, transparent 100%);
 }
 
 .position {
@@ -209,9 +271,42 @@
     color: var(--masters-green);
 }
 
-.position.gold { color: #FFD700; }
-.position.silver { color: #C0C0C0; }
-.position.bronze { color: #CD7F32; }
+.leaderboard-row.gold .position { color: #FFD700; }
+.leaderboard-row.silver .position { color: #C0C0C0; }
+.leaderboard-row.bronze .position { color: #CD7F32; }
+
+.gross-score-input {
+    width: 55px;
+    padding: 6px 8px;
+    border: 2px solid var(--masters-green);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    text-align: center;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.gross-score-input:focus {
+    outline: none;
+    border-color: var(--masters-gold);
+    box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.2);
+}
+
+.gross-score-input::placeholder {
+    color: #aaa;
+}
+
+.player-hcp {
+    color: var(--masters-brown);
+    font-weight: 600;
+    text-align: center;
+}
+
+.player-net {
+    font-weight: 700;
+    color: var(--masters-green);
+    text-align: center;
+}
 
 /* Score Input Form */
 .score-form {
@@ -295,8 +390,8 @@
         grid-template-columns: repeat(2, 1fr);
     }
     
-    .hole-flyovers-grid {
-        grid-template-columns: repeat(4, 1fr);
+    .hole-flyovers-grid .hole-card {
+        flex: 0 1 200px;
     }
 }
 
@@ -320,8 +415,8 @@
         grid-template-columns: 1fr;
     }
     
-    .hole-flyovers-grid {
-        grid-template-columns: repeat(3, 1fr);
+    .hole-flyovers-grid .hole-card {
+        flex: 0 1 180px;
     }
     
     .tee-times-container {
@@ -341,6 +436,35 @@
     /* Mobile Navigation */
     .mobile-menu-toggle {
         display: flex;
+    }
+    
+    /* Team Configuration Mobile (inline in bracket) */
+    .team-name-config {
+        flex-wrap: nowrap;
+        gap: 5px;
+    }
+    
+    .team-name-config .player-select {
+        min-width: 70px;
+        max-width: none;
+        flex: 1;
+        font-size: 0.75rem;
+        padding: 6px 4px;
+    }
+    
+    .team-ampersand {
+        font-size: 0.9rem;
+    }
+    
+    .team {
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px;
+    }
+    
+    .team-score-input {
+        width: 100%;
+        max-width: 100px;
     }
     
     .nav-container {
@@ -428,7 +552,7 @@
     }
     
     .page-section {
-        padding: 80px 15px 40px;
+        padding: 40px 15px 40px;
     }
     
     /* Players Grid */
@@ -439,33 +563,38 @@
     
     /* Hole Flyovers */
     .hole-flyovers-grid {
-        grid-template-columns: repeat(2, 1fr);
         gap: 10px;
     }
     
-    .hole-card {
-        padding: 15px;
+    .hole-flyovers-grid .hole-card {
+        flex: 0 1 calc(50% - 10px);
+        min-width: 140px;
+        max-width: none;
     }
     
     .hole-card h4 {
-        font-size: 1.1rem;
+        font-size: 0.95rem;
     }
     
     /* Tee Times */
     .tee-times-container {
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
+        flex-wrap: nowrap;
+        gap: 10px;
+        padding: 0 15px;
     }
     
     .tee-time-box {
-        width: 100%;
-        max-width: 280px;
-        padding: 15px 20px;
+        flex: 1;
+        max-width: 200px;
+        padding: 12px 10px;
+    }
+    
+    .tee-time-box h4 {
+        font-size: 0.85rem;
     }
     
     .tee-time-box .tee-time {
-        font-size: 1.4rem;
+        font-size: 1.1rem;
     }
     
     /* Tournament Bracket */
@@ -495,9 +624,41 @@
     
     /* Leaderboard */
     .leaderboard-row {
-        grid-template-columns: 35px 1fr 55px 55px;
+        grid-template-columns: 30px 1fr 35px 55px 45px;
         font-size: 0.85rem;
         padding: 12px 10px;
+    }
+    
+    .gross-score-input {
+        width: 45px;
+        padding: 5px 4px;
+        font-size: 0.85rem;
+    }
+    
+    /* Team Leaderboard Mobile */
+    #team-leaderboard .leaderboard-row {
+        grid-template-columns: 25px 1fr 45px;
+        padding: 10px 6px;
+    }
+    
+    #team-leaderboard .team-name-config {
+        gap: 5px;
+    }
+    
+    #team-leaderboard .team-name-config .player-select {
+        font-size: 0.68rem;
+        padding: 4px 2px;
+        max-width: 120px;
+    }
+    
+    #team-leaderboard .team-ampersand {
+        font-size: 0.7rem;
+    }
+    
+    #team-leaderboard .team-score-input {
+        width: 38px;
+        font-size: 0.8rem;
+        padding: 4px 2px;
     }
     
     .leaderboard-header {
@@ -506,6 +667,10 @@
     }
     
     /* Dinner Section */
+    .dinner-details p {
+        font-size: 1rem;
+    }
+    
     .dinner-image {
         height: 200px;
     }
@@ -542,21 +707,21 @@
     }
     
     .hole-flyovers-grid {
-        grid-template-columns: repeat(2, 1fr);
         gap: 8px;
     }
     
-    .hole-card {
-        padding: 10px;
+    .hole-flyovers-grid .hole-card {
+        flex: 0 1 calc(50% - 8px);
+        min-width: 120px;
     }
     
     .hole-card h4 {
-        font-size: 1rem;
-        margin-bottom: 5px;
+        font-size: 0.85rem;
+        margin-bottom: 2px;
     }
     
     .hole-card .par {
-        font-size: 0.85rem;
+        font-size: 0.75rem;
     }
     
     .player-image {
@@ -564,9 +729,15 @@
     }
     
     .leaderboard-row {
-        grid-template-columns: 30px 1fr 50px 50px;
-        font-size: 0.8rem;
+        grid-template-columns: 25px 1fr 30px 45px 40px;
+        font-size: 0.75rem;
         padding: 10px 8px;
+    }
+    
+    .gross-score-input {
+        width: 40px;
+        padding: 4px 2px;
+        font-size: 0.8rem;
     }
     
     .position {

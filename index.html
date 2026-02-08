@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="styles-part2.css">
     <link rel="stylesheet" href="styles-part3.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
     <!-- Navigation -->
@@ -177,29 +179,83 @@
                 <h3>🎥 Hole Fly-Overs</h3>
                 <div class="course-card-content">
                     <p style="margin-bottom: 20px; color: var(--masters-brown); text-align: center;">Watch aerial flyover videos of each hole to plan your strategy and appreciate the stunning course layout.</p>
-                    <div style="text-align: center; margin-bottom: 25px;">
-                        <a href="https://www.bonvillegolf.com.au/hole-fly-overs/" target="_blank" class="cta-button" style="font-size: 1rem;">Watch All Flyovers</a>
+                    <div style="display: flex; justify-content: center; margin-bottom: 25px; padding: 0 15px;">
+                        <a href="https://vimeo.com/287184640" target="_blank" class="cta-button" style="font-size: 1rem; white-space: nowrap;">Watch Course Flyover</a>
                     </div>
                     
                     <div class="hole-flyovers-grid">
-                        <div class="hole-card"><h4>Hole 1</h4><p class="par">Par 4 • 358m</p></div>
-                        <div class="hole-card"><h4>Hole 2</h4><p class="par">Par 4 • 337m</p></div>
-                        <div class="hole-card"><h4>Hole 3</h4><p class="par">Par 5 • 490m</p></div>
-                        <div class="hole-card"><h4>Hole 4</h4><p class="par">Par 3 • 165m</p></div>
-                        <div class="hole-card"><h4>Hole 5</h4><p class="par">Par 4 • 380m</p></div>
-                        <div class="hole-card"><h4>Hole 6</h4><p class="par">Par 4 • 350m</p></div>
-                        <div class="hole-card"><h4>Hole 7</h4><p class="par">Par 3 • 175m</p></div>
-                        <div class="hole-card"><h4>Hole 8</h4><p class="par">Par 5 • 510m</p></div>
-                        <div class="hole-card"><h4>Hole 9</h4><p class="par">Par 4 • 395m</p></div>
-                        <div class="hole-card"><h4>Hole 10</h4><p class="par">Par 4 • 345m</p></div>
-                        <div class="hole-card"><h4>Hole 11</h4><p class="par">Par 4 • 370m</p></div>
-                        <div class="hole-card"><h4>Hole 12</h4><p class="par">Par 3 • 155m</p></div>
-                        <div class="hole-card"><h4>Hole 13</h4><p class="par">Par 5 • 485m</p></div>
-                        <div class="hole-card"><h4>Hole 14</h4><p class="par">Par 4 • 365m</p></div>
-                        <div class="hole-card"><h4>Hole 15</h4><p class="par">Par 4 • 340m</p></div>
-                        <div class="hole-card"><h4>Hole 16</h4><p class="par">Par 3 • 180m</p></div>
-                        <div class="hole-card"><h4>Hole 17</h4><p class="par">Par 5 • 520m</p></div>
-                        <div class="hole-card"><h4>Hole 18</h4><p class="par">Par 4 • 410m</p></div>
+                        <div class="hole-card">
+                            <a href="https://www.bonvillegolf.com.au/hole/hole-1/" target="_blank" class="hole-info"><h4>Hole 1</h4><p class="par">Par 4 • 358m</p></a>
+                            <div class="hole-video"><iframe src="https://www.youtube.com/embed/Z4OtMIxXbts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                        </div>
+                        <div class="hole-card">
+                            <a href="https://www.bonvillegolf.com.au/hole/hole-2/" target="_blank" class="hole-info"><h4>Hole 2</h4><p class="par">Par 4 • 337m</p></a>
+                            <div class="hole-video"><iframe src="https://www.youtube.com/embed/sffkGMJvAI0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                        </div>
+                        <div class="hole-card">
+                            <a href="https://www.bonvillegolf.com.au/hole/hole-3/" target="_blank" class="hole-info"><h4>Hole 3</h4><p class="par">Par 5 • 490m</p></a>
+                            <div class="hole-video"><iframe src="https://www.youtube.com/embed/Rs0itcMovSc" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                        </div>
+                        <div class="hole-card par3">
+                            <a href="https://www.bonvillegolf.com.au/hole/hole-4/" target="_blank" class="hole-info"><h4>Hole 4 ⛳</h4><p class="par">Par 3 • 165m</p></a>
+                            <div class="hole-video"><iframe src="https://www.youtube.com/embed/Pt3gE3Yp4E0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                        </div>
+                        <div class="hole-card">
+                            <a href="https://www.bonvillegolf.com.au/hole/hole-5/" target="_blank" class="hole-info"><h4>Hole 5</h4><p class="par">Par 4 • 380m</p></a>
+                            <div class="hole-video"><iframe src="https://www.youtube.com/embed/hURLN9CijB0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                        </div>
+                        <div class="hole-card longest-drive">
+                            <a href="https://www.bonvillegolf.com.au/hole/hole-6/" target="_blank" class="hole-info"><h4>Hole 6 💪</h4><p class="par">Par 4 • 350m</p></a>
+                            <div class="hole-video"><iframe src="https://www.youtube.com/embed/JfyZgLvPWTM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                        </div>
+                        <div class="hole-card par3">
+                            <a href="https://www.bonvillegolf.com.au/hole/hole-7/" target="_blank" class="hole-info"><h4>Hole 7 ⛳</h4><p class="par">Par 3 • 175m</p></a>
+                            <div class="hole-video"><iframe src="https://www.youtube.com/embed/sEL4EUaFmEQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                        </div>
+                        <div class="hole-card">
+                            <a href="https://www.bonvillegolf.com.au/hole/hole-8/" target="_blank" class="hole-info"><h4>Hole 8</h4><p class="par">Par 5 • 510m</p></a>
+                            <div class="hole-video"><iframe src="https://www.youtube.com/embed/BX7nta7u27o" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                        </div>
+                        <div class="hole-card">
+                            <a href="https://www.bonvillegolf.com.au/hole/hole-9/" target="_blank" class="hole-info"><h4>Hole 9</h4><p class="par">Par 4 • 395m</p></a>
+                            <div class="hole-video"><iframe src="https://www.youtube.com/embed/ukTcPM-HHig" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                        </div>
+                        <div class="hole-card">
+                            <a href="https://www.bonvillegolf.com.au/hole/hole-10/" target="_blank" class="hole-info"><h4>Hole 10</h4><p class="par">Par 4 • 345m</p></a>
+                            <div class="hole-video"><iframe src="https://www.youtube.com/embed/F5SCMN0X3U4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                        </div>
+                        <div class="hole-card">
+                            <a href="https://www.bonvillegolf.com.au/hole/hole-11/" target="_blank" class="hole-info"><h4>Hole 11</h4><p class="par">Par 4 • 370m</p></a>
+                            <div class="hole-video"><iframe src="https://www.youtube.com/embed/e4wFkVsWaug" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                        </div>
+                        <div class="hole-card par3">
+                            <a href="https://www.bonvillegolf.com.au/hole/hole-12/" target="_blank" class="hole-info"><h4>Hole 12 ⛳</h4><p class="par">Par 3 • 155m</p></a>
+                            <div class="hole-video"><iframe src="https://www.youtube.com/embed/p9UBiaCt_es" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                        </div>
+                        <div class="hole-card">
+                            <a href="https://www.bonvillegolf.com.au/hole/hole-13/" target="_blank" class="hole-info"><h4>Hole 13</h4><p class="par">Par 5 • 485m</p></a>
+                            <div class="hole-video"><iframe src="https://www.youtube.com/embed/eGR7M642U3g" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                        </div>
+                        <div class="hole-card longest-drive">
+                            <a href="https://www.bonvillegolf.com.au/hole/hole-14/" target="_blank" class="hole-info"><h4>Hole 14 💪</h4><p class="par">Par 4 • 365m</p></a>
+                            <div class="hole-video"><iframe src="https://www.youtube.com/embed/vmj7mOaVpfU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                        </div>
+                        <div class="hole-card">
+                            <a href="https://www.bonvillegolf.com.au/hole/hole-15/" target="_blank" class="hole-info"><h4>Hole 15</h4><p class="par">Par 4 • 340m</p></a>
+                            <div class="hole-video"><iframe src="https://www.youtube.com/embed/RY-BLD0ooBI" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                        </div>
+                        <div class="hole-card par3">
+                            <a href="https://www.bonvillegolf.com.au/hole/hole-16/" target="_blank" class="hole-info"><h4>Hole 16 ⛳</h4><p class="par">Par 3 • 180m</p></a>
+                            <div class="hole-video"><iframe src="https://www.youtube.com/embed/BRrfggDEmWs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                        </div>
+                        <div class="hole-card">
+                            <a href="https://www.bonvillegolf.com.au/hole/hole-17/" target="_blank" class="hole-info"><h4>Hole 17</h4><p class="par">Par 5 • 520m</p></a>
+                            <div class="hole-video"><iframe src="https://www.youtube.com/embed/wsXWvGKwY28" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                        </div>
+                        <div class="hole-card">
+                            <a href="https://www.bonvillegolf.com.au/hole/hole-18/" target="_blank" class="hole-info"><h4>Hole 18</h4><p class="par">Par 4 • 410m</p></a>
+                            <div class="hole-video"><iframe src="https://www.youtube.com/embed/YKwE-HvdXqg" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -220,119 +276,79 @@
                 <div class="player-card">
                     <img src="players/mck-tour-card-1.jpg" alt="Player 1" class="player-image">
                     <div class="player-info">
-                        <h3>James Mitchell</h3>
+                        <h3>Mike Buller</h3>
                         <span class="handicap">HCP: 12</span>
-                        <div class="player-stats">
-                            <div class="stat"><span class="stat-label">Avg Score</span><span class="stat-value">84</span></div>
-                            <div class="stat"><span class="stat-label">Best Round</span><span class="stat-value">78</span></div>
-                            <div class="stat"><span class="stat-label">Fairways</span><span class="stat-value">62%</span></div>
-                            <div class="stat"><span class="stat-label">GIR</span><span class="stat-value">44%</span></div>
-                        </div>
+                        <p class="player-skill">🎯 The "Mulligan Whisperer" – has perfected the art of pretending that first shot never happened.</p>
                     </div>
                 </div>
 
                 <!-- Player 2 -->
                 <div class="player-card">
-                    <img src="players/mcb-tour-card-2.jpg" alt="Player 2" class="player-image">
+                    <img src="players/adrian-platas.jpeg" alt="Adrian Platas" class="player-image">
                     <div class="player-info">
-                        <h3>David Thompson</h3>
+                        <h3>Adrian Platas</h3>
                         <span class="handicap">HCP: 8</span>
-                        <div class="player-stats">
-                            <div class="stat"><span class="stat-label">Avg Score</span><span class="stat-value">80</span></div>
-                            <div class="stat"><span class="stat-label">Best Round</span><span class="stat-value">74</span></div>
-                            <div class="stat"><span class="stat-label">Fairways</span><span class="stat-value">68%</span></div>
-                            <div class="stat"><span class="stat-label">GIR</span><span class="stat-value">52%</span></div>
-                        </div>
+                        <p class="player-skill">🥘 Like a fine paella, his drives are cooked low and slow – short off the tee but always simmering toward the green. His tortilla flip putting technique? Chef's kiss!</p>
                     </div>
                 </div>
 
                 <!-- Player 3 -->
                 <div class="player-card">
-                    <img src="players/mcb-tour-card-3.jpg" alt="Player 3" class="player-image">
+                    <img src="players/darren-shadlow.jpeg" alt="Darren Shadlow" class="player-image">
                     <div class="player-info">
-                        <h3>Michael Roberts</h3>
+                        <h3>Darren Shadlow</h3>
                         <span class="handicap">HCP: 15</span>
-                        <div class="player-stats">
-                            <div class="stat"><span class="stat-label">Avg Score</span><span class="stat-value">87</span></div>
-                            <div class="stat"><span class="stat-label">Best Round</span><span class="stat-value">82</span></div>
-                            <div class="stat"><span class="stat-label">Fairways</span><span class="stat-value">55%</span></div>
-                            <div class="stat"><span class="stat-label">GIR</span><span class="stat-value">38%</span></div>
-                        </div>
+                        <p class="player-skill">😤 Master of channeling his inner fury into pure golfing power. That bunker shot that wronged him? It'll never happen again.</p>
                     </div>
                 </div>
 
                 <!-- Player 4 -->
                 <div class="player-card">
-                    <img src="players/mcb-tour-card-4.jpg" alt="Player 4" class="player-image">
+                    <img src="players/mcb-tour-card-2.jpg" alt="Player 4" class="player-image">
                     <div class="player-info">
                         <h3>Chris Anderson</h3>
                         <span class="handicap">HCP: 10</span>
-                        <div class="player-stats">
-                            <div class="stat"><span class="stat-label">Avg Score</span><span class="stat-value">82</span></div>
-                            <div class="stat"><span class="stat-label">Best Round</span><span class="stat-value">76</span></div>
-                            <div class="stat"><span class="stat-label">Fairways</span><span class="stat-value">64%</span></div>
-                            <div class="stat"><span class="stat-label">GIR</span><span class="stat-value">48%</span></div>
-                        </div>
+                        <p class="player-skill">🍺 The "19th Hole MVP" – plays best when the clubhouse beer is in sight. Mysteriously excellent on holes 16-18.</p>
                     </div>
                 </div>
 
                 <!-- Player 5 -->
                 <div class="player-card">
-                    <img src="players/mcb-tour-card-5.jpg" alt="Player 5" class="player-image">
+                    <img src="players/mcb-tour-card-3.jpg" alt="Player 5" class="player-image">
                     <div class="player-info">
                         <h3>Ryan Campbell</h3>
                         <span class="handicap">HCP: 6</span>
-                        <div class="player-stats">
-                            <div class="stat"><span class="stat-label">Avg Score</span><span class="stat-value">78</span></div>
-                            <div class="stat"><span class="stat-label">Best Round</span><span class="stat-value">72</span></div>
-                            <div class="stat"><span class="stat-label">Fairways</span><span class="stat-value">72%</span></div>
-                            <div class="stat"><span class="stat-label">GIR</span><span class="stat-value">58%</span></div>
-                        </div>
+                        <p class="player-skill">📏 The "Human GPS" – can read greens like a map but still somehow manages to three-putt while telling you exactly why.</p>
                     </div>
                 </div>
 
                 <!-- Player 6 -->
                 <div class="player-card">
-                    <img src="players/mcb-tour-card-6.jpg" alt="Player 6" class="player-image">
+                    <img src="players/mcb-tour-card-4.jpg" alt="Player 6" class="player-image">
                     <div class="player-info">
                         <h3>Andrew Wilson</h3>
                         <span class="handicap">HCP: 14</span>
-                        <div class="player-stats">
-                            <div class="stat"><span class="stat-label">Avg Score</span><span class="stat-value">86</span></div>
-                            <div class="stat"><span class="stat-label">Best Round</span><span class="stat-value">80</span></div>
-                            <div class="stat"><span class="stat-label">Fairways</span><span class="stat-value">58%</span></div>
-                            <div class="stat"><span class="stat-label">GIR</span><span class="stat-value">40%</span></div>
-                        </div>
+                        <p class="player-skill">🌳 The "Tree Whisperer" – his ball finds every tree on the course, but somehow always bounces back onto the fairway.</p>
                     </div>
                 </div>
 
                 <!-- Player 7 -->
                 <div class="player-card">
-                    <img src="players/mcb-tour-card-7.jpg" alt="Player 7" class="player-image">
+                    <img src="players/mcb-tour-card-5.jpg" alt="Player 7" class="player-image">
                     <div class="player-info">
                         <h3>Steven Parker</h3>
                         <span class="handicap">HCP: 11</span>
-                        <div class="player-stats">
-                            <div class="stat"><span class="stat-label">Avg Score</span><span class="stat-value">83</span></div>
-                            <div class="stat"><span class="stat-label">Best Round</span><span class="stat-value">77</span></div>
-                            <div class="stat"><span class="stat-label">Fairways</span><span class="stat-value">60%</span></div>
-                            <div class="stat"><span class="stat-label">GIR</span><span class="stat-value">46%</span></div>
-                        </div>
+                        <p class="player-skill">🎭 The "Cart Path Maestro" – gets more distance off concrete than grass. Groundskeepers fear him.</p>
                     </div>
                 </div>
 
                 <!-- Player 8 -->
                 <div class="player-card">
-                    <img src="players/mcb-tour-card-8.jpg" alt="Player 8" class="player-image">
+                    <img src="players/mcb-tour-card-6.jpg" alt="Player 8" class="player-image">
                     <div class="player-info">
                         <h3>Daniel Hughes</h3>
                         <span class="handicap">HCP: 9</span>
-                        <div class="player-stats">
-                            <div class="stat"><span class="stat-label">Avg Score</span><span class="stat-value">81</span></div>
-                            <div class="stat"><span class="stat-label">Best Round</span><span class="stat-value">75</span></div>
-                            <div class="stat"><span class="stat-label">Fairways</span><span class="stat-value">66%</span></div>
-                            <div class="stat"><span class="stat-label">GIR</span><span class="stat-value">50%</span></div>
-                        </div>
+                        <p class="player-skill">🦘 The "Wildlife Wrangler" – has developed an uncanny ability to locate his ball next to kangaroos. They're basically his caddies now.</p>
                     </div>
                 </div>
             </div>
@@ -360,59 +376,85 @@
             </div>
 
             <div class="tournament-container">
-                <div class="bracket">
-                    <!-- Semi Finals -->
-                    <div class="round">
-                        <h3 class="round-title">Semi Finals</h3>
-                        <div class="match" id="match1">
-                            <div class="match-header">Match 1</div>
-                            <div class="team" data-team="1">
-                                <span class="team-name">Team Eagles<br><small>Mitchell & Thompson</small></span>
-                                <input type="number" class="team-score-input" placeholder="Score" min="0" style="width: 70px; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
-                            </div>
-                            <div class="team" data-team="2">
-                                <span class="team-name">Team Birdies<br><small>Roberts & Anderson</small></span>
-                                <input type="number" class="team-score-input" placeholder="Score" min="0" style="width: 70px; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
-                            </div>
-                        </div>
-                        <div class="match" id="match2">
-                            <div class="match-header">Match 2</div>
-                            <div class="team" data-team="3">
-                                <span class="team-name">Team Albatross<br><small>Campbell & Wilson</small></span>
-                                <input type="number" class="team-score-input" placeholder="Score" min="0" style="width: 70px; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
-                            </div>
-                            <div class="team" data-team="4">
-                                <span class="team-name">Team Condors<br><small>Parker & Hughes</small></span>
-                                <input type="number" class="team-score-input" placeholder="Score" min="0" style="width: 70px; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
-                            </div>
-                        </div>
+                <!-- Team Leaderboard -->
+                <div class="leaderboard" id="team-leaderboard">
+                    <div class="leaderboard-header">🏆 Team Leaderboard</div>
+                    <div class="leaderboard-row header">
+                        <span>Pos</span>
+                        <span>Team</span>
+                        <span>Score</span>
                     </div>
-
-                    <!-- Connector -->
-                    <div class="connector"></div>
-
-                    <!-- Finals -->
-                    <div class="round">
-                        <h3 class="round-title">🏆 Grand Final</h3>
-                        <div class="match" id="final">
-                            <div class="match-header">Championship Match</div>
-                            <div class="team" data-team="winner1">
-                                <span class="team-name" id="finalist1">Winner Match 1</span>
-                                <input type="number" class="team-score-input" placeholder="Score" min="0" style="width: 70px; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
-                            </div>
-                            <div class="team" data-team="winner2">
-                                <span class="team-name" id="finalist2">Winner Match 2</span>
-                                <input type="number" class="team-score-input" placeholder="Score" min="0" style="width: 70px; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
-                            </div>
+                    <div id="team-leaderboard-body">
+                        <!-- Team 1 -->
+                        <div class="leaderboard-row" data-team="1">
+                            <span class="position">1</span>
+                            <span class="team-name-config">
+                                <select id="team1-player1" class="player-select" onchange="updatePlayerOptions()">
+                                    <option value="">Player 1</option>
+                                </select>
+                                <span class="team-ampersand">&</span>
+                                <select id="team1-player2" class="player-select" onchange="updatePlayerOptions()">
+                                    <option value="">Player 2</option>
+                                </select>
+                            </span>
+                            <span class="team-score">
+                                <input type="number" class="team-score-input" id="team1-score" placeholder="-" min="0">
+                            </span>
+                        </div>
+                        <!-- Team 2 -->
+                        <div class="leaderboard-row" data-team="2">
+                            <span class="position">2</span>
+                            <span class="team-name-config">
+                                <select id="team2-player1" class="player-select" onchange="updatePlayerOptions()">
+                                    <option value="">Player 1</option>
+                                </select>
+                                <span class="team-ampersand">&</span>
+                                <select id="team2-player2" class="player-select" onchange="updatePlayerOptions()">
+                                    <option value="">Player 2</option>
+                                </select>
+                            </span>
+                            <span class="team-score">
+                                <input type="number" class="team-score-input" id="team2-score" placeholder="-" min="0">
+                            </span>
+                        </div>
+                        <!-- Team 3 -->
+                        <div class="leaderboard-row" data-team="3">
+                            <span class="position">3</span>
+                            <span class="team-name-config">
+                                <select id="team3-player1" class="player-select" onchange="updatePlayerOptions()">
+                                    <option value="">Player 1</option>
+                                </select>
+                                <span class="team-ampersand">&</span>
+                                <select id="team3-player2" class="player-select" onchange="updatePlayerOptions()">
+                                    <option value="">Player 2</option>
+                                </select>
+                            </span>
+                            <span class="team-score">
+                                <input type="number" class="team-score-input" id="team3-score" placeholder="-" min="0">
+                            </span>
+                        </div>
+                        <!-- Team 4 -->
+                        <div class="leaderboard-row" data-team="4">
+                            <span class="position">4</span>
+                            <span class="team-name-config">
+                                <select id="team4-player1" class="player-select" onchange="updatePlayerOptions()">
+                                    <option value="">Player 1</option>
+                                </select>
+                                <span class="team-ampersand">&</span>
+                                <select id="team4-player2" class="player-select" onchange="updatePlayerOptions()">
+                                    <option value="">Player 2</option>
+                                </select>
+                            </span>
+                            <span class="team-score">
+                                <input type="number" class="team-score-input" id="team4-score" placeholder="-" min="0">
+                            </span>
                         </div>
                     </div>
                 </div>
 
-                <div class="trophy-icon">🏆</div>
-                <p style="text-align: center; color: var(--masters-green); font-size: 1.2rem; font-style: italic;">The winning team will be crowned Day 1 Champions!</p>
-
                 <div style="text-align: center; margin-top: 30px;">
                     <button onclick="calculateDay1Winners()" class="cta-button" style="cursor: pointer; border: none;">Calculate Winners</button>
+                    <p id="champion-text" style="color: var(--masters-green); font-size: 1.2rem; font-style: italic; margin-top: 20px;"></p>
                 </div>
             </div>
         </div>
@@ -422,9 +464,14 @@
     <section id="dinner" class="page-section dinner-section">
         <div class="container">
             <div class="section-header">
-                <h2>Tournament Dinner</h2>
+                <h2>Day 1 Awards Dinner</h2>
                 <div class="divider"></div>
-                <p>An evening of fine dining and celebration at Bonville's acclaimed restaurant</p>
+            </div>
+
+            <!-- Dinner Info Details -->
+            <div class="dinner-details">
+                <p><strong>Time:</strong> 7:30 PM</p>
+                <p><strong>Dress Code:</strong> Smart casual (collared shirts preferred)</p>
             </div>
 
             <div class="dinner-grid">
@@ -452,30 +499,6 @@
                     </div>
                 </div>
             </div>
-
-            <div class="dinner-features">
-                <div class="feature">
-                    <div class="feature-icon">🌅</div>
-                    <h4>Sunset Views</h4>
-                    <p>Dine as the sun sets over the stunning Bonville landscape, creating an unforgettable atmosphere.</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🍾</div>
-                    <h4>Premium Beverages</h4>
-                    <p>Extensive wine list featuring Australia's finest vintages paired with each course.</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🏆</div>
-                    <h4>Awards Ceremony</h4>
-                    <p>Day 1 champions will be celebrated with the presentation of prizes and recognition.</p>
-                </div>
-            </div>
-
-            <div style="text-align: center; margin-top: 50px; padding: 30px; background: rgba(255,255,255,0.1); border-radius: 15px; border: 1px solid var(--masters-gold);">
-                <h3 style="color: var(--masters-gold); margin-bottom: 15px;">Dress Code</h3>
-                <p style="color: var(--masters-cream); font-size: 1.1rem;">Smart casual attire. Collared shirts preferred.</p>
-                <p style="color: var(--masters-gold); margin-top: 15px; font-style: italic;">Dinner commences at 7:30 PM</p>
-            </div>
         </div>
     </section>
 
@@ -499,69 +522,24 @@
                 </div>
             </div>
 
-            <!-- Score Entry Form -->
-            <div class="score-form">
-                <h3>Enter Player Scores</h3>
-                <div class="score-form-grid">
-                    <div class="form-group">
-                        <label>James Mitchell</label>
-                        <input type="number" id="score1" placeholder="Gross Score" min="50" max="150">
-                    </div>
-                    <div class="form-group">
-                        <label>David Thompson</label>
-                        <input type="number" id="score2" placeholder="Gross Score" min="50" max="150">
-                    </div>
-                    <div class="form-group">
-                        <label>Michael Roberts</label>
-                        <input type="number" id="score3" placeholder="Gross Score" min="50" max="150">
-                    </div>
-                    <div class="form-group">
-                        <label>Chris Anderson</label>
-                        <input type="number" id="score4" placeholder="Gross Score" min="50" max="150">
-                    </div>
-                    <div class="form-group">
-                        <label>Ryan Campbell</label>
-                        <input type="number" id="score5" placeholder="Gross Score" min="50" max="150">
-                    </div>
-                    <div class="form-group">
-                        <label>Andrew Wilson</label>
-                        <input type="number" id="score6" placeholder="Gross Score" min="50" max="150">
-                    </div>
-                    <div class="form-group">
-                        <label>Steven Parker</label>
-                        <input type="number" id="score7" placeholder="Gross Score" min="50" max="150">
-                    </div>
-                    <div class="form-group">
-                        <label>Daniel Hughes</label>
-                        <input type="number" id="score8" placeholder="Gross Score" min="50" max="150">
-                    </div>
-                </div>
-                <button onclick="calculateLeaderboard()" class="submit-btn">Update Leaderboard</button>
-            </div>
-
             <!-- Leaderboard -->
             <div class="leaderboard" style="margin-top: 50px;">
-                <div class="leaderboard-header">🏆 Day 2 Leaderboard</div>
+                <div class="leaderboard-header">🏆 Championship Leaderboard</div>
                 <div class="leaderboard-row header">
                     <span>Pos</span>
                     <span>Player</span>
+                    <span>HCP</span>
                     <span>Gross</span>
                     <span>Net</span>
                 </div>
                 <div id="leaderboard-body">
-                    <div class="leaderboard-row"><span class="position">1</span><span>-</span><span>-</span><span>-</span></div>
-                    <div class="leaderboard-row"><span class="position">2</span><span>-</span><span>-</span><span>-</span></div>
-                    <div class="leaderboard-row"><span class="position">3</span><span>-</span><span>-</span><span>-</span></div>
-                    <div class="leaderboard-row"><span class="position">4</span><span>-</span><span>-</span><span>-</span></div>
-                    <div class="leaderboard-row"><span class="position">5</span><span>-</span><span>-</span><span>-</span></div>
-                    <div class="leaderboard-row"><span class="position">6</span><span>-</span><span>-</span><span>-</span></div>
-                    <div class="leaderboard-row"><span class="position">7</span><span>-</span><span>-</span><span>-</span></div>
-                    <div class="leaderboard-row"><span class="position">8</span><span>-</span><span>-</span><span>-</span></div>
+                    <!-- Players will be populated by JavaScript -->
                 </div>
             </div>
-
-            <div class="trophy-icon">👑</div>
-            <p style="text-align: center; color: var(--masters-green); font-size: 1.2rem; font-style: italic; margin-top: 20px;">The lowest net score claims the Individual Championship!</p>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button onclick="updateLeaderboard()" class="cta-button" style="cursor: pointer; border: none;">Update Leaderboard</button>
+            </div>
         </div>
     </section>
 
@@ -692,40 +670,403 @@
             });
         });
 
-        // Day 1 Team Tournament Calculator
-        function calculateDay1Winners() {
-            const match1 = document.getElementById('match1');
-            const match2 = document.getElementById('match2');
-            const scores1 = match1.querySelectorAll('.team-score-input');
-            const scores2 = match2.querySelectorAll('.team-score-input');
+        // Player list for team configuration (with handicaps)
+        const allPlayers = [
+            { id: 1, name: 'Mike Buller', handicap: 12 },
+            { id: 2, name: 'Adrian Platas', handicap: 8 },
+            { id: 3, name: 'Darren Shadlow', handicap: 15 },
+            { id: 4, name: 'Chris Anderson', handicap: 10 },
+            { id: 5, name: 'Ryan Campbell', handicap: 6 },
+            { id: 6, name: 'Andrew Wilson', handicap: 14 },
+            { id: 7, name: 'Steven Parker', handicap: 11 },
+            { id: 8, name: 'Daniel Hughes', handicap: 9 }
+        ];
+
+        // Store team configurations
+        let teamConfigs = {
+            team1: { player1: null, player2: null },
+            team2: { player1: null, player2: null },
+            team3: { player1: null, player2: null },
+            team4: { player1: null, player2: null }
+        };
+
+        // Store semi-final winners for the grand final
+        let semiWinners = {
+            semi1: null,
+            semi2: null
+        };
+
+        // Get all selected player IDs
+        function getSelectedPlayerIds() {
+            const selectIds = [
+                'team1-player1', 'team1-player2',
+                'team2-player1', 'team2-player2',
+                'team3-player1', 'team3-player2',
+                'team4-player1', 'team4-player2'
+            ];
+            const selectedIds = [];
+            selectIds.forEach(id => {
+                const value = document.getElementById(id).value;
+                if (value) selectedIds.push(value);
+            });
+            return selectedIds;
+        }
+
+        // Initialize player dropdowns
+        function initializePlayerDropdowns() {
+            const selects = document.querySelectorAll('.player-select');
+            selects.forEach(select => {
+                select.innerHTML = '<option value="">Select</option>';
+                allPlayers.forEach(player => {
+                    const option = document.createElement('option');
+                    option.value = player.id;
+                    option.textContent = player.name;
+                    select.appendChild(option);
+                });
+            });
+        }
+
+        // Update player options to disable already selected players
+        function updatePlayerOptions() {
+            const selectedIds = getSelectedPlayerIds();
+            const selects = document.querySelectorAll('.player-select');
             
-            const teams = {
-                'Team Eagles': { players: 'Mitchell & Thompson', score: parseInt(scores1[0].value) || 0 },
-                'Team Birdies': { players: 'Roberts & Anderson', score: parseInt(scores1[1].value) || 0 },
-                'Team Albatross': { players: 'Campbell & Wilson', score: parseInt(scores2[0].value) || 0 },
-                'Team Condors': { players: 'Parker & Hughes', score: parseInt(scores2[1].value) || 0 }
+            selects.forEach(select => {
+                const currentValue = select.value;
+                
+                // Update each option's disabled state
+                Array.from(select.options).forEach(option => {
+                    if (option.value === '') return; // Skip placeholder
+                    
+                    // Disable if selected elsewhere (but not in this dropdown)
+                    if (selectedIds.includes(option.value) && option.value !== currentValue) {
+                        option.disabled = true;
+                    } else {
+                        option.disabled = false;
+                    }
+                });
+            });
+
+            // Update team configs for the calculate function
+            const getFullPlayerName = (id) => {
+                if (!id) return null;
+                const player = allPlayers.find(p => p.id == id);
+                return player ? player.name : null;
             };
 
-            // In golf, lower score wins
-            let winner1 = teams['Team Eagles'].score <= teams['Team Birdies'].score ? 'Team Eagles' : 'Team Birdies';
-            let winner2 = teams['Team Albatross'].score <= teams['Team Condors'].score ? 'Team Albatross' : 'Team Condors';
+            teamConfigs.team1 = { 
+                player1: getFullPlayerName(document.getElementById('team1-player1').value), 
+                player2: getFullPlayerName(document.getElementById('team1-player2').value) 
+            };
+            teamConfigs.team2 = { 
+                player1: getFullPlayerName(document.getElementById('team2-player1').value), 
+                player2: getFullPlayerName(document.getElementById('team2-player2').value) 
+            };
+            teamConfigs.team3 = { 
+                player1: getFullPlayerName(document.getElementById('team3-player1').value), 
+                player2: getFullPlayerName(document.getElementById('team3-player2').value) 
+            };
+            teamConfigs.team4 = { 
+                player1: getFullPlayerName(document.getElementById('team4-player1').value), 
+                player2: getFullPlayerName(document.getElementById('team4-player2').value) 
+            };
+        }
 
-            if (teams['Team Eagles'].score > 0 && teams['Team Birdies'].score > 0) {
-                document.getElementById('finalist1').innerHTML = winner1 + '<br><small>' + teams[winner1].players + '</small>';
-                match1.querySelectorAll('.team').forEach(t => t.classList.remove('winner'));
-                match1.querySelector(`[data-team="${winner1 === 'Team Eagles' ? '1' : '2'}"]`).classList.add('winner');
+        // Fire confetti celebration
+        function fireConfetti() {
+            const duration = 6000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
             }
 
-            if (teams['Team Albatross'].score > 0 && teams['Team Condors'].score > 0) {
-                document.getElementById('finalist2').innerHTML = winner2 + '<br><small>' + teams[winner2].players + '</small>';
-                match2.querySelectorAll('.team').forEach(t => t.classList.remove('winner'));
-                match2.querySelector(`[data-team="${winner2 === 'Team Albatross' ? '3' : '4'}"]`).classList.add('winner');
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+
+                // Confetti from both sides
+                confetti(Object.assign({}, defaults, {
+                    particleCount,
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                    colors: ['#006747', '#C9A227', '#FFD700', '#FFFFFF']
+                }));
+                confetti(Object.assign({}, defaults, {
+                    particleCount,
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                    colors: ['#006747', '#C9A227', '#FFD700', '#FFFFFF']
+                }));
+            }, 250);
+        }
+
+        // Day 1 Team Tournament Calculator
+        function calculateDay1Winners() {
+            const leaderboardBody = document.getElementById('team-leaderboard-body');
+            const rows = Array.from(leaderboardBody.querySelectorAll('.leaderboard-row'));
+            
+            // Helper to get team display name
+            const getTeamName = (teamKey) => {
+                const team = teamConfigs[teamKey];
+                if (team.player1 && team.player2) {
+                    return `${team.player1.split(' ')[1]} & ${team.player2.split(' ')[1]}`;
+                }
+                return 'TBD';
+            };
+
+            // Get team data with scores
+            const teamScores = rows.map(row => {
+                const teamNum = row.getAttribute('data-team');
+                const scoreInput = document.getElementById(`team${teamNum}-score`);
+                const score = parseInt(scoreInput.value) || null;
+                
+                return {
+                    teamNum: teamNum,
+                    teamKey: `team${teamNum}`,
+                    name: getTeamName(`team${teamNum}`),
+                    score: score,
+                    element: row
+                };
+            });
+            
+            // Sort by score (lowest first for golf), teams without scores go to bottom
+            teamScores.sort((a, b) => {
+                if (a.score === null && b.score === null) return 0;
+                if (a.score === null) return 1;
+                if (b.score === null) return -1;
+                return a.score - b.score;
+            });
+            
+            // Calculate positions with ties (sequential, no skip)
+            let currentPosition = 1;
+            let previousScore = null;
+            
+            teamScores.forEach((team) => {
+                if (team.score === null) {
+                    team.displayPosition = '-';
+                    team.positionRank = null;
+                } else if (team.score === previousScore) {
+                    team.displayPosition = currentPosition;
+                    team.positionRank = currentPosition;
+                } else {
+                    if (previousScore !== null) {
+                        currentPosition++;
+                    }
+                    team.displayPosition = currentPosition;
+                    team.positionRank = currentPosition;
+                }
+                previousScore = team.score;
+            });
+            
+            // Clear and re-append sorted rows
+            leaderboardBody.innerHTML = '';
+            teamScores.forEach((team) => {
+                let rowClass = 'leaderboard-row';
+                
+                // Highlight top 3 positions
+                if (team.positionRank !== null) {
+                    if (team.positionRank === 1) rowClass += ' gold';
+                    else if (team.positionRank === 2) rowClass += ' silver';
+                    else if (team.positionRank === 3) rowClass += ' bronze';
+                }
+                
+                const row = document.createElement('div');
+                row.className = rowClass;
+                row.setAttribute('data-team', team.teamNum);
+                row.innerHTML = `
+                    <span class="position">${team.displayPosition}</span>
+                    <span class="team-name-config">
+                        <select id="team${team.teamNum}-player1" class="player-select" onchange="updatePlayerOptions()">
+                            <option value="">Player 1</option>
+                        </select>
+                        <span class="team-ampersand">&</span>
+                        <select id="team${team.teamNum}-player2" class="player-select" onchange="updatePlayerOptions()">
+                            <option value="">Player 2</option>
+                        </select>
+                    </span>
+                    <span class="team-score">
+                        <input type="number" class="team-score-input" id="team${team.teamNum}-score" value="${team.score || ''}" placeholder="-" min="0">
+                    </span>
+                `;
+                leaderboardBody.appendChild(row);
+            });
+            
+            // Re-initialize dropdowns and restore selections
+            initializePlayerDropdowns();
+            
+            // Restore player selections
+            teamScores.forEach((team) => {
+                const config = teamConfigs[team.teamKey];
+                if (config.player1) {
+                    const player = allPlayers.find(p => p.name === config.player1);
+                    if (player) document.getElementById(`team${team.teamNum}-player1`).value = player.id;
+                }
+                if (config.player2) {
+                    const player = allPlayers.find(p => p.name === config.player2);
+                    if (player) document.getElementById(`team${team.teamNum}-player2`).value = player.id;
+                }
+            });
+            
+            updatePlayerOptions();
+            
+            // Fire confetti and update champion text if we have a winner
+            const winners = teamScores.filter(t => t.positionRank === 1 && t.score !== null);
+            if (winners.length > 0) {
+                const championText = document.getElementById('champion-text');
+                if (winners.length === 1) {
+                    championText.innerHTML = `🎉 <strong>${winners[0].name}</strong> are the Day 1 Champions! 🎉`;
+                } else {
+                    const names = winners.map(w => w.name).join(' & ');
+                    championText.innerHTML = `🎉 <strong>${names}</strong> are tied for the Day 1 Championship! 🎉`;
+                }
+                fireConfetti();
             }
         }
 
+        // Initialize the Day 2 leaderboard with all players
+        function initializeLeaderboard() {
+            const leaderboardBody = document.getElementById('leaderboard-body');
+            leaderboardBody.innerHTML = '';
+            
+            allPlayers.forEach((player, index) => {
+                const row = document.createElement('div');
+                row.className = 'leaderboard-row';
+                row.setAttribute('data-player-id', player.id);
+                row.innerHTML = `
+                    <span class="position">${index + 1}</span>
+                    <span class="player-name">${player.name}</span>
+                    <span class="player-hcp">${player.handicap}</span>
+                    <span class="player-gross">
+                        <input type="number" class="gross-score-input" id="gross-${player.id}" 
+                               placeholder="-" min="50" max="150" onchange="calculateNetScore(${player.id})">
+                    </span>
+                    <span class="player-net" id="net-${player.id}">-</span>
+                `;
+                leaderboardBody.appendChild(row);
+            });
+        }
+
+        // Calculate net score for a player (gross - handicap)
+        function calculateNetScore(playerId) {
+            const player = allPlayers.find(p => p.id === playerId);
+            const grossInput = document.getElementById(`gross-${playerId}`);
+            const netSpan = document.getElementById(`net-${playerId}`);
+            
+            const grossScore = parseInt(grossInput.value);
+            if (grossScore && !isNaN(grossScore)) {
+                const netScore = grossScore - player.handicap;
+                netSpan.textContent = netScore;
+            } else {
+                netSpan.textContent = '-';
+            }
+        }
+
+        // Update leaderboard - sort by net score and show confetti for winner
+        function updateLeaderboard() {
+            const leaderboardBody = document.getElementById('leaderboard-body');
+            const rows = Array.from(leaderboardBody.querySelectorAll('.leaderboard-row'));
+            
+            // Get player data with scores
+            const playerScores = rows.map(row => {
+                const playerId = parseInt(row.getAttribute('data-player-id'));
+                const player = allPlayers.find(p => p.id === playerId);
+                const grossInput = document.getElementById(`gross-${playerId}`);
+                const grossScore = parseInt(grossInput.value) || null;
+                const netScore = grossScore ? grossScore - player.handicap : null;
+                
+                return {
+                    id: playerId,
+                    name: player.name,
+                    handicap: player.handicap,
+                    gross: grossScore,
+                    net: netScore,
+                    element: row
+                };
+            });
+            
+            // Sort by net score (lowest first), players without scores go to bottom
+            playerScores.sort((a, b) => {
+                if (a.net === null && b.net === null) return 0;
+                if (a.net === null) return 1;
+                if (b.net === null) return -1;
+                return a.net - b.net;
+            });
+            
+            // Calculate positions with ties
+            // Players with same net score get the same position
+            // Next different score gets the next sequential position (not skipping)
+            let currentPosition = 1;
+            let previousNet = null;
+            
+            playerScores.forEach((player, index) => {
+                if (player.net === null) {
+                    player.displayPosition = '-';
+                    player.positionRank = null;
+                } else if (player.net === previousNet) {
+                    // Same score as previous player - same position
+                    player.displayPosition = currentPosition;
+                    player.positionRank = currentPosition;
+                } else {
+                    // New score - advance to next position (sequential, no skip)
+                    if (previousNet !== null) {
+                        currentPosition++;
+                    }
+                    player.displayPosition = currentPosition;
+                    player.positionRank = currentPosition;
+                }
+                previousNet = player.net;
+            });
+            
+            // Clear and re-append sorted rows
+            leaderboardBody.innerHTML = '';
+            playerScores.forEach((player) => {
+                const row = document.createElement('div');
+                let rowClass = 'leaderboard-row';
+                
+                // Highlight top 3 positions (including ties)
+                if (player.positionRank !== null) {
+                    if (player.positionRank === 1) rowClass += ' gold';
+                    else if (player.positionRank === 2) rowClass += ' silver';
+                    else if (player.positionRank === 3) rowClass += ' bronze';
+                }
+                
+                row.className = rowClass;
+                row.setAttribute('data-player-id', player.id);
+                row.innerHTML = `
+                    <span class="position">${player.displayPosition}</span>
+                    <span class="player-name">${player.name}</span>
+                    <span class="player-hcp">${player.handicap}</span>
+                    <span class="player-gross">
+                        <input type="number" class="gross-score-input" id="gross-${player.id}" 
+                               value="${player.gross || ''}" placeholder="-" min="50" max="150" 
+                               onchange="calculateNetScore(${player.id})">
+                    </span>
+                    <span class="player-net" id="net-${player.id}">${player.net !== null ? player.net : '-'}</span>
+                `;
+                leaderboardBody.appendChild(row);
+            });
+            
+            // Fire confetti if we have a winner (at least one player with a score)
+            const hasScores = playerScores.some(p => p.net !== null);
+            if (hasScores) {
+                fireConfetti();
+            }
+        }
+
+        // Initialize dropdowns and leaderboard when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePlayerDropdowns();
+            initializeLeaderboard();
+        });
+
         // Day 2 Individual Leaderboard Calculator
         const players = [
-            { id: 1, name: 'James Mitchell', handicap: 12 },
+            { id: 1, name: 'Mike Buller', handicap: 12 },
             { id: 2, name: 'David Thompson', handicap: 8 },
             { id: 3, name: 'Michael Roberts', handicap: 15 },
             { id: 4, name: 'Chris Anderson', handicap: 10 },
