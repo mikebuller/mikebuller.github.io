@@ -1342,6 +1342,11 @@
     min-width: 20px;
 }
 
+.header-lb-snake {
+    font-size: 0.9rem;
+    margin-right: 3px;
+}
+
 .header-lb-name {
     font-weight: 600;
     max-width: 100px;

@@ -1452,11 +1452,23 @@
             try {
                 const { doc, updateDoc } = window.firestoreHelpers;
                 
-                await updateDoc(doc(window.db, 'activeRounds', currentRound.playerId.toString()), {
+                const { deleteField } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js");
+                
+                const updateData = {
                     currentHole: currentRound.currentHole,
                     holes: currentRound.holes,
                     lastUpdated: new Date().toISOString()
-                });
+                };
+                
+                // Include lastThreePuttTime for snake tracking
+                if (currentRound.lastThreePuttTime) {
+                    updateData.lastThreePuttTime = currentRound.lastThreePuttTime;
+                } else {
+                    // Remove the field from Firebase if no longer has snake
+                    updateData.lastThreePuttTime = deleteField();
+                }
+                
+                await updateDoc(doc(window.db, 'activeRounds', currentRound.playerId.toString()), updateData);
             } catch (error) {
                 console.error('Error updating active round:', error);
             }
@@ -1668,6 +1680,20 @@
                 return;
             }
             
+            // Find who has the snake (most recent 3+ putt across all players)
+            let snakePlayerId = null;
+            let snakeTimestamp = null;
+            
+            activeRounds.forEach(round => {
+                if (round.lastThreePuttTime) {
+                    const timestamp = new Date(round.lastThreePuttTime);
+                    if (!snakeTimestamp || timestamp > snakeTimestamp) {
+                        snakeTimestamp = timestamp;
+                        snakePlayerId = round.playerId;
+                    }
+                }
+            });
+            
             // Build leaderboard data from active rounds only
             const leaderboardData = activeRounds.map(round => {
                 let holesPlayed = 0;
@@ -1693,7 +1719,8 @@
                     totalPar: totalPar,
                     scoreToPar: totalScore - totalPar,
                     isCurrentPlayer: currentRound && currentRound.playerId == round.playerId,
-                    isFinished: round.status === 'finished'
+                    isFinished: round.status === 'finished',
+                    hasSnake: round.playerId == snakePlayerId
                 };
             });
             
@@ -1736,11 +1763,12 @@
                 if (player.isFinished) playerClass += ' finished';
                 
                 const holeDisplay = player.isFinished ? 'F' : (player.currentHole > 0 ? `H${player.currentHole}` : 'Tee');
+                const snakeIcon = player.hasSnake ? '<span class="header-lb-snake">🐍</span>' : '';
                 
                 return `
                     <div class="${playerClass}" onclick="openScorecardModal('${player.id}')">
                         <span class="header-lb-pos">${pos}</span>
-                        <span class="header-lb-name">${player.name}</span>
+                        ${snakeIcon}<span class="header-lb-name">${player.name}</span>
                         <span class="header-lb-hole">${holeDisplay}</span>
                         <span class="header-lb-score ${scoreClass}">${scoreDisplay}</span>
                     </div>
@@ -2064,7 +2092,28 @@
             currentPutts = Math.max(0, Math.min(10, currentPutts));
             currentRound.holes[hole].putts = currentPutts;
             
+            // Track when a 3+ putt occurs (the snake!)
+            // Check if any hole still has 3+ putts
+            let hasThreePutt = false;
+            for (let i = 1; i <= 18; i++) {
+                if (currentRound.holes[i] && currentRound.holes[i].putts >= 3) {
+                    hasThreePutt = true;
+                    break;
+                }
+            }
+            
+            if (currentPutts >= 3) {
+                // Just got a 3+ putt, update timestamp
+                currentRound.lastThreePuttTime = new Date().toISOString();
+            } else if (!hasThreePutt) {
+                // No more 3+ putts, clear the snake
+                currentRound.lastThreePuttTime = null;
+            }
+            
             document.getElementById('current-putts').textContent = currentPutts;
+            
+            // Sync to Firebase
+            updateActiveRoundInFirebase();
         }
 
         // Update quick nav to show which holes have scores
