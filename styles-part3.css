@@ -788,12 +788,14 @@
 .setup-select,
 .setup-input {
     width: 100%;
+    max-width: 100%;
     padding: 12px 15px;
     border: 2px solid var(--masters-green);
     border-radius: 8px;
     font-size: 1rem;
     background: white;
     color: var(--masters-dark-green);
+    box-sizing: border-box;
 }
 
 .setup-select:focus,
