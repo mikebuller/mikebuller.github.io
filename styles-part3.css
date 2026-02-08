@@ -1295,12 +1295,16 @@
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    max-height: 200px;
-    overflow-y: auto;
+    max-height: 400px;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out, opacity 0.4s ease-in-out;
+    opacity: 1;
 }
 
 .header-leaderboard-content.collapsed {
-    display: none;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
 }
 
 .header-lb-player {
@@ -1327,8 +1331,15 @@
 }
 
 .header-lb-player.current-player {
-    background: rgba(201, 162, 39, 0.5);
-    border: 2px solid var(--masters-gold);
+    background: rgba(0, 200, 150, 0.3);
+    border: 2px solid #00c896;
+    box-shadow: 0 0 8px rgba(0, 200, 150, 0.4);
+}
+
+/* When current player is also the leader */
+.header-lb-player.current-player.leader {
+    background: linear-gradient(135deg, rgba(0, 200, 150, 0.3) 0%, rgba(201, 162, 39, 0.3) 100%);
+    border: 2px solid #00c896;
 }
 
 .header-lb-player.live .header-lb-name {
@@ -1381,6 +1392,7 @@
     padding: 2px 8px;
     border-radius: 10px;
     background: rgba(0, 0, 0, 0.2);
+    text-align: center;
 }
 
 .header-lb-score.under-par {
