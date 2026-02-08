@@ -39,9 +39,37 @@
 
 .hole-flyovers-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 20px;
     margin-top: 20px;
+}
+
+/* Tee Times Container */
+.tee-times-container {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.tee-time-box {
+    background: var(--masters-white);
+    padding: 25px 40px;
+    border-radius: 15px;
+    border: 2px solid var(--masters-gold);
+    text-align: center;
+}
+
+.tee-time-box h4 {
+    color: var(--masters-green);
+    margin-bottom: 10px;
+}
+
+.tee-time-box .tee-time {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--masters-brown);
 }
 
 .hole-card {

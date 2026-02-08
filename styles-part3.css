@@ -231,6 +231,12 @@
     text-align: center;
 }
 
+.score-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
 .form-group {
     margin-bottom: 20px;
 }
@@ -288,6 +294,10 @@
     .battle-royale {
         grid-template-columns: repeat(2, 1fr);
     }
+    
+    .hole-flyovers-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
 }
 
 @media (max-width: 992px) {
@@ -309,43 +319,262 @@
     .dinner-features {
         grid-template-columns: 1fr;
     }
+    
+    .hole-flyovers-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .tee-times-container {
+        gap: 30px;
+    }
+    
+    .tee-time-box {
+        padding: 20px 30px;
+    }
+    
+    .tee-time-box .tee-time {
+        font-size: 1.5rem;
+    }
 }
 
 @media (max-width: 768px) {
+    /* Mobile Navigation */
+    .mobile-menu-toggle {
+        display: flex;
+    }
+    
     .nav-container {
-        flex-direction: column;
-        padding: 10px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        padding: 10px 15px;
+        justify-content: space-between;
+    }
+    
+    .nav-logo {
+        flex: 1;
+    }
+    
+    .nav-logo h1 {
+        font-size: 1rem;
+    }
+    
+    .nav-logo img {
+        height: 40px;
     }
     
     .nav-links {
-        flex-wrap: wrap;
-        justify-content: center;
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background: var(--masters-dark-green);
+        position: absolute;
+        top: 100%;
+        left: 0;
+        padding: 0;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+    
+    .nav-links.active {
+        display: flex;
+    }
+    
+    .nav-links li {
+        width: 100%;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .nav-links li a {
+        display: block;
+        padding: 15px 20px;
+        text-align: center;
+        border-bottom: none;
+    }
+    
+    .nav-links li a:hover,
+    .nav-links li a.active {
+        border-bottom: none;
+        background: rgba(201, 162, 39, 0.2);
+    }
+    
+    /* Hero Section */
+    .hero-content {
+        padding: 20px;
     }
     
     .hero-content h1 {
-        font-size: 2.5rem;
-    }
-    
-    .hero-content h2 {
-        font-size: 1.3rem;
-    }
-    
-    .section-header h2 {
         font-size: 2rem;
     }
     
+    .hero-content h2 {
+        font-size: 1.1rem;
+    }
+    
+    .hero-content p {
+        font-size: 1rem;
+    }
+    
+    .cta-button {
+        padding: 12px 25px;
+        font-size: 0.9rem;
+    }
+    
+    /* Section Headers */
+    .section-header h2 {
+        font-size: 1.8rem;
+    }
+    
+    .section-header p {
+        font-size: 1rem;
+    }
+    
+    .page-section {
+        padding: 80px 15px 40px;
+    }
+    
+    /* Players Grid */
     .players-grid,
     .battle-royale {
         grid-template-columns: 1fr;
     }
     
+    /* Hole Flyovers */
     .hole-flyovers-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .hole-card {
+        padding: 15px;
+    }
+    
+    .hole-card h4 {
+        font-size: 1.1rem;
+    }
+    
+    /* Tee Times */
+    .tee-times-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .tee-time-box {
+        width: 100%;
+        max-width: 280px;
+        padding: 15px 20px;
+    }
+    
+    .tee-time-box .tee-time {
+        font-size: 1.4rem;
+    }
+    
+    /* Tournament Bracket */
+    .match {
+        min-width: 250px;
+    }
+    
+    .team {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .team-score-input {
+        width: 100% !important;
+    }
+    
+    /* Score Form */
+    .score-form {
+        padding: 20px;
+        margin: 20px 10px;
+    }
+    
+    .score-form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Leaderboard */
+    .leaderboard-row {
+        grid-template-columns: 35px 1fr 55px 55px;
+        font-size: 0.85rem;
+        padding: 12px 10px;
+    }
+    
+    .leaderboard-header {
+        font-size: 1.2rem;
+        padding: 15px;
+    }
+    
+    /* Dinner Section */
+    .dinner-image {
+        height: 200px;
+    }
+    
+    .dinner-info {
+        padding: 20px;
+    }
+    
+    .dinner-info h3 {
+        font-size: 1.4rem;
+    }
+    
+    /* Footer */
+    .footer {
+        padding: 30px 15px;
+    }
+    
+    .footer h3 {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-content h1 {
+        font-size: 1.6rem;
+    }
+    
+    .hero-content h2 {
+        font-size: 1rem;
+    }
+    
+    .section-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .hole-flyovers-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .hole-card {
+        padding: 10px;
+    }
+    
+    .hole-card h4 {
+        font-size: 1rem;
+        margin-bottom: 5px;
+    }
+    
+    .hole-card .par {
+        font-size: 0.85rem;
+    }
+    
+    .player-image {
+        height: 200px;
     }
     
     .leaderboard-row {
-        grid-template-columns: 40px 1fr 70px 70px;
-        font-size: 0.9rem;
+        grid-template-columns: 30px 1fr 50px 50px;
+        font-size: 0.8rem;
+        padding: 10px 8px;
+    }
+    
+    .position {
+        font-size: 1.1rem;
+    }
+    
+    .trophy-icon {
+        font-size: 3rem;
     }
 }
 

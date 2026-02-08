@@ -17,6 +17,11 @@
                 <img src="https://www.golfandstay.com.au/images/Bonville_Golf_Resort_00_Logo.jpg" alt="Bonville Golf Resort">
                 <h1>The Bonville G.C. Invitational</h1>
             </div>
+            <button class="mobile-menu-toggle" aria-label="Toggle navigation menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
             <ul class="nav-links">
                 <li><a href="#welcome" class="active">Welcome</a></li>
                 <li><a href="#course">Course</a></li>
@@ -31,10 +36,7 @@
     <!-- Welcome Section -->
     <section id="welcome" class="hero-section">
         <div class="video-background">
-            <iframe src="https://www.youtube.com/embed/PdBEFTMmnYA?autoplay=1&mute=1&loop=1&playlist=PdBEFTMmnYA&controls=0&showinfo=0&rel=0&modestbranding=1" 
-                    frameborder="0" 
-                    allow="autoplay; encrypted-media" 
-                    allowfullscreen></iframe>
+            <div id="youtube-player"></div>
         </div>
         <div class="video-overlay"></div>
         <div class="hero-content">
@@ -179,7 +181,7 @@
                         <a href="https://www.bonvillegolf.com.au/hole-fly-overs/" target="_blank" class="cta-button" style="font-size: 1rem;">Watch All Flyovers</a>
                     </div>
                     
-                    <div class="hole-flyovers-grid" style="grid-template-columns: repeat(6, 1fr);">
+                    <div class="hole-flyovers-grid">
                         <div class="hole-card"><h4>Hole 1</h4><p class="par">Par 4 • 358m</p></div>
                         <div class="hole-card"><h4>Hole 2</h4><p class="par">Par 4 • 337m</p></div>
                         <div class="hole-card"><h4>Hole 3</h4><p class="par">Par 5 • 490m</p></div>
@@ -346,14 +348,14 @@
                 <p>Four teams of two compete head-to-head. Winners advance to the Grand Final for the trophy!</p>
             </div>
 
-            <div style="display: flex; justify-content: center; gap: 60px; margin-bottom: 40px; flex-wrap: wrap;">
-                <div style="background: var(--masters-white); padding: 25px 40px; border-radius: 15px; border: 2px solid var(--masters-gold); text-align: center;">
-                    <h4 style="color: var(--masters-green); margin-bottom: 10px;">⛳ Group 1 Tee Time</h4>
-                    <p style="font-size: 1.8rem; font-weight: 700; color: var(--masters-brown);">10:20 AM</p>
+            <div class="tee-times-container">
+                <div class="tee-time-box">
+                    <h4>⛳ Group 1 Tee Time</h4>
+                    <p class="tee-time">10:20 AM</p>
                 </div>
-                <div style="background: var(--masters-white); padding: 25px 40px; border-radius: 15px; border: 2px solid var(--masters-gold); text-align: center;">
-                    <h4 style="color: var(--masters-green); margin-bottom: 10px;">⛳ Group 2 Tee Time</h4>
-                    <p style="font-size: 1.8rem; font-weight: 700; color: var(--masters-brown);">10:10 AM</p>
+                <div class="tee-time-box">
+                    <h4>⛳ Group 2 Tee Time</h4>
+                    <p class="tee-time">10:10 AM</p>
                 </div>
             </div>
 
@@ -486,21 +488,21 @@
                 <p>All eight players compete individually in an epic battle for ultimate glory!</p>
             </div>
 
-            <div style="display: flex; justify-content: center; gap: 60px; margin-bottom: 40px; flex-wrap: wrap;">
-                <div style="background: var(--masters-white); padding: 25px 40px; border-radius: 15px; border: 2px solid var(--masters-gold); text-align: center;">
-                    <h4 style="color: var(--masters-green); margin-bottom: 10px;">⛳ Group 1 Tee Time</h4>
-                    <p style="font-size: 1.8rem; font-weight: 700; color: var(--masters-brown);">8:40 AM</p>
+            <div class="tee-times-container">
+                <div class="tee-time-box">
+                    <h4>⛳ Group 1 Tee Time</h4>
+                    <p class="tee-time">8:40 AM</p>
                 </div>
-                <div style="background: var(--masters-white); padding: 25px 40px; border-radius: 15px; border: 2px solid var(--masters-gold); text-align: center;">
-                    <h4 style="color: var(--masters-green); margin-bottom: 10px;">⛳ Group 2 Tee Time</h4>
-                    <p style="font-size: 1.8rem; font-weight: 700; color: var(--masters-brown);">8:30 AM</p>
+                <div class="tee-time-box">
+                    <h4>⛳ Group 2 Tee Time</h4>
+                    <p class="tee-time">8:30 AM</p>
                 </div>
             </div>
 
             <!-- Score Entry Form -->
             <div class="score-form">
                 <h3>Enter Player Scores</h3>
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                <div class="score-form-grid">
                     <div class="form-group">
                         <label>James Mitchell</label>
                         <input type="number" id="score1" placeholder="Gross Score" min="50" max="150">
@@ -572,7 +574,72 @@
         <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.8;">© 2026 The Bonville G.C. Invitational. All rights reserved.</p>
     </footer>
 
+    <!-- YouTube IFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
+        // YouTube Player with early loop (15 seconds before end)
+        let player;
+        let loopCheckInterval;
+        const LOOP_BEFORE_END = 17; // seconds before end to restart
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                videoId: 'PdBEFTMmnYA',
+                playerVars: {
+                    autoplay: 1,
+                    mute: 1,
+                    controls: 0,
+                    showinfo: 0,
+                    rel: 0,
+                    modestbranding: 1,
+                    playsinline: 1,
+                    enablejsapi: 1
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            event.target.playVideo();
+            startLoopCheck();
+        }
+
+        function onPlayerStateChange(event) {
+            // If video ends (shouldn't happen with our loop, but as fallback)
+            if (event.data === YT.PlayerState.ENDED) {
+                player.seekTo(0);
+                player.playVideo();
+            }
+            // Restart loop check when video is playing
+            if (event.data === YT.PlayerState.PLAYING) {
+                startLoopCheck();
+            }
+        }
+
+        function startLoopCheck() {
+            // Clear any existing interval
+            if (loopCheckInterval) {
+                clearInterval(loopCheckInterval);
+            }
+            
+            // Check every 500ms if we need to loop
+            loopCheckInterval = setInterval(() => {
+                if (player && player.getDuration && player.getCurrentTime) {
+                    const duration = player.getDuration();
+                    const currentTime = player.getCurrentTime();
+                    
+                    // Loop 15 seconds before the video ends
+                    if (duration > 0 && currentTime >= duration - LOOP_BEFORE_END) {
+                        player.seekTo(0);
+                        player.playVideo();
+                    }
+                }
+            }, 500);
+        }
+
         // Smooth scrolling for navigation
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -584,6 +651,23 @@
                     document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active'));
                     this.classList.add('active');
                 }
+            });
+        });
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const navLinks = document.querySelector('.nav-links');
+        
+        mobileMenuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            mobileMenuToggle.classList.toggle('active');
+        });
+
+        // Close mobile menu when a link is clicked
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
             });
         });
 
