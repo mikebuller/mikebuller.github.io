@@ -700,7 +700,7 @@
                 <!-- Player Info Bar -->
                 <div class="score-player-bar">
                     <span id="current-player-name">Player Name</span>
-                    <span id="current-tees-display">Tallwood</span>
+                    <span id="hole-prize-display" class="hole-prize-display" style="display: none;"></span>
                     <button onclick="exitRound()" class="exit-round-btn">✕</button>
                 </div>
 
@@ -1490,8 +1490,6 @@
 
             // Update player info bar
             document.getElementById('current-player-name').textContent = playerName;
-            document.getElementById('current-tees-display').textContent = 
-                teesInput.value === 'tallwood' ? 'Tallwood' : 'Bloodwood';
 
             // Show first hole
             updateHoleDisplay();
@@ -2304,6 +2302,17 @@
         }
 
         // Update the hole display
+        // Hole prizes - Par 3s have Nearest Pin, specific holes have Longest Drive
+        const holePrizes = {
+            3: { type: 'nearest-pin', text: '⛳ Nearest Pin' },
+            5: { type: 'nearest-pin', text: '⛳ Nearest Pin' },
+            7: { type: 'longest-drive', text: '💪 Longest Drive' },
+            8: { type: 'nearest-pin', text: '⛳ Nearest Pin' },
+            11: { type: 'nearest-pin', text: '⛳ Nearest Pin' },
+            14: { type: 'longest-drive', text: '💪 Longest Drive' },
+            17: { type: 'nearest-pin', text: '⛳ Nearest Pin' }
+        };
+
         function updateHoleDisplay() {
             const hole = currentRound.currentHole;
             const holeData = courseData.holes[hole];
@@ -2311,6 +2320,17 @@
 
             document.getElementById('current-hole-number').textContent = `Hole ${hole}`;
             document.getElementById('current-hole-details').textContent = `Par ${holeData.par} • SI ${holeData.si} • ${distance}m`;
+
+            // Update prize display
+            const prizeDisplay = document.getElementById('hole-prize-display');
+            const prize = holePrizes[hole];
+            if (prize) {
+                prizeDisplay.textContent = prize.text;
+                prizeDisplay.className = `hole-prize-display ${prize.type}`;
+                prizeDisplay.style.display = 'inline-flex';
+            } else {
+                prizeDisplay.style.display = 'none';
+            }
 
             // Update score and putts display
             const holeScore = currentRound.holes[hole];

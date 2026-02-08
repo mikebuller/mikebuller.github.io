@@ -981,6 +981,45 @@
     padding: 12px 20px;
     border-radius: 10px 10px 0 0;
     font-weight: 600;
+    min-height: 48px;
+    box-sizing: border-box;
+}
+
+/* Hole Prize Display */
+.hole-prize-display {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    animation: prizePulse 2s ease-in-out infinite;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    line-height: 1;
+}
+
+.hole-prize-display.nearest-pin {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 2px 10px rgba(16, 185, 129, 0.4);
+}
+
+.hole-prize-display.longest-drive {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    box-shadow: 0 2px 10px rgba(245, 158, 11, 0.4);
+}
+
+@keyframes prizePulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
 }
 
 .exit-round-btn {
