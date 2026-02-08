@@ -158,6 +158,13 @@ a.hole-info:active {
     margin: 0;
 }
 
+.hole-card .distance {
+    color: var(--masters-green);
+    font-size: 0.75rem;
+    margin: 3px 0 0 0;
+    opacity: 0.85;
+}
+
 .hole-card.par3 {
     border: 2px solid var(--masters-gold);
 }
