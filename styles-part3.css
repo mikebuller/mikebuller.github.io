@@ -1260,11 +1260,11 @@
 }
 
 .header-leaderboard-container {
-    max-width: 1200px;
-    margin: 0 auto;
+    width: 100%;
+    max-width: none;
     padding: 10px 20px;
     position: relative;
-    overflow-x: auto;
+    box-sizing: border-box;
 }
 
 .header-leaderboard-title {
@@ -1273,6 +1273,7 @@
     font-size: 1rem;
     font-weight: 700;
     text-align: center;
+    margin-top: 8px;
     margin-bottom: 8px;
     cursor: pointer;
     user-select: none;
@@ -1292,19 +1293,61 @@
 
 .header-leaderboard-content {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
     align-items: center;
     gap: 8px;
-    max-height: 400px;
-    overflow: hidden;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: hidden;
     transition: max-height 0.5s ease-in-out, opacity 0.4s ease-in-out;
     opacity: 1;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 5px 10px;
+}
+
+.header-leaderboard-content::-webkit-scrollbar {
+    height: 6px;
+    display: none;
+}
+
+.header-leaderboard-content:hover::-webkit-scrollbar {
+    display: block;
+}
+
+.header-leaderboard-content:hover {
+    scrollbar-width: thin;
+    scrollbar-color: var(--masters-gold) transparent;
+}
+
+.header-leaderboard-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.header-leaderboard-content::-webkit-scrollbar-thumb {
+    background: var(--masters-gold);
+    border-radius: 3px;
+}
+
+/* Mobile: vertical layout */
+@media (max-width: 992px) {
+    .header-leaderboard-content {
+        flex-direction: column;
+        flex-wrap: nowrap;
+        max-height: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
 }
 
 .header-leaderboard-content.collapsed {
-    max-height: 0;
+    max-height: 0 !important;
     opacity: 0;
     overflow: hidden;
+    padding: 0;
+    gap: 0;
 }
 
 .header-lb-player {
