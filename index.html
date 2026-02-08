@@ -139,11 +139,10 @@
     <!-- Header Live Leaderboard (shown only during active round) -->
     <div id="header-leaderboard" class="header-leaderboard" style="display: none;">
         <div class="header-leaderboard-container">
-            <div class="header-leaderboard-title">🏆 Live Leaderboard</div>
+            <div class="header-leaderboard-title" onclick="toggleHeaderLeaderboard()">🏆 Live Leaderboard <span id="header-leaderboard-chevron">▲</span></div>
             <div class="header-leaderboard-content" id="header-leaderboard-content">
                 <!-- Populated by JavaScript -->
             </div>
-            <button onclick="toggleHeaderLeaderboard()" class="header-leaderboard-toggle" id="header-leaderboard-toggle">▲</button>
         </div>
     </div>
 
@@ -656,8 +655,7 @@
                     <button onclick="prevHole()" class="hole-nav-btn" id="prev-hole-btn">◀</button>
                     <div class="current-hole-info">
                         <h3 id="current-hole-number">Hole 1</h3>
-                        <p id="current-hole-details">Par 4 • SI 2</p>
-                        <p id="current-hole-distance">380m</p>
+                        <p id="current-hole-details">Par 4 • SI 2 • 380m</p>
                     </div>
                     <button onclick="nextHole()" class="hole-nav-btn" id="next-hole-btn">▶</button>
                 </div>
@@ -699,6 +697,14 @@
                     <div class="total-item total-net">
                         <span class="total-label">Net</span>
                         <span id="net-total" class="total-value">-</span>
+                    </div>
+                    <div class="total-item total-stableford">
+                        <span class="total-label">Stableford</span>
+                        <span id="stableford-total" class="total-value">-</span>
+                    </div>
+                    <div class="total-item total-putts">
+                        <span class="total-label">Putts</span>
+                        <span id="putts-total" class="total-value">-</span>
                     </div>
                 </div>
 
@@ -1621,14 +1627,14 @@
         // Toggle header leaderboard collapse/expand
         function toggleHeaderLeaderboard() {
             const content = document.getElementById('header-leaderboard-content');
-            const toggle = document.getElementById('header-leaderboard-toggle');
+            const chevron = document.getElementById('header-leaderboard-chevron');
             
             if (content.classList.contains('collapsed')) {
                 content.classList.remove('collapsed');
-                toggle.textContent = '▲';
+                chevron.textContent = '▲';
             } else {
                 content.classList.add('collapsed');
-                toggle.textContent = '▼';
+                chevron.textContent = '▼';
             }
         }
         
@@ -1694,11 +1700,24 @@
                 }
             });
             
+            // Helper function to calculate stableford points
+            const getStablefordPoints = (score, par, si, handicap) => {
+                let strokes = 0;
+                if (handicap >= si) strokes++;
+                if (handicap >= 18 + si) strokes++;
+                const adjustedPar = par + strokes;
+                const diff = adjustedPar - score;
+                if (diff <= -2) return 0;
+                return diff + 2;
+            };
+            
             // Build leaderboard data from active rounds only
             const leaderboardData = activeRounds.map(round => {
                 let holesPlayed = 0;
                 let totalScore = 0;
                 let totalPar = 0;
+                let stablefordPoints = 0;
+                const handicap = round.playerHandicap || 0;
                 
                 // Calculate scores from holes data
                 for (let i = 1; i <= 18; i++) {
@@ -1706,33 +1725,40 @@
                         holesPlayed = i;
                         totalScore += round.holes[i].score;
                         totalPar += courseData.holes[i].par;
+                        stablefordPoints += getStablefordPoints(
+                            round.holes[i].score,
+                            courseData.holes[i].par,
+                            courseData.holes[i].si,
+                            handicap
+                        );
                     }
                 }
                 
                 return {
                     id: round.playerId,
                     name: round.playerName,
-                    handicap: round.playerHandicap,
+                    handicap: handicap,
                     holesPlayed: holesPlayed,
                     currentHole: round.currentHole || holesPlayed,
                     totalScore: totalScore,
                     totalPar: totalPar,
                     scoreToPar: totalScore - totalPar,
+                    stablefordPoints: stablefordPoints,
                     isCurrentPlayer: currentRound && currentRound.playerId == round.playerId,
                     isFinished: round.status === 'finished',
                     hasSnake: round.playerId == snakePlayerId
                 };
             });
             
-            // Sort by score to par (lowest first), then by holes played (more holes first)
+            // Sort by stableford points (highest first), then by holes played (more holes first)
             leaderboardData.sort((a, b) => {
                 // Players with scores come first
                 if (a.holesPlayed > 0 && b.holesPlayed === 0) return -1;
                 if (b.holesPlayed > 0 && a.holesPlayed === 0) return 1;
                 if (a.holesPlayed === 0 && b.holesPlayed === 0) return 0;
                 
-                // Sort by score to par
-                if (a.scoreToPar !== b.scoreToPar) return a.scoreToPar - b.scoreToPar;
+                // Sort by stableford points (highest first)
+                if (a.stablefordPoints !== b.stablefordPoints) return b.stablefordPoints - a.stablefordPoints;
                 
                 // If tied, more holes played is better
                 return b.holesPlayed - a.holesPlayed;
@@ -1743,15 +1769,18 @@
                 const pos = index + 1;
                 let scoreClass = 'even-par';
                 let scoreDisplay = 'E';
+                let parDisplay = 'E';
                 
                 if (player.holesPlayed > 0) {
                     if (player.scoreToPar < 0) {
                         scoreClass = 'under-par';
-                        scoreDisplay = player.scoreToPar.toString();
+                        parDisplay = player.scoreToPar.toString();
                     } else if (player.scoreToPar > 0) {
                         scoreClass = 'over-par';
-                        scoreDisplay = '+' + player.scoreToPar;
+                        parDisplay = '+' + player.scoreToPar;
                     }
+                    // Format: "-5 (12)" where -5 is to par and 12 is stableford
+                    scoreDisplay = `${parDisplay} (${player.stablefordPoints})`;
                 } else {
                     scoreDisplay = '-';
                 }
@@ -1763,12 +1792,13 @@
                 if (player.isFinished) playerClass += ' finished';
                 
                 const holeDisplay = player.isFinished ? 'F' : (player.currentHole > 0 ? `H${player.currentHole}` : 'Tee');
-                const snakeIcon = player.hasSnake ? '<span class="header-lb-snake">🐍</span>' : '';
+                const snakeIcon = player.hasSnake ? '🐍' : '';
                 
                 return `
                     <div class="${playerClass}" onclick="openScorecardModal('${player.id}')">
                         <span class="header-lb-pos">${pos}</span>
-                        ${snakeIcon}<span class="header-lb-name">${player.name}</span>
+                        <span class="header-lb-snake">${snakeIcon}</span>
+                        <span class="header-lb-name">${player.name}</span>
                         <span class="header-lb-hole">${holeDisplay}</span>
                         <span class="header-lb-score ${scoreClass}">${scoreDisplay}</span>
                     </div>
@@ -1861,15 +1891,19 @@
             const isFinished = modalRoundData.status === 'finished';
             const currentHole = modalRoundData.currentHole || 1;
             
-            // Calculate totals
+            // Calculate totals including putts
             let front9Score = 0, back9Score = 0, front9Count = 0, back9Count = 0;
             let front9Par = 0, back9Par = 0;
+            let front9Putts = 0, back9Putts = 0;
             
             for (let i = 1; i <= 9; i++) {
                 front9Par += courseData.holes[i].par;
                 if (modalRoundData.holes[i] && modalRoundData.holes[i].score !== null) {
                     front9Score += modalRoundData.holes[i].score;
                     front9Count++;
+                }
+                if (modalRoundData.holes[i] && modalRoundData.holes[i].putts !== null) {
+                    front9Putts += modalRoundData.holes[i].putts;
                 }
             }
             for (let i = 10; i <= 18; i++) {
@@ -1878,11 +1912,49 @@
                     back9Score += modalRoundData.holes[i].score;
                     back9Count++;
                 }
+                if (modalRoundData.holes[i] && modalRoundData.holes[i].putts !== null) {
+                    back9Putts += modalRoundData.holes[i].putts;
+                }
             }
+            
+            const totalPutts = front9Putts + back9Putts;
             
             const totalScore = front9Score + back9Score;
             const totalPar = front9Par + back9Par;
             const netScore = totalScore - modalRoundData.playerHandicap;
+            
+            // Calculate par for only the holes played
+            let parForHolesPlayed = 0;
+            for (let i = 1; i <= 18; i++) {
+                if (modalRoundData.holes[i] && modalRoundData.holes[i].score !== null) {
+                    parForHolesPlayed += courseData.holes[i].par;
+                }
+            }
+            
+            // Calculate stableford points
+            const handicap = modalRoundData.playerHandicap || 0;
+            const getStablefordPoints = (score, par, si) => {
+                let strokes = 0;
+                if (handicap >= si) strokes++;
+                if (handicap >= 18 + si) strokes++;
+                const adjustedPar = par + strokes;
+                const diff = adjustedPar - score;
+                if (diff <= -2) return 0;
+                return diff + 2;
+            };
+            
+            let front9Stableford = 0, back9Stableford = 0;
+            for (let i = 1; i <= 9; i++) {
+                if (modalRoundData.holes[i] && modalRoundData.holes[i].score !== null) {
+                    front9Stableford += getStablefordPoints(modalRoundData.holes[i].score, courseData.holes[i].par, courseData.holes[i].si);
+                }
+            }
+            for (let i = 10; i <= 18; i++) {
+                if (modalRoundData.holes[i] && modalRoundData.holes[i].score !== null) {
+                    back9Stableford += getStablefordPoints(modalRoundData.holes[i].score, courseData.holes[i].par, courseData.holes[i].si);
+                }
+            }
+            const totalStableford = front9Stableford + back9Stableford;
             
             // Helper to get score cell style
             const getScoreCellStyle = (hole, score) => {
@@ -1949,6 +2021,50 @@
             scoreRow += `<td style="padding: 10px 8px; text-align: center; font-weight: 700; background: rgba(0,103,71,0.1);">${back9Count > 0 ? back9Score : '-'}</td>`;
             scoreRow += `<td style="padding: 10px 8px; text-align: center; font-weight: 700; background: rgba(201,162,39,0.2);">${(front9Count + back9Count) > 0 ? totalScore : '-'}</td>`;
             
+            // Build stableford row
+            let stablefordRow = `<td style="padding: 10px 8px; text-align: center; font-weight: 700; color: var(--masters-brown);">Stableford</td>`;
+            for (let i = 1; i <= 9; i++) {
+                const score = modalRoundData.holes[i]?.score;
+                if (score !== null && score !== undefined) {
+                    const pts = getStablefordPoints(score, courseData.holes[i].par, courseData.holes[i].si);
+                    const ptsStyle = pts >= 3 ? 'color: #006747; font-weight: 700;' : pts === 0 ? 'color: #c00;' : '';
+                    stablefordRow += `<td style="padding: 10px 8px; text-align: center; ${ptsStyle}">${pts}</td>`;
+                } else {
+                    stablefordRow += `<td style="padding: 10px 8px; text-align: center;">-</td>`;
+                }
+            }
+            stablefordRow += `<td style="padding: 10px 8px; text-align: center; font-weight: 700; background: rgba(0,103,71,0.1);">${front9Stableford > 0 ? front9Stableford : '-'}</td>`;
+            for (let i = 10; i <= 18; i++) {
+                const score = modalRoundData.holes[i]?.score;
+                if (score !== null && score !== undefined) {
+                    const pts = getStablefordPoints(score, courseData.holes[i].par, courseData.holes[i].si);
+                    const ptsStyle = pts >= 3 ? 'color: #006747; font-weight: 700;' : pts === 0 ? 'color: #c00;' : '';
+                    stablefordRow += `<td style="padding: 10px 8px; text-align: center; ${ptsStyle}">${pts}</td>`;
+                } else {
+                    stablefordRow += `<td style="padding: 10px 8px; text-align: center;">-</td>`;
+                }
+            }
+            stablefordRow += `<td style="padding: 10px 8px; text-align: center; font-weight: 700; background: rgba(0,103,71,0.1);">${back9Stableford > 0 ? back9Stableford : '-'}</td>`;
+            stablefordRow += `<td style="padding: 10px 8px; text-align: center; font-weight: 700; background: rgba(201,162,39,0.2);">${totalStableford > 0 ? totalStableford : '-'}</td>`;
+            
+            // Build putts row
+            let puttsRow = `<td style="padding: 10px 8px; text-align: center; font-weight: 700; color: var(--masters-brown);">Putts</td>`;
+            for (let i = 1; i <= 9; i++) {
+                const putts = modalRoundData.holes[i]?.putts;
+                const displayPutts = putts !== null && putts !== undefined ? putts : '-';
+                const puttStyle = putts >= 3 ? 'color: #c00; font-weight: 700;' : '';
+                puttsRow += `<td style="padding: 10px 8px; text-align: center; ${puttStyle}">${displayPutts}</td>`;
+            }
+            puttsRow += `<td style="padding: 10px 8px; text-align: center; font-weight: 700; background: rgba(0,103,71,0.1);">${front9Putts > 0 ? front9Putts : '-'}</td>`;
+            for (let i = 10; i <= 18; i++) {
+                const putts = modalRoundData.holes[i]?.putts;
+                const displayPutts = putts !== null && putts !== undefined ? putts : '-';
+                const puttStyle = putts >= 3 ? 'color: #c00; font-weight: 700;' : '';
+                puttsRow += `<td style="padding: 10px 8px; text-align: center; ${puttStyle}">${displayPutts}</td>`;
+            }
+            puttsRow += `<td style="padding: 10px 8px; text-align: center; font-weight: 700; background: rgba(0,103,71,0.1);">${back9Putts > 0 ? back9Putts : '-'}</td>`;
+            puttsRow += `<td style="padding: 10px 8px; text-align: center; font-weight: 700; background: rgba(201,162,39,0.2);">${totalPutts > 0 ? totalPutts : '-'}</td>`;
+            
             // Build the table
             container.innerHTML = `
                 <div style="overflow-x: auto;">
@@ -1965,6 +2081,12 @@
                             <tr style="background: white;">
                                 ${scoreRow}
                             </tr>
+                            <tr style="background: var(--masters-cream);">
+                                ${stablefordRow}
+                            </tr>
+                            <tr style="background: white;">
+                                ${puttsRow}
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -1980,15 +2102,13 @@
                         </div>
                         <div style="text-align: center;">
                             <span style="font-size: 0.8rem; color: var(--masters-brown);">To Par</span>
-                            <div style="font-size: 1.2rem; font-weight: 700; color: ${totalScore - totalPar < 0 ? '#006747' : totalScore - totalPar > 0 ? '#c00' : 'var(--masters-dark-green)'};">
-                                ${(front9Count + back9Count) > 0 ? (totalScore - totalPar === 0 ? 'E' : (totalScore - totalPar > 0 ? '+' : '') + (totalScore - totalPar)) : '-'}
+                            <div style="font-size: 1.2rem; font-weight: 700; color: ${totalScore - parForHolesPlayed < 0 ? '#006747' : totalScore - parForHolesPlayed > 0 ? '#c00' : 'var(--masters-dark-green)'};">
+                                ${(front9Count + back9Count) > 0 ? (totalScore - parForHolesPlayed === 0 ? 'E' : (totalScore - parForHolesPlayed > 0 ? '+' : '') + (totalScore - parForHolesPlayed)) : '-'}
                             </div>
                         </div>
                         <div style="text-align: center;">
-                            <span style="font-size: 0.8rem; color: var(--masters-brown);">Thru</span>
-                            <div style="font-size: 1.2rem; font-weight: 700; color: ${isFinished ? 'var(--masters-gold)' : 'var(--masters-green)'};">
-                                ${isFinished ? 'F' : currentHole}
-                            </div>
+                            <span style="font-size: 0.8rem; color: var(--masters-brown);">Stableford</span>
+                            <div style="font-size: 1.2rem; font-weight: 700; color: var(--masters-dark-green);">${totalStableford > 0 ? totalStableford : '-'}</div>
                         </div>
                     </div>
                     <button onclick="confirmDeleteRound()" class="modal-delete-btn">Delete</button>
@@ -2003,8 +2123,7 @@
             const distance = holeData[currentRound.tees];
 
             document.getElementById('current-hole-number').textContent = `Hole ${hole}`;
-            document.getElementById('current-hole-details').textContent = `Par ${holeData.par} • SI ${holeData.si}`;
-            document.getElementById('current-hole-distance').textContent = `${distance}m`;
+            document.getElementById('current-hole-details').textContent = `Par ${holeData.par} • SI ${holeData.si} • ${distance}m`;
 
             // Update score and putts display
             const holeScore = currentRound.holes[hole];
@@ -2112,6 +2231,9 @@
             
             document.getElementById('current-putts').textContent = currentPutts;
             
+            // Update totals display
+            updateTotals();
+            
             // Sync to Firebase
             updateActiveRoundInFirebase();
         }
@@ -2134,12 +2256,34 @@
         function updateTotals() {
             let front9 = 0, back9 = 0, front9Par = 0, back9Par = 0;
             let front9Count = 0, back9Count = 0;
+            let totalPutts = 0;
+            let stablefordPoints = 0;
+
+            // Calculate Stableford points based on handicap strokes per hole
+            const getStablefordPoints = (score, par, si) => {
+                // Calculate strokes received on this hole based on handicap
+                const handicap = currentRound.playerHandicap || 0;
+                let strokes = 0;
+                if (handicap >= si) strokes++;
+                if (handicap >= 18 + si) strokes++;
+                
+                const adjustedPar = par + strokes;
+                const diff = adjustedPar - score;
+                
+                // Stableford: 0 for double bogey or worse, 1 for bogey, 2 for par, 3 for birdie, etc.
+                if (diff <= -2) return 0;
+                return diff + 2;
+            };
 
             for (let i = 1; i <= 9; i++) {
                 front9Par += courseData.holes[i].par;
                 if (currentRound.holes[i].score !== null) {
                     front9 += currentRound.holes[i].score;
                     front9Count++;
+                    stablefordPoints += getStablefordPoints(currentRound.holes[i].score, courseData.holes[i].par, courseData.holes[i].si);
+                }
+                if (currentRound.holes[i].putts !== null) {
+                    totalPutts += currentRound.holes[i].putts;
                 }
             }
             for (let i = 10; i <= 18; i++) {
@@ -2147,27 +2291,44 @@
                 if (currentRound.holes[i].score !== null) {
                     back9 += currentRound.holes[i].score;
                     back9Count++;
+                    stablefordPoints += getStablefordPoints(currentRound.holes[i].score, courseData.holes[i].par, courseData.holes[i].si);
+                }
+                if (currentRound.holes[i].putts !== null) {
+                    totalPutts += currentRound.holes[i].putts;
                 }
             }
 
             const gross = front9 + back9;
             const net = gross - currentRound.playerHandicap;
-            const totalPar = front9Par + back9Par;
 
-            // Format with +/- relative to par
-            const formatScore = (score, par, count) => {
+            // Calculate par for only the holes played
+            let front9ParPlayed = 0, back9ParPlayed = 0;
+            for (let i = 1; i <= 9; i++) {
+                if (currentRound.holes[i].score !== null) {
+                    front9ParPlayed += courseData.holes[i].par;
+                }
+            }
+            for (let i = 10; i <= 18; i++) {
+                if (currentRound.holes[i].score !== null) {
+                    back9ParPlayed += courseData.holes[i].par;
+                }
+            }
+
+            // Format with +/- relative to par only
+            const formatRelativeToPar = (score, par, count) => {
                 if (count === 0) return '-';
                 const diff = score - par;
-                const diffStr = diff === 0 ? 'E' : (diff > 0 ? `+${diff}` : diff);
-                return `${diffStr} (${score})`;
+                return diff === 0 ? 'E' : (diff > 0 ? `+${diff}` : `${diff}`);
             };
 
-            document.getElementById('front-9-total').textContent = front9Count > 0 ? formatScore(front9, front9Par, front9Count) : '-';
-            document.getElementById('back-9-total').textContent = back9Count > 0 ? formatScore(back9, back9Par, back9Count) : '-';
+            document.getElementById('front-9-total').textContent = formatRelativeToPar(front9, front9ParPlayed, front9Count);
+            document.getElementById('back-9-total').textContent = formatRelativeToPar(back9, back9ParPlayed, back9Count);
             
             const totalCount = front9Count + back9Count;
             document.getElementById('gross-total').textContent = totalCount > 0 ? gross : '-';
             document.getElementById('net-total').textContent = totalCount > 0 ? net : '-';
+            document.getElementById('stableford-total').textContent = totalCount > 0 ? stablefordPoints : '-';
+            document.getElementById('putts-total').textContent = totalPutts > 0 ? totalPutts : '-';
             
             // Update header leaderboard with latest scores
             updateHeaderLeaderboard();
