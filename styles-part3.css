@@ -1515,6 +1515,93 @@
     border-radius: 0 0 12px 12px;
 }
 
+/* Hole Image Modal */
+.hole-image-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hole-image-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+}
+
+.hole-image-modal-content {
+    position: relative;
+    max-width: 95vw;
+    max-height: 95vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+.hole-image-modal-content img {
+    max-width: 100%;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+}
+
+.hole-image-close-btn {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: var(--masters-gold);
+    color: var(--masters-dark-green);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.hole-image-close-btn:hover {
+    background: var(--masters-cream);
+    transform: scale(1.1);
+}
+
+.hole-image-caption {
+    color: var(--masters-gold);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-top: 15px;
+    text-align: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 768px) {
+    .hole-image-close-btn {
+        top: -35px;
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+    
+    .hole-image-caption {
+        font-size: 1.1rem;
+    }
+}
+
 .modal-delete-btn {
     background: #dc3545;
     color: white;

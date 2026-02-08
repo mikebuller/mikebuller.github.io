@@ -708,7 +708,7 @@
                 <div class="hole-navigation">
                     <button onclick="prevHole()" class="hole-nav-btn" id="prev-hole-btn">◀</button>
                     <div class="current-hole-info">
-                        <h3 id="current-hole-number">Hole 1</h3>
+                        <h3 id="current-hole-number" onclick="showHoleImage()" style="cursor: pointer;">Hole 1</h3>
                         <p id="current-hole-details">Par 4 • SI 2 • 380m</p>
                     </div>
                     <button onclick="nextHole()" class="hole-nav-btn" id="next-hole-btn">▶</button>
@@ -778,6 +778,16 @@
     </section>
 
     <!-- Player Scorecard Modal -->
+    <!-- Hole Image Modal -->
+    <div id="hole-image-modal" class="hole-image-modal" style="display: none;">
+        <div class="hole-image-modal-overlay" onclick="closeHoleImage()"></div>
+        <div class="hole-image-modal-content">
+            <button class="hole-image-close-btn" onclick="closeHoleImage()">✕</button>
+            <img id="hole-image-display" src="" alt="Hole image">
+            <div id="hole-image-caption" class="hole-image-caption">Hole 1</div>
+        </div>
+    </div>
+
     <div id="scorecard-modal" class="scorecard-modal" style="display: none;">
         <div class="scorecard-modal-overlay" onclick="closeScorecardModal()"></div>
         <div class="scorecard-modal-content">
@@ -2000,6 +2010,27 @@
         function closeScorecardModal() {
             document.getElementById('scorecard-modal').style.display = 'none';
             modalRoundData = null;
+        }
+        
+        // Show hole image in fullscreen modal
+        function showHoleImage() {
+            if (!currentRound) return;
+            const hole = currentRound.currentHole;
+            const holeData = courseData.holes[hole];
+            const modal = document.getElementById('hole-image-modal');
+            const img = document.getElementById('hole-image-display');
+            const caption = document.getElementById('hole-image-caption');
+            
+            img.src = `holes/hole-${hole}.jpg`;
+            caption.textContent = `Hole ${hole} - Par ${holeData.par} • SI ${holeData.si}`;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Close hole image modal
+        function closeHoleImage() {
+            document.getElementById('hole-image-modal').style.display = 'none';
+            document.body.style.overflow = '';
         }
         
         // Delete a round
