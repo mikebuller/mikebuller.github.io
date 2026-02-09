@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rounds - The Bonville G.C. Invitational</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles-part2.css">
+    <link rel="stylesheet" href="styles-part3.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK (shared initialization) -->
+    <script type="module" src="firebase-init.js"></script>
+    <script>
+        // Set up callback for when Firebase is ready
+        window.onFirebaseReady = function() {
+            if (typeof initializeRoundsPage === 'function') {
+                initializeRoundsPage();
+            }
+        };
+    </script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="index.html">
+                    <img src="images/bonville-logo.jpg" alt="Bonville Golf Resort">
+                </a>
+            </div>
+            <button class="mobile-menu-toggle" aria-label="Toggle navigation menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html#welcome">Welcome</a></li>
+                <li><a href="index.html#course">Course</a></li>
+                <li><a href="index.html#players">Players</a></li>
+                <li><a href="index.html#day1">Day 1</a></li>
+                <li><a href="index.html#dinner">Dinner</a></li>
+                <li><a href="index.html#day2">Day 2</a></li>
+                <li><a href="rounds.html" class="active">Rounds</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <section id="live-scores" class="page-section live-scores-section" style="padding-top: 120px;">
+        <div class="container">
+            <div class="section-header">
+                <h2>Rounds</h2>
+                <div class="divider"></div>
+            </div>
+
+            <!-- Main Options: CREATE or JOIN -->
+            <div id="rounds-hub" class="rounds-hub">
+                <div class="rounds-options">
+                    <div class="round-option-card" onclick="showCreateRound()">
+                        <div class="option-icon">🏌️</div>
+                        <h3>Create Round</h3>
+                        <p>Start a new round and invite others to join</p>
+                    </div>
+                    <div class="round-option-card" onclick="showJoinRound()">
+                        <div class="option-icon">🤝</div>
+                        <h3>Join Round</h3>
+                        <p>Enter a code to join an existing round</p>
+                    </div>
+                </div>
+
+                <!-- My Rounds Section with Tabs -->
+                <div id="my-rounds-section" class="my-rounds-section" style="display: none;">
+                    <div class="my-rounds-tabs">
+                        <button class="my-rounds-tab active" onclick="switchRoundsTab('active')" id="tab-active">Active Rounds</button>
+                        <button class="my-rounds-tab" onclick="switchRoundsTab('completed')" id="tab-completed">Completed Rounds</button>
+                    </div>
+                    <div id="active-rounds-list" class="my-rounds-list">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                    <div id="completed-rounds-list" class="my-rounds-list" style="display: none;">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create Round Form (Hidden initially) -->
+            <div id="create-round-form" class="round-setup-container" style="display: none;">
+                <button class="back-btn" onclick="showRoundsHub()">← Back</button>
+                <div class="setup-card">
+                    <div class="setup-field">
+                        <label for="round-name">Round Name</label>
+                        <input type="text" id="round-name" class="setup-input" placeholder="e.g., Saturday Morning Round">
+                    </div>
+
+                    <div class="setup-field">
+                        <label for="round-course">Golf Course</label>
+                        <input type="text" id="round-course" class="setup-input" list="course-list" placeholder="Select or type a course name...">
+                        <datalist id="course-list">
+                            <option value="Anglesea Golf Club">
+                            <option value="Australian Golf Club, The">
+                            <option value="Avondale Golf Club">
+                            <option value="Ballarat Golf Club">
+                            <option value="Bankstown Golf Club">
+                            <option value="Barnbougle Dunes">
+                            <option value="Barnbougle Lost Farm">
+                            <option value="Barwon Heads Golf Club">
+                            <option value="Bayview Golf Club">
+                            <option value="Bonnie Doon Golf Club">
+                            <option value="Bonville Golf Resort">
+                            <option value="Brighton Golf Club">
+                            <option value="Brisbane Golf Club">
+                            <option value="Brookwater Golf Club">
+                            <option value="Burleigh Golf Club">
+                            <option value="Cape Schanck Golf Course">
+                            <option value="Cape Wickham Links">
+                            <option value="Capital Golf Club">
+                            <option value="Castle Hill Country Club">
+                            <option value="Caves Beach Golf Course">
+                            <option value="Charlestown Golf Club">
+                            <option value="Clearwater Golf Club">
+                            <option value="Coffs Harbour Golf Club">
+                            <option value="Collier Park Golf Course">
+                            <option value="Concord Golf Club">
+                            <option value="Coolangatta Tweed Heads Golf Club">
+                            <option value="Cottesloe Golf Club">
+                            <option value="Cronulla Golf Club">
+                            <option value="Curlewis Golf Club">
+                            <option value="Cypresslakes Golf Resort">
+                            <option value="Eastlake Golf Club">
+                            <option value="Elanora Country Club">
+                            <option value="Ellerston Golf Course">
+                            <option value="Federal Golf Club">
+                            <option value="Flinders Golf Club">
+                            <option value="Forster Tuncurry Golf Club">
+                            <option value="Fremantle Golf Club">
+                            <option value="Glenelg Golf Club">
+                            <option value="Gold Creek Country Club">
+                            <option value="Grange Golf Club, The">
+                            <option value="Hamilton Island Golf Club">
+                            <option value="Headland Golf Club">
+                            <option value="Heritage Golf Club">
+                            <option value="Horizons Golf Resort">
+                            <option value="Huntingdale Golf Club">
+                            <option value="Indooroopilly Golf Club">
+                            <option value="Joondalup Country Club">
+                            <option value="Kalgoorlie Golf Course">
+                            <option value="Kennedy Bay Golf Club">
+                            <option value="Kingston Heath Golf Club">
+                            <option value="Kogarah Golf Club">
+                            <option value="Kooindah Waters Golf Club">
+                            <option value="Kooyonga Golf Club">
+                            <option value="Lake Karrinyup Country Club">
+                            <option value="Lake Macquarie Golf Club">
+                            <option value="Lakes Golf Club, The">
+                            <option value="Launceston Golf Club">
+                            <option value="Links Hope Island">
+                            <option value="Links Lady Bay">
+                            <option value="Links Shell Cove">
+                            <option value="Long Reef Golf Club">
+                            <option value="Lorne Country Club">
+                            <option value="Lynwood Country Club">
+                            <option value="Magenta Shores Golf Club">
+                            <option value="Manly Golf Club">
+                            <option value="Maroochy River Golf Club">
+                            <option value="Melbourne Golf Club">
+                            <option value="Merewether Golf Club">
+                            <option value="Metropolitan Golf Club">
+                            <option value="Mollymook Golf Club">
+                            <option value="Monash Country Club">
+                            <option value="Mona Vale Golf Club">
+                            <option value="Moonah Links">
+                            <option value="Moore Park Golf Course">
+                            <option value="Mornington Golf Club">
+                            <option value="Mount Lawley Golf Club">
+                            <option value="Mount Osmond Golf Club">
+                            <option value="Murray Downs Golf Course">
+                            <option value="National Golf Club, The">
+                            <option value="Nelson Bay Golf Club">
+                            <option value="New South Wales Golf Club">
+                            <option value="Newcastle Golf Club">
+                            <option value="Noosa Springs Golf Club">
+                            <option value="Oatlands Golf Club">
+                            <option value="Ocean Shores Country Club">
+                            <option value="Pacific Dunes Golf Club">
+                            <option value="Palm Meadows Golf Course">
+                            <option value="Palmer Colonial Golf Course">
+                            <option value="Palmer Gold Coast">
+                            <option value="Paraparaumu Beach Golf Club">
+                            <option value="Pelican Waters Golf Club">
+                            <option value="Peninsula Kingswood Country Golf Club">
+                            <option value="Pennant Hills Golf Club">
+                            <option value="Port Kembla Golf Club">
+                            <option value="Port Macquarie Golf Club">
+                            <option value="Portsea Golf Club">
+                            <option value="RACV Cape Schanck Resort">
+                            <option value="RACV Healesville Country Club">
+                            <option value="RACV Royal Pines Resort">
+                            <option value="Redland Bay Golf Club">
+                            <option value="Rich River Golf Club">
+                            <option value="Riverside Oaks Golf Resort">
+                            <option value="Rosebud Country Club">
+                            <option value="Royal Adelaide Golf Club">
+                            <option value="Royal Canberra Golf Club">
+                            <option value="Royal Fremantle Golf Club">
+                            <option value="Royal Hobart Golf Club">
+                            <option value="Royal Melbourne Golf Club">
+                            <option value="Royal Perth Golf Club">
+                            <option value="Royal Queensland Golf Club">
+                            <option value="Royal Sydney Golf Club">
+                            <option value="Sanctuary Cove Golf Club">
+                            <option value="Sandringham Golf Club">
+                            <option value="Sawtell Golf Club">
+                            <option value="Shelly Beach Golf Club">
+                            <option value="Sorrento Golf Club">
+                            <option value="Spring Valley Golf Club">
+                            <option value="St Andrews Beach Golf Course">
+                            <option value="St Michaels Golf Club">
+                            <option value="Stonecutters Ridge Golf Club">
+                            <option value="Tallwoods Golf Course">
+                            <option value="Tanilba Bay Golf Club">
+                            <option value="Tasmania Golf Club">
+                            <option value="Terrey Hills Golf Club">
+                            <option value="Thirteenth Beach Golf Links">
+                            <option value="Twin Creeks Golf Club">
+                            <option value="Twin Waters Golf Club">
+                            <option value="Victoria Golf Club">
+                            <option value="Vintage Golf Club, The">
+                            <option value="Virginia Golf Club">
+                            <option value="Wantima Country Club">
+                            <option value="Warringah Golf Club">
+                            <option value="Wollongong Golf Club">
+                            <option value="Woodlands Golf Club">
+                            <option value="Woolooware Golf Club">
+                            <option value="Wyong Golf Club">
+                            <option value="Yamba Golf Club">
+                            <option value="Yarrawonga Mulwala Golf Club">
+                        </datalist>
+                    </div>
+
+                    <div class="setup-field">
+                        <label for="round-date">Date</label>
+                        <input type="date" id="round-date" class="setup-input">
+                    </div>
+
+                    <div class="setup-field">
+                        <label>Number of Holes</label>
+                        <div class="tee-options">
+                            <label class="tee-option">
+                                <input type="radio" name="holes" value="18" checked>
+                                <span class="tee-label">18 Holes</span>
+                            </label>
+                            <label class="tee-option">
+                                <input type="radio" name="holes" value="9">
+                                <span class="tee-label">9 Holes</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="setup-field">
+                        <label>Tees</label>
+                        <div class="tee-options">
+                            <label class="tee-option">
+                                <input type="radio" name="create-tees" value="tallwood" checked>
+                                <span class="tee-label">Tallwood (6,146m)</span>
+                            </label>
+                            <label class="tee-option">
+                                <input type="radio" name="tees" value="bloodwood">
+                                <span class="tee-label">Bloodwood (5,664m)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button onclick="createRound()" class="cta-button start-round-btn">Create Round</button>
+                </div>
+            </div>
+
+            <!-- Round Created Success (Hidden initially) -->
+            <div id="round-created-success" class="round-setup-container" style="display: none;">
+                <div class="setup-card success-card">
+                    <div class="success-icon">✓</div>
+                    <h3>Round Created!</h3>
+                    <p class="round-name-display" id="created-round-name"></p>
+                    
+                    <div class="share-link-section">
+                        <label>Share this link with others:</label>
+                        <div class="share-link-display">
+                            <input type="text" id="created-share-link" readonly class="share-link-input clickable-link" onclick="copyShareLink()" title="Click to copy">
+                        </div>
+                    </div>
+
+                    <div class="success-actions">
+                        <button onclick="joinCreatedRound()" class="cta-button">Join & Start Scoring</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Join Round Form (Hidden initially) -->
+            <div id="join-round-form" class="round-setup-container" style="display: none;">
+                <button class="back-btn" onclick="showRoundsHub()">← Back</button>
+                <div class="setup-card">
+                    <h3>Join a Round</h3>
+                    
+                    <div class="setup-field">
+                        <label for="join-code">Enter Join Code</label>
+                        <input type="text" id="join-code" class="setup-input join-code-input" placeholder="e.g., A1B2C3D4E5" maxlength="10" oninput="this.value = this.value.toUpperCase()">
+                    </div>
+
+                    <button onclick="lookupRound()" class="cta-button start-round-btn">Find Round</button>
+                </div>
+            </div>
+
+            <!-- Round Found - Player Selection (Hidden initially) -->
+            <div id="join-round-details" class="round-setup-container" style="display: none;">
+                <button class="back-btn" onclick="showRoundsHub()">← Back</button>
+                <div class="setup-card">
+                    <h3>Join Round</h3>
+                    
+                    <div class="round-details-display">
+                        <p class="round-name" id="join-round-name"></p>
+                        <p class="round-info" id="join-round-info"></p>
+                    </div>
+
+                    <div class="setup-field">
+                        <label>Entry Type</label>
+                        <div class="entry-type-options">
+                            <label class="entry-type-option">
+                                <input type="radio" name="join-entry-type" value="player" checked onchange="toggleJoinEntryType()">
+                                <span class="entry-type-label">Player</span>
+                            </label>
+                            <label class="entry-type-option">
+                                <input type="radio" name="join-entry-type" value="team" onchange="toggleJoinEntryType()">
+                                <span class="entry-type-label">Team</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Player Selection -->
+                    <div id="join-player-section" class="setup-field">
+                        <label for="join-player-select">Player</label>
+                        <select id="join-player-select" class="setup-select" onchange="toggleNewPlayerFields()">
+                            <option value="">Select Player</option>
+                            <option value="new">+ Enter new player</option>
+                        </select>
+                    </div>
+
+                    <!-- New Player Fields (Hidden initially) -->
+                    <div id="new-player-fields" style="display: none;">
+                        <div class="setup-field">
+                            <label for="new-player-name">Your Name</label>
+                            <input type="text" id="new-player-name" class="setup-input" placeholder="Enter your name">
+                        </div>
+                        <div class="setup-field">
+                            <label for="new-player-handicap">Handicap</label>
+                            <input type="number" id="new-player-handicap" class="setup-input" placeholder="e.g., 18" min="0" max="54">
+                        </div>
+                    </div>
+
+                    <!-- Team Fields (Hidden initially) -->
+                    <div id="join-team-section" style="display: none;">
+                        <div class="setup-field">
+                            <label for="join-team-name">Team Name</label>
+                            <input type="text" id="join-team-name" class="setup-input" placeholder="Enter team name">
+                        </div>
+                        <div class="setup-field">
+                            <label for="join-team-handicap">Team Handicap</label>
+                            <input type="number" id="join-team-handicap" class="setup-input" placeholder="e.g., 15" min="0" max="54">
+                        </div>
+                    </div>
+
+                    <button onclick="joinRound()" class="cta-button start-round-btn">Join Round</button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Scorecard Modal -->
+    <div id="scorecard-modal" class="scorecard-modal" style="display: none;">
+        <div class="scorecard-modal-overlay" onclick="closeScorecardModal()"></div>
+        <button class="scorecard-modal-close" onclick="closeScorecardModal()">×</button>
+        <div class="scorecard-modal-content">
+            <div class="scorecard-modal-header">
+                <h3 id="scorecard-modal-title">Scorecard</h3>
+                <p id="scorecard-modal-subtitle"></p>
+            </div>
+            <div class="modal-scorecard-wrapper">
+                <div id="modal-scorecard-table"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <h3>The Bonville G.C. Invitational</h3>
+        <p>A Tradition Unlike Any Other</p>
+        <p style="margin-top: 10px;">Bonville Golf Resort, NSW Australia</p>
+        <img src="images/bonville-logo.jpg" alt="Bonville Logo" class="footer-logo">
+        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.8;">© 2026 The Bonville G.C. Invitational. All rights reserved.</p>
+    </footer>
+
+    <script src="rounds.js"></script>
+</body>
+</html>
