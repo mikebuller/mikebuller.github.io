@@ -796,6 +796,16 @@
     background: white;
     color: var(--masters-dark-green);
     box-sizing: border-box;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Fix iOS date input overflow */
+input[type="date"].setup-input {
+    -webkit-appearance: none;
+    min-height: 48px;
+    padding-right: 10px;
 }
 
 .setup-select:focus,
