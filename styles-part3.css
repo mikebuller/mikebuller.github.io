@@ -1128,7 +1128,7 @@ input[type="date"].setup-input {
     justify-content: center;
     gap: 40px;
     margin-top: 5px;
-    padding-top: 15px;
+    padding-top: 25px;
     border-top: 1px solid rgba(0, 103, 71, 0.15);
 }
 
@@ -1246,7 +1246,7 @@ input[type="date"].setup-input {
 }
 
 .total-item {
-    padding: 15px 10px;
+    padding: 10px 10px;
     text-align: center;
     border-right: 1px solid var(--masters-cream);
 }
@@ -1259,7 +1259,7 @@ input[type="date"].setup-input {
     display: block;
     font-size: 0.8rem;
     color: var(--masters-brown);
-    margin-bottom: 5px;
+    margin-bottom: 0px;
 }
 
 .total-value {
@@ -1441,7 +1441,7 @@ input[type="date"].setup-input {
     opacity: 1;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    padding: 5px 10px;
+    padding: 5px 5px 10px;
 }
 
 .header-leaderboard-content::-webkit-scrollbar {

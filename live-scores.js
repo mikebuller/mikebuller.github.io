@@ -365,8 +365,7 @@ function updateHoleDisplay() {
     const tees = currentRound.tees;
     
     document.getElementById('current-hole-number').textContent = `Hole ${hole}`;
-    document.getElementById('current-hole-details').textContent = `Par ${holeData.par} • SI ${holeData.si}`;
-    document.getElementById('current-hole-distance').textContent = `${holeData[tees]}m`;
+    document.getElementById('current-hole-details').textContent = `Par ${holeData.par} • ${holeData[tees]}m • Index ${holeData.si}`;
     
     // Update score and putts display
     const score = currentRound.scores[hole];
