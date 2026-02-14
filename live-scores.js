@@ -168,7 +168,9 @@ async function loadRoundFromParams(roundId, scoreId) {
             date: roundData.date,
             currentHole: 1,
             scores: scoreData.scores || {},
-            putts: scoreData.putts || {}
+            putts: scoreData.putts || {},
+            fir: scoreData.fir || {},
+            gir: scoreData.gir || {}
         };
         
         // Find the last hole with a score to resume from
@@ -298,7 +300,9 @@ function startRound() {
         date: date,
         currentHole: 1,
         scores: {},
-        putts: {}
+        putts: {},
+        fir: {},
+        gir: {}
     };
     
     // Update UI
@@ -370,6 +374,12 @@ function updateHoleDisplay() {
     document.getElementById('current-score').textContent = score !== undefined ? score : '-';
     document.getElementById('current-putts').textContent = putts !== undefined ? putts : '-';
     
+    // Update FIR and GIR checkboxes
+    const firCheckbox = document.getElementById('current-fir');
+    const girCheckbox = document.getElementById('current-gir');
+    if (firCheckbox) firCheckbox.checked = !!currentRound.fir[hole];
+    if (girCheckbox) girCheckbox.checked = !!currentRound.gir[hole];
+    
     // Update navigation buttons
     document.getElementById('prev-hole-btn').disabled = hole === 1;
     document.getElementById('next-hole-btn').disabled = hole === 18;
@@ -412,7 +422,7 @@ function adjustPutts(delta) {
     let current = currentRound.putts[hole];
     
     if (current === undefined) {
-        current = 2; // Start at 2 putts
+        current = 0; // Start at 0, so first click of +1 gives 1
     }
     
     const newPutts = Math.max(0, current + delta);
@@ -448,6 +458,26 @@ function adjustPutts(delta) {
     updateTotals();
     
     // Save to Firebase for real-time leaderboard updates
+    saveActiveRoundToFirebase();
+}
+
+// Toggle Fairway In Regulation
+function toggleFIR() {
+    if (!currentRound) return;
+    const hole = currentRound.currentHole;
+    const checkbox = document.getElementById('current-fir');
+    currentRound.fir[hole] = checkbox.checked;
+    updateTotals();
+    saveActiveRoundToFirebase();
+}
+
+// Toggle Green In Regulation
+function toggleGIR() {
+    if (!currentRound) return;
+    const hole = currentRound.currentHole;
+    const checkbox = document.getElementById('current-gir');
+    currentRound.gir[hole] = checkbox.checked;
+    updateTotals();
     saveActiveRoundToFirebase();
 }
 
@@ -549,6 +579,15 @@ function updateTotals() {
     document.getElementById('back-9-total').textContent = formatRelativeToPar(back9Score, back9ParPlayed, back9Count > 0);
     document.getElementById('gross-total').textContent = (front9Count + back9Count) > 0 ? totalScore : '-';
     document.getElementById('net-total').textContent = (front9Count + back9Count) > 0 ? net : '-';
+    
+    // Calculate FIR and GIR totals
+    let firCount = 0, girCount = 0, holesPlayed = front9Count + back9Count;
+    for (let i = 1; i <= 18; i++) {
+        if (currentRound.fir[i]) firCount++;
+        if (currentRound.gir[i]) girCount++;
+    }
+    document.getElementById('fir-total').textContent = holesPlayed > 0 ? firCount : '-';
+    document.getElementById('gir-total').textContent = holesPlayed > 0 ? girCount : '-';
 }
 
 // Fire confetti celebration
@@ -634,6 +673,8 @@ async function saveRound() {
             date: currentRound.date,
             scores: currentRound.scores,
             putts: currentRound.putts,
+            fir: currentRound.fir,
+            gir: currentRound.gir,
             status: 'completed',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
@@ -672,6 +713,8 @@ async function saveRound() {
             tees: currentRound.tees,
             scores: currentRound.scores,
             putts: currentRound.putts,
+            fir: currentRound.fir,
+            gir: currentRound.gir,
             totalScore: totalScore,
             stablefordPoints: totalStableford,
             joinCode: ''
@@ -695,20 +738,6 @@ async function saveRound() {
     } catch (error) {
         console.error('Error saving round:', error);
         alert('Failed to save round. Please try again.');
-    }
-}
-
-// Toggle header leaderboard
-function toggleHeaderLeaderboard() {
-    const content = document.getElementById('header-leaderboard-content');
-    const toggle = document.getElementById('header-leaderboard-toggle');
-    
-    if (content.style.display === 'none') {
-        content.style.display = 'block';
-        toggle.textContent = '▲';
-    } else {
-        content.style.display = 'none';
-        toggle.textContent = '▼';
     }
 }
 
@@ -753,25 +782,47 @@ function positionHeaderLeaderboard() {
         const navbarHeight = navbar.offsetHeight;
         headerLb.style.top = navbarHeight + 'px';
     }
+    
+    updateSectionPadding();
 }
+
+function updateSectionPadding() {
+    const headerLb = document.getElementById('header-leaderboard');
+    const navbar = document.querySelector('.navbar');
+    const section = document.getElementById('live-scores');
+    
+    if (!section || !navbar) return;
+    
+    if (headerLb && headerLb.style.display !== 'none') {
+        const navbarHeight = navbar.offsetHeight;
+        const lbHeight = headerLb.offsetHeight;
+        section.style.paddingTop = (navbarHeight + lbHeight - 55) + 'px';
+    }
+}
+
+// Recalculate padding after leaderboard collapse/expand transition ends
+document.addEventListener('DOMContentLoaded', () => {
+    const content = document.getElementById('header-leaderboard-content');
+    if (content) {
+        content.addEventListener('transitionend', () => {
+            updateSectionPadding();
+        });
+    }
+});
 
 // Show the header leaderboard
 function showHeaderLeaderboard() {
     const headerLb = document.getElementById('header-leaderboard');
     if (!headerLb) return;
     
-    // Position header leaderboard right below the navbar
+    headerLb.style.display = 'block';
+    document.body.classList.add('header-lb-active');
+    
+    // Position header leaderboard and section padding (must be after display:block)
     positionHeaderLeaderboard();
     
     // Re-position on window resize
     window.addEventListener('resize', positionHeaderLeaderboard);
-    
-    headerLb.style.display = 'block';
-    document.body.classList.add('header-lb-active');
-    
-    // Add extra padding to section for leaderboard
-    const section = document.getElementById('live-scores');
-    if (section) section.classList.add('with-leaderboard');
     
     // Start real-time listener
     startActiveRoundsListener();
@@ -785,9 +836,12 @@ function hideHeaderLeaderboard() {
     headerLb.style.display = 'none';
     document.body.classList.remove('header-lb-active');
     
-    // Remove extra padding from section
+    // Reset section padding
     const section = document.getElementById('live-scores');
-    if (section) section.classList.remove('with-leaderboard');
+    if (section) {
+        section.classList.remove('with-leaderboard');
+        section.style.paddingTop = '';
+    }
     
     // Remove resize listener
     window.removeEventListener('resize', positionHeaderLeaderboard);
@@ -874,6 +928,8 @@ function toggleHeaderLeaderboard() {
         content.classList.add('collapsed');
         if (chevron) chevron.textContent = '▼';
     }
+    
+    updateSectionPadding();
 }
 
 // Update header leaderboard with current scores from Firebase (manual fetch)
@@ -974,11 +1030,9 @@ function renderHeaderLeaderboard(activeRounds) {
     }
     
     // Show the leaderboard (only when there are scores)
-    const section = document.getElementById('live-scores');
     if (headerLb) {
         headerLb.style.display = 'block';
         positionHeaderLeaderboard();
-        if (section) section.classList.add('with-leaderboard');
     }
     
     // Find who has the snake (most recent 3+ putt across all players)
@@ -1118,6 +1172,9 @@ function renderHeaderLeaderboard(activeRounds) {
             </div>
         `;
     }).join('');
+    
+    // Recalculate section padding now that leaderboard content has changed
+    updateSectionPadding();
     
     // Start auto-scroll if needed (desktop only)
     setTimeout(() => startLeaderboardAutoScroll(), 500);
@@ -1484,7 +1541,9 @@ async function saveActiveRoundToFirebase() {
             if (currentRound.scores[i] !== undefined || currentRound.putts[i] !== undefined) {
                 holes[i] = {
                     score: currentRound.scores[i] !== undefined ? currentRound.scores[i] : null,
-                    putts: currentRound.putts[i] || 0
+                    putts: currentRound.putts[i] || 0,
+                    fir: !!currentRound.fir[i],
+                    gir: !!currentRound.gir[i]
                 };
             }
         }
@@ -1497,6 +1556,8 @@ async function saveActiveRoundToFirebase() {
             await updateDoc(scoreRef, {
                 scores: currentRound.scores,
                 putts: currentRound.putts,
+                fir: currentRound.fir,
+                gir: currentRound.gir,
                 updatedAt: new Date().toISOString()
             });
         }

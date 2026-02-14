@@ -15,9 +15,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <a href="index.html">
-                    <img src="images/bonville-logo.jpg" alt="Bonville Golf Resort">
-                </a>
+                <div class="option-icon">⛳️</div>
             </div>
             <a href="rounds.html" class="back-link" style="color: var(--masters-gold); text-decoration: none; font-weight: 600;">← Back to Rounds</a>
         </div>
@@ -89,6 +87,18 @@
                             <button onclick="adjustPutts(1)" class="stepper-btn">+</button>
                         </div>
                     </div>
+                    <div class="score-input-row fir-gir-row">
+                        <label class="fir-gir-checkbox">
+                            <input type="checkbox" id="current-fir" onchange="toggleFIR()">
+                            <span class="fir-gir-checkmark"></span>
+                            FIR
+                        </label>
+                        <label class="fir-gir-checkbox">
+                            <input type="checkbox" id="current-gir" onchange="toggleGIR()">
+                            <span class="fir-gir-checkmark"></span>
+                            GIR
+                        </label>
+                    </div>
                 </div>
 
                 <!-- Running Totals -->
@@ -100,6 +110,14 @@
                     <div class="total-item total-putts">
                         <span class="total-label">Putts</span>
                         <span id="putts-total" class="total-value">-</span>
+                    </div>
+                    <div class="total-item total-fir">
+                        <span class="total-label">FIR</span>
+                        <span id="fir-total" class="total-value">-</span>
+                    </div>
+                    <div class="total-item total-gir">
+                        <span class="total-label">GIR</span>
+                        <span id="gir-total" class="total-value">-</span>
                     </div>
                     <div class="total-item">
                         <span class="total-label">Front 9</span>
@@ -158,11 +176,6 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <h3>The Bonville G.C. Invitational</h3>
-        <p>A Tradition Unlike Any Other</p>
-        <p style="margin-top: 10px;">Bonville Golf Resort, NSW Australia</p>
-        <img src="images/bonville-logo.jpg" alt="Bonville Logo" class="footer-logo">
-        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.8;">© 2026 The Bonville G.C. Invitational. All rights reserved.</p>
     </footer>
 
     <!-- Firebase SDK (shared initialization) -->
