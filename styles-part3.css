@@ -1838,6 +1838,9 @@ input[type="date"].setup-input {
     border-collapse: collapse;
     background: white;
     font-size: 0.9rem;
+    border: 2px solid var(--masters-gold);
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 .modal-scorecard th,
@@ -1847,9 +1850,10 @@ input[type="date"].setup-input {
     border-bottom: 1px solid #eee;
 }
 
+/* Header row - masters green with gold text */
 .modal-scorecard thead {
     background: var(--masters-green);
-    color: white;
+    color: var(--masters-gold);
 }
 
 .modal-scorecard thead th {
@@ -1859,6 +1863,20 @@ input[type="date"].setup-input {
 
 .modal-scorecard tbody tr:hover {
     background: #f9f9f9;
+}
+
+/* Hole number column - masters green with gold text */
+.modal-scorecard-vertical tbody td:first-child {
+    background: var(--masters-green);
+    color: var(--masters-gold);
+    font-weight: 700;
+}
+
+/* Par column - masters cream with brown text */
+.modal-scorecard-vertical tbody td:nth-child(2) {
+    background: var(--masters-cream);
+    color: var(--masters-brown);
+    font-weight: 600;
 }
 
 .modal-scorecard .under-par {
@@ -1871,13 +1889,24 @@ input[type="date"].setup-input {
     font-weight: 700;
 }
 
+/* OUT / IN subtotal rows - grey background */
 .modal-scorecard .subtotal-row {
-    background: rgba(0, 102, 51, 0.1);
+    background: #e8e8e8;
     font-weight: 600;
 }
 
 .modal-scorecard .subtotal-row td {
-    border-bottom: 2px solid var(--masters-green);
+    border-bottom: 2px solid #ccc;
+}
+
+.modal-scorecard .subtotal-row td:first-child {
+    background: #e8e8e8;
+    color: var(--masters-dark-green);
+}
+
+.modal-scorecard .subtotal-row td:nth-child(2) {
+    background: #e8e8e8;
+    color: var(--masters-brown);
 }
 
 .modal-scorecard .total-row {
@@ -1888,6 +1917,16 @@ input[type="date"].setup-input {
 
 .modal-scorecard .total-row td {
     border-bottom: none;
+}
+
+.modal-scorecard .total-row td:first-child {
+    background: var(--masters-gold);
+    color: var(--masters-dark-green);
+}
+
+.modal-scorecard .total-row td:nth-child(2) {
+    background: var(--masters-gold);
+    color: var(--masters-dark-green);
 }
 
 @keyframes currentHolePulse {

@@ -1345,7 +1345,7 @@ function generateModalScorecard() {
     
     // ========== VERTICAL LAYOUT (Mobile) ==========
     html += '<table class="modal-scorecard modal-scorecard-vertical">';
-    html += '<thead><tr><th>Hole</th><th>Par</th><th>Score</th><th>Pts</th><th>Putts</th></tr></thead>';
+    html += '<thead><tr style="border-bottom: 2px solid rgba(255,255,255,0.3);"><th>Hole</th><th>Par</th><th>Score</th><th>Pts</th><th>Putts</th></tr></thead>';
     html += '<tbody>';
     
     // Front 9
