@@ -1,3 +1,8 @@
+/* Stop zooming on double-tap */
+html {
+    touch-action: manipulation;
+}
+
 /* Masters-themed Golf Event Website Styles */
 :root {
     --masters-green: #006747;

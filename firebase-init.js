@@ -64,8 +64,8 @@ async function decryptConfig(password) {
 
 // Initialize Firebase with password prompt
 async function initializeFirebase() {
-    // Check if password is stored in sessionStorage
-    let password = sessionStorage.getItem('fbPassword');
+    // Check if password is stored in localStorage
+    let password = localStorage.getItem('fbPassword');
     
     if (!password) {
         password = prompt('Enter password to access live scoring features:');
@@ -78,13 +78,13 @@ async function initializeFirebase() {
     const firebaseConfig = await decryptConfig(password);
     
     if (!firebaseConfig) {
-        sessionStorage.removeItem('fbPassword');
+        localStorage.removeItem('fbPassword');
         alert('Invalid password. Please refresh the page and try again.');
         return false;
     }
     
     // Store password for session
-    sessionStorage.setItem('fbPassword', password);
+    localStorage.setItem('fbPassword', password);
     
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);

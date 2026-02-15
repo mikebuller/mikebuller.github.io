@@ -227,12 +227,22 @@ function checkUrlForJoinCode() {
 
 // Load user's active rounds from session storage
 async function loadMyActiveRounds() {
-    // Get joined rounds from session storage
-    const joinedRounds = JSON.parse(sessionStorage.getItem('joinedRounds') || '[]');
-    // Get completed rounds from local storage
-    const completedRounds = JSON.parse(localStorage.getItem('completedRounds') || '[]');
-    
-    const archivedRounds = JSON.parse(localStorage.getItem('archivedRounds') || '[]');
+    const currentPlayerName = localStorage.getItem('currentPlayerName');
+
+    // Get rounds from local storage, filtered by current player
+    const allJoinedRounds = JSON.parse(localStorage.getItem('joinedRounds') || '[]');
+    const allCompletedRounds = JSON.parse(localStorage.getItem('completedRounds') || '[]');
+    const allArchivedRounds = JSON.parse(localStorage.getItem('archivedRounds') || '[]');
+
+    const joinedRounds = currentPlayerName
+        ? allJoinedRounds.filter(r => r.playerName === currentPlayerName)
+        : allJoinedRounds;
+    const completedRounds = currentPlayerName
+        ? allCompletedRounds.filter(r => r.playerName === currentPlayerName)
+        : allCompletedRounds;
+    const archivedRounds = currentPlayerName
+        ? allArchivedRounds.filter(r => r.playerName === currentPlayerName)
+        : allArchivedRounds;
     
     if (joinedRounds.length === 0 && completedRounds.length === 0 && archivedRounds.length === 0) {
         document.getElementById('my-rounds-section').style.display = 'none';
@@ -383,7 +393,7 @@ async function removeRound(roundId, scoreId) {
     }
     
     // Find the round data before removing
-    let joinedRounds = JSON.parse(sessionStorage.getItem('joinedRounds') || '[]');
+    let joinedRounds = JSON.parse(localStorage.getItem('joinedRounds') || '[]');
     const roundToArchive = joinedRounds.find(r => r.roundId === roundId && r.scoreId === scoreId);
     
     if (roundToArchive) {
@@ -401,7 +411,7 @@ async function removeRound(roundId, scoreId) {
     
     // Remove from session storage
     joinedRounds = joinedRounds.filter(r => r.roundId !== roundId || r.scoreId !== scoreId);
-    sessionStorage.setItem('joinedRounds', JSON.stringify(joinedRounds));
+    localStorage.setItem('joinedRounds', JSON.stringify(joinedRounds));
     
     // Delete the score from Firebase
     if (window.db && window.firestoreHelpers && scoreId) {
@@ -728,13 +738,41 @@ async function joinRound() {
         }
     }
     
+    // Save player identity to localStorage
+    localStorage.setItem('currentPlayerName', playerName);
+
     if (!window.db || !window.firestoreHelpers) {
         alert('Database not initialized. Please refresh the page.');
         return;
     }
     
     try {
-        const { doc, setDoc, updateDoc, arrayUnion } = window.firestoreHelpers;
+        const { doc, setDoc, updateDoc, arrayUnion, collection, query, where, getDocs } = window.firestoreHelpers;
+
+        // Check if this player/team has already joined this round
+        const scoresRef = collection(window.db, 'scores');
+        const existingQuery = query(scoresRef,
+            where('roundId', '==', createdRoundId),
+            where('playerName', '==', playerName)
+        );
+        const existingDocs = await getDocs(existingQuery);
+
+        if (!existingDocs.empty) {
+            const existingScore = existingDocs.docs[0];
+            const existingData = existingScore.data();
+
+            // If they already have an active score, redirect to it
+            if (existingData.status === 'in-progress') {
+                const resume = confirm(`${playerName} has already joined this round. Would you like to resume scoring?`);
+                if (resume) {
+                    window.location.href = `live-scores.html?round=${createdRoundId}&score=${existingScore.id}`;
+                }
+                return;
+            } else {
+                alert(`${playerName} has already completed this round.`);
+                return;
+            }
+        }
         
         // Create score document for this player/team in the round
         const scoreId = `score_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -764,13 +802,13 @@ async function joinRound() {
         });
         
         // Store in session for "My Active Rounds"
-        const joinedRounds = JSON.parse(sessionStorage.getItem('joinedRounds') || '[]');
+        const joinedRounds = JSON.parse(localStorage.getItem('joinedRounds') || '[]');
         joinedRounds.push({
             roundId: createdRoundId,
             scoreId: scoreId,
             playerName: playerName
         });
-        sessionStorage.setItem('joinedRounds', JSON.stringify(joinedRounds));
+        localStorage.setItem('joinedRounds', JSON.stringify(joinedRounds));
         
         console.log('Joined round:', scoreData);
         
@@ -886,8 +924,12 @@ function loadArchivedRounds() {
     const container = document.getElementById('archived-rounds-list');
     if (!container) return;
     
-    const archivedRounds = JSON.parse(localStorage.getItem('archivedRounds') || '[]');
-    
+    const currentPlayerName = localStorage.getItem('currentPlayerName');
+    const allArchivedRounds = JSON.parse(localStorage.getItem('archivedRounds') || '[]');
+    const archivedRounds = currentPlayerName
+        ? allArchivedRounds.filter(r => r.playerName === currentPlayerName)
+        : allArchivedRounds;
+
     if (archivedRounds.length === 0) {
         container.innerHTML = '<div class="no-rounds-message">No archived rounds</div>';
         return;
