@@ -259,6 +259,23 @@
                         </div>
                     </div>
 
+                    <!-- Optional Settings -->
+                    <div class="optional-section">
+                        <button type="button" class="optional-toggle" onclick="toggleOptionalSettings()">
+                            Optional Settings <span id="optional-chevron">▼</span>
+                        </button>
+                        <div id="optional-settings" class="optional-content" style="display: none;">
+                            <div class="setup-field">
+                                <label>Hole Prizes</label>
+                                <p class="field-hint">Assign prizes to specific holes</p>
+                                <div id="hole-prizes-list" class="hole-prizes-list">
+                                    <!-- Populated by JS -->
+                                </div>
+                                <button type="button" class="add-prize-btn" onclick="addHolePrize()">+ Add Hole Prize</button>
+                            </div>
+                        </div>
+                    </div>
+
                     <button onclick="createRound()" class="cta-button start-round-btn">Create Round</button>
                 </div>
             </div>

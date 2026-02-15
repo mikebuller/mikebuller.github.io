@@ -166,12 +166,15 @@ async function loadRoundFromParams(roundId, scoreId) {
             handicap: scoreData.handicap || 18,
             tees: scoreData.tees || roundData.settings?.tees || 'tallwood',
             course: roundData.settings?.course || 'Bonville Golf Resort',
+            holePrizes: roundData.settings?.holePrizes || [],
             date: roundData.date,
             currentHole: 1,
             scores: scoreData.scores || {},
             putts: scoreData.putts || {},
             fir: scoreData.fir || {},
-            gir: scoreData.gir || {}
+            gir: scoreData.gir || {},
+            ctp: scoreData.ctp || {},
+            longestDrive: scoreData.longestDrive || {}
         };
         
         // Find the last hole with a score to resume from
@@ -303,7 +306,10 @@ function startRound() {
         scores: {},
         putts: {},
         fir: {},
-        gir: {}
+        gir: {},
+        ctp: {},
+        longestDrive: {},
+        holePrizes: []
     };
     
     // Update UI
@@ -392,11 +398,72 @@ function updateHoleDisplay() {
     document.getElementById('prev-hole-btn').disabled = hole === 1;
     document.getElementById('next-hole-btn').disabled = hole === 18;
     
+    // Update hole prize indicator and input
+    updateHolePrizeDisplay(hole);
+    
     // Update quick nav
     updateQuickNav();
     
     // Update totals
     updateTotals();
+}
+
+// Update hole prize indicator and input row
+function updateHolePrizeDisplay(hole) {
+    const indicator = document.getElementById('hole-prize-indicator');
+    const prizeRow = document.getElementById('prize-input-row');
+    const prizeLabel = document.getElementById('prize-input-label');
+    const prizeDistance = document.getElementById('prize-distance');
+    const prizeUnit = document.getElementById('prize-unit');
+    
+    if (!indicator || !prizeRow || !currentRound) return;
+    
+    // Find prize for this hole
+    const prizes = currentRound.holePrizes || [];
+    const prize = prizes.find(p => parseInt(p.hole) === hole);
+    
+    const prizeDivider = document.getElementById('prize-divider');
+    
+    if (prize) {
+        const isCtp = prize.type === 'ctp';
+        const emoji = isCtp ? '⛳' : '💪';
+        const label = isCtp ? 'Closest to Pin' : 'Longest Drive';
+        
+        // Show indicator
+        indicator.style.display = '';
+        document.getElementById('hole-prize-text').textContent = `${emoji} ${label}`;
+        
+        // Show divider and input row
+        if (prizeDivider) prizeDivider.style.display = '';
+        prizeRow.style.display = '';
+        prizeLabel.textContent = `${emoji} ${label}`;
+        prizeUnit.textContent = isCtp ? 'cm' : 'm';
+        
+        // Set current value
+        const dataKey = isCtp ? 'ctp' : 'longestDrive';
+        prizeDistance.value = currentRound[dataKey][hole] || '';
+    } else {
+        indicator.style.display = 'none';
+        if (prizeDivider) prizeDivider.style.display = 'none';
+        prizeRow.style.display = 'none';
+    }
+}
+
+// Update prize distance value
+function updatePrizeDistance() {
+    if (!currentRound) return;
+    
+    const hole = currentRound.currentHole;
+    const prizes = currentRound.holePrizes || [];
+    const prize = prizes.find(p => parseInt(p.hole) === hole);
+    
+    if (!prize) return;
+    
+    const value = parseFloat(document.getElementById('prize-distance').value) || 0;
+    const dataKey = prize.type === 'ctp' ? 'ctp' : 'longestDrive';
+    currentRound[dataKey][hole] = value;
+    
+    saveActiveRoundToFirebase();
 }
 
 // Adjust score
@@ -687,6 +754,8 @@ async function saveRound() {
             putts: currentRound.putts,
             fir: currentRound.fir,
             gir: currentRound.gir,
+            ctp: currentRound.ctp,
+            longestDrive: currentRound.longestDrive,
             status: 'completed',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
@@ -730,6 +799,8 @@ async function saveRound() {
             putts: currentRound.putts,
             fir: currentRound.fir,
             gir: currentRound.gir,
+            ctp: currentRound.ctp,
+            longestDrive: currentRound.longestDrive,
             totalScore: totalScore,
             stablefordPoints: totalStableford,
             joinCode: ''
@@ -1558,7 +1629,9 @@ async function saveActiveRoundToFirebase() {
                     score: currentRound.scores[i] !== undefined ? currentRound.scores[i] : null,
                     putts: currentRound.putts[i] || 0,
                     fir: !!currentRound.fir[i],
-                    gir: !!currentRound.gir[i]
+                    gir: !!currentRound.gir[i],
+                    ctp: currentRound.ctp[i] || 0,
+                    longestDrive: currentRound.longestDrive[i] || 0
                 };
             }
         }
@@ -1573,6 +1646,8 @@ async function saveActiveRoundToFirebase() {
                 putts: currentRound.putts,
                 fir: currentRound.fir,
                 gir: currentRound.gir,
+                ctp: currentRound.ctp,
+                longestDrive: currentRound.longestDrive,
                 updatedAt: new Date().toISOString()
             });
         }

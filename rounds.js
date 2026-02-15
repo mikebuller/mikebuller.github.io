@@ -5,6 +5,7 @@ const allPlayers = [
     { id: 1, name: "Mike Buller", handicap: 9.0 },
     { id: 2, name: "Adrian Platas", handicap: 3.2 },
     { id: 3, name: "Darren Shadlow", handicap: 6.0 },
+    { id: 4, name: "Nathan Pizzuto", handicap: 35.0 },
 ];
 
 // State
@@ -110,6 +111,67 @@ function formatTeeName(tee) {
         back: 'Back Tees'
     };
     return teeNames[tee] || tee.charAt(0).toUpperCase() + tee.slice(1);
+}
+
+// Toggle optional settings section
+function toggleOptionalSettings() {
+    const content = document.getElementById('optional-settings');
+    const chevron = document.getElementById('optional-chevron');
+    
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+        chevron.textContent = '▲';
+    } else {
+        content.style.display = 'none';
+        chevron.textContent = '▼';
+    }
+}
+
+// Add a hole prize entry
+let holePrizeCount = 0;
+function addHolePrize() {
+    holePrizeCount++;
+    const list = document.getElementById('hole-prizes-list');
+    
+    const entry = document.createElement('div');
+    entry.className = 'hole-prize-entry';
+    entry.id = `hole-prize-${holePrizeCount}`;
+    
+    let holeOptions = '';
+    for (let i = 1; i <= 18; i++) {
+        holeOptions += `<option value="${i}">Hole ${i}</option>`;
+    }
+    
+    entry.innerHTML = `
+        <select class="prize-hole-select">
+            ${holeOptions}
+        </select>
+        <select class="prize-type-select">
+            <option value="ctp">⛳ Closest to pin</option>
+            <option value="ld">💪 Longest drive</option>
+        </select>
+        <button type="button" class="remove-prize-btn" onclick="removeHolePrize('hole-prize-${holePrizeCount}')">✕</button>
+    `;
+    
+    list.appendChild(entry);
+}
+
+// Remove a hole prize entry
+function removeHolePrize(id) {
+    const entry = document.getElementById(id);
+    if (entry) entry.remove();
+}
+
+// Get configured hole prizes
+function getHolePrizes() {
+    const entries = document.querySelectorAll('.hole-prize-entry');
+    const prizes = [];
+    entries.forEach(entry => {
+        const hole = entry.querySelector('.prize-hole-select').value;
+        const type = entry.querySelector('.prize-type-select').value;
+        prizes.push({ hole: parseInt(hole), type: type });
+    });
+    return prizes;
 }
 
 // Update tee options based on selected course
@@ -458,7 +520,8 @@ async function createRound() {
                 course: course,
                 holes: parseInt(holes),
                 tees: tees,
-                scoringFormat: 'stableford'
+                scoringFormat: 'stableford',
+                holePrizes: getHolePrizes()
             },
             invitedPlayers: []
         };
@@ -737,6 +800,9 @@ function initializeMobileMenu() {
 window.showRoundsHub = showRoundsHub;
 window.showCreateRound = showCreateRound;
 window.showJoinRound = showJoinRound;
+window.toggleOptionalSettings = toggleOptionalSettings;
+window.addHolePrize = addHolePrize;
+window.removeHolePrize = removeHolePrize;
 window.createRound = createRound;
 window.copyJoinCode = copyJoinCode;
 window.copyShareLink = copyShareLink;
