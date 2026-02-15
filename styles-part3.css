@@ -762,7 +762,24 @@
 .live-scores-section {
     background: linear-gradient(180deg, var(--masters-cream) 0%, #e8e4d0 100%);
     padding-top: 80px;
+    padding-bottom: 15px;
     min-height: 100vh;
+}
+
+.rounds-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.rounds-page .page-section,
+.rounds-page .live-scores-section {
+    min-height: auto;
+    flex: 1;
+}
+
+.rounds-page .footer {
+    margin-top: auto;
 }
 
 @media (max-width: 600px) {
@@ -2179,6 +2196,61 @@ body.header-lb-active {
     border-left: 4px solid var(--masters-gold);
 }
 
+.my-round-card.archived {
+    border-left: 4px solid #999;
+    opacity: 0.7;
+    position: relative;
+}
+
+.archived-remove-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.archived-actions {
+    width: 100%;
+    text-align: center;
+    padding: 15px 0;
+}
+
+.delete-all-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.delete-all-btn:hover {
+    background: #c82333;
+}
+
+.no-rounds-message {
+    width: 100%;
+    text-align: center;
+    padding: 30px;
+    color: #888;
+    font-style: italic;
+}
+
+.my-round-card.highlight-completed {
+    animation: highlightBorderPulse 1.5s ease-in-out;
+    border: 1px solid var(--masters-green);
+}
+
+@keyframes highlightBorderPulse {
+    0% { border-color: #00a86b; box-shadow: 0 0 10px 5px rgba(0, 168, 107, 0.4); }
+    25% { border-color: var(--masters-dark-green); box-shadow: 0 0 10px 5px rgba(0, 168, 107, 0.8); }
+    50% { border-color: #00a86b; box-shadow: 0 0 10px 5px rgba(0, 168, 107, 0.4); }
+    75% { border-color: var(--masters-dark-green); box-shadow: 0 0 10px 5px rgba(0, 168, 107, 0.8); }
+    100% { border-color: var(--masters-green); box-shadow: none; }
+}
+
 .my-rounds-list {
     display: flex;
     flex-direction: column;
@@ -2194,6 +2266,7 @@ body.header-lb-active {
     padding: 1rem 1.25rem;
     padding-right: 2.5rem;
     border-radius: 10px;
+    border-left: 4px solid var(--masters-green);
     transition: all 0.2s ease;
 }
 
@@ -2214,7 +2287,7 @@ body.header-lb-active {
 }
 
 .my-round-info .my-round-course {
-    color: var(--masters-green);
+    color: var(--masters-brown);
     font-weight: 500;
     margin-bottom: 0.25rem;
 }
@@ -2715,8 +2788,7 @@ body.header-lb-active {
     }
     
     .empty-rounds-message {
-        padding: 1.5rem 1rem;
-        font-size: 0.9rem;
+        padding: 30px;
     }
     
     .round-score-summary {

@@ -548,7 +548,7 @@ function updateTotals() {
     const totalScore = front9Score + back9Score;
     const totalPutts = front9Putts + back9Putts;
     const totalStableford = front9Stableford + back9Stableford;
-    const net = totalScore - handicap;
+    const net = Math.round(totalScore - handicap);
     
     // Format relative to par display
     const formatRelativeToPar = (score, par, hasScores) => {
@@ -633,6 +633,10 @@ async function saveRound() {
         alert('Database not initialized. Please refresh the page.');
         return;
     }
+
+    if (!confirm('You will not be able to update scores once a round is complete. Are you sure you want to submit?')) {
+        return;
+    }
     
     try {
         const { doc, setDoc, updateDoc, deleteDoc } = window.firestoreHelpers;
@@ -681,14 +685,17 @@ async function saveRound() {
         
         await setDoc(doc(window.db, 'scores', scoreId), scoreData);
         
-        // Delete from activeRounds collection
+        // Mark as finished in activeRounds collection so leaderboard shows "F"
         if (currentRound.roundId && currentRound.scoreId) {
             const activeRoundId = `${currentRound.roundId}_${currentRound.scoreId}`;
             try {
-                await deleteDoc(doc(window.db, 'activeRounds', activeRoundId));
-                console.log('Deleted active round:', activeRoundId);
+                await updateDoc(doc(window.db, 'activeRounds', activeRoundId), {
+                    status: 'finished',
+                    updatedAt: new Date().toISOString()
+                });
+                console.log('Marked active round as finished:', activeRoundId);
             } catch (e) {
-                console.log('Could not delete active round (may not exist):', e);
+                console.log('Could not update active round (may not exist):', e);
             }
         }
         
@@ -722,16 +729,16 @@ async function saveRound() {
         
         // Fire confetti celebration!
         fireConfetti();
-        
-        // Show success message
-        alert('🎉 Round saved successfully!');
+        //
+        // // Show success message
+        // alert('🎉 Round saved successfully!');
         
         // Reset
         currentRound = null;
         
         // Redirect back to rounds page after a short delay to show confetti
         setTimeout(() => {
-            window.location.href = 'rounds.html';
+            window.location.href = `rounds.html?completed=${scoreId}`;
         }, 2000);
         
     } catch (error) {
