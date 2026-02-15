@@ -225,38 +225,57 @@ function checkUrlForJoinCode() {
     }
 }
 
-// Load user's active rounds from session storage
+// Load all rounds (active + completed) and show the section
 async function loadMyActiveRounds() {
     const currentPlayerName = localStorage.getItem('currentPlayerName');
-
-    // Get rounds from local storage, filtered by current player
     const allJoinedRounds = JSON.parse(localStorage.getItem('joinedRounds') || '[]');
-    const allCompletedRounds = JSON.parse(localStorage.getItem('completedRounds') || '[]');
-    const allArchivedRounds = JSON.parse(localStorage.getItem('archivedRounds') || '[]');
-
     const joinedRounds = currentPlayerName
         ? allJoinedRounds.filter(r => r.playerName === currentPlayerName)
         : allJoinedRounds;
-    const completedRounds = currentPlayerName
-        ? allCompletedRounds.filter(r => r.playerName === currentPlayerName)
-        : allCompletedRounds;
-    const archivedRounds = currentPlayerName
-        ? allArchivedRounds.filter(r => r.playerName === currentPlayerName)
-        : allArchivedRounds;
     
-    if (joinedRounds.length === 0 && completedRounds.length === 0 && archivedRounds.length === 0) {
+    // Check if we have any active rounds or if Firebase has completed/archived rounds
+    const hasActiveRounds = joinedRounds.length > 0;
+    let hasCompletedRounds = false;
+    let hasArchivedRounds = false;
+    
+    if (window.db && window.firestoreHelpers && currentPlayerName) {
+        try {
+            const { collection, query, where, getDocs } = window.firestoreHelpers;
+            const completedQ = query(
+                collection(window.db, 'completedRounds'),
+                where('playerName', '==', currentPlayerName)
+            );
+            const archivedQ = query(
+                collection(window.db, 'archivedRounds'),
+                where('playerName', '==', currentPlayerName)
+            );
+            const [completedSnap, archivedSnap] = await Promise.all([getDocs(completedQ), getDocs(archivedQ)]);
+            hasCompletedRounds = !completedSnap.empty;
+            hasArchivedRounds = !archivedSnap.empty;
+        } catch (error) {
+            console.error('Error checking rounds:', error);
+        }
+    }
+    
+    if (!hasActiveRounds && !hasCompletedRounds && !hasArchivedRounds) {
         document.getElementById('my-rounds-section').style.display = 'none';
         return;
     }
     
     document.getElementById('my-rounds-section').style.display = 'block';
+    
+    // Load active rounds
+    await loadActiveRounds(joinedRounds);
+    
+    // Load completed rounds
+    await loadMyCompletedRounds();
+}
+
+// Load active rounds from localStorage + Firebase
+async function loadActiveRounds(joinedRounds) {
     const activeListContainer = document.getElementById('active-rounds-list');
-    const completedListContainer = document.getElementById('completed-rounds-list');
-    
     activeListContainer.innerHTML = '';
-    completedListContainer.innerHTML = '';
     
-    // Fetch each active round's current data
     for (const roundInfo of joinedRounds) {
         try {
             if (!window.db || !window.firestoreHelpers) continue;
@@ -275,18 +294,43 @@ async function loadMyActiveRounds() {
         }
     }
     
-    // Show empty state for active if none
     if (joinedRounds.length === 0) {
         activeListContainer.innerHTML = '<p class="empty-rounds-message">No active rounds</p>';
     }
+}
+
+// Load completed rounds from Firebase
+async function loadMyCompletedRounds() {
+    const completedListContainer = document.getElementById('completed-rounds-list');
+    completedListContainer.innerHTML = '';
     
-    // Load completed rounds
+    const currentPlayerName = localStorage.getItem('currentPlayerName');
+    let completedRounds = [];
+    
+    if (window.db && window.firestoreHelpers && currentPlayerName) {
+        try {
+            const { collection, query, where, getDocs } = window.firestoreHelpers;
+            const q = query(
+                collection(window.db, 'completedRounds'),
+                where('playerName', '==', currentPlayerName)
+            );
+            const snapshot = await getDocs(q);
+            snapshot.forEach(docSnap => {
+                completedRounds.push({ id: docSnap.id, ...docSnap.data() });
+            });
+        } catch (error) {
+            console.error('Error loading completed rounds from Firebase:', error);
+        }
+    }
+    
+    // Sort by date, most recent first
+    completedRounds.sort((a, b) => new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt));
+    
     for (const completedRound of completedRounds) {
         const roundCard = createCompletedRoundCard(completedRound);
         completedListContainer.appendChild(roundCard);
     }
     
-    // Show empty state for completed if none
     if (completedRounds.length === 0) {
         completedListContainer.innerHTML = '<p class="empty-rounds-message">No completed rounds</p>';
     }
@@ -313,7 +357,8 @@ function switchRoundsTab(tab) {
     if (tabs[tab]) tabs[tab].classList.add('active');
     if (lists[tab]) lists[tab].style.display = 'flex';
     
-    // Load archived rounds when switching to that tab
+    // Load data when switching tabs
+    if (tab === 'completed') loadMyCompletedRounds();
     if (tab === 'archived') loadArchivedRounds();
 }
 
@@ -392,35 +437,37 @@ async function removeRound(roundId, scoreId) {
         return;
     }
     
-    // Find the round data before removing
+    // Remove from joinedRounds in localStorage
     let joinedRounds = JSON.parse(localStorage.getItem('joinedRounds') || '[]');
-    const roundToArchive = joinedRounds.find(r => r.roundId === roundId && r.scoreId === scoreId);
-    
-    if (roundToArchive) {
-        // Add to archived rounds
-        let archivedRounds = JSON.parse(localStorage.getItem('archivedRounds') || '[]');
-        archivedRounds.push({
-            id: scoreId,
-            roundId: roundId,
-            type: 'active',
-            archivedAt: new Date().toISOString(),
-            ...roundToArchive
-        });
-        localStorage.setItem('archivedRounds', JSON.stringify(archivedRounds));
-    }
-    
-    // Remove from session storage
     joinedRounds = joinedRounds.filter(r => r.roundId !== roundId || r.scoreId !== scoreId);
     localStorage.setItem('joinedRounds', JSON.stringify(joinedRounds));
     
-    // Delete the score from Firebase
+    // Delete from activeRounds and move score to archivedRounds in Firebase
     if (window.db && window.firestoreHelpers && scoreId) {
         try {
-            const { doc, deleteDoc } = window.firestoreHelpers;
-            await deleteDoc(doc(window.db, 'scores', scoreId));
-            console.log('Score deleted from Firebase');
+            const { doc, getDoc, setDoc, deleteDoc } = window.firestoreHelpers;
+            
+            // Delete from activeRounds
+            const activeRoundId = `${roundId}_${scoreId}`;
+            try {
+                await deleteDoc(doc(window.db, 'activeRounds', activeRoundId));
+                console.log('Deleted from activeRounds:', activeRoundId);
+            } catch (e) {
+                console.log('Could not delete active round (may not exist):', e);
+            }
+            
+            // Move score to archivedRounds
+            const scoreSnap = await getDoc(doc(window.db, 'scores', scoreId));
+            if (scoreSnap.exists()) {
+                const scoreData = scoreSnap.data();
+                scoreData.status = 'archived';
+                scoreData.archivedAt = new Date().toISOString();
+                await setDoc(doc(window.db, 'archivedRounds', scoreId), scoreData);
+                await deleteDoc(doc(window.db, 'scores', scoreId));
+                console.log('Score moved to archivedRounds:', scoreId);
+            }
         } catch (error) {
-            console.error('Error deleting score:', error);
+            console.error('Error archiving round:', error);
         }
     }
     
@@ -749,7 +796,7 @@ async function joinRound() {
     try {
         const { doc, setDoc, updateDoc, arrayUnion, collection, query, where, getDocs } = window.firestoreHelpers;
 
-        // Check if this player/team has already joined this round
+        // Check if this player/team has already joined this round (check active scores)
         const scoresRef = collection(window.db, 'scores');
         const existingQuery = query(scoresRef,
             where('roundId', '==', createdRoundId),
@@ -759,19 +806,24 @@ async function joinRound() {
 
         if (!existingDocs.empty) {
             const existingScore = existingDocs.docs[0];
-            const existingData = existingScore.data();
-
-            // If they already have an active score, redirect to it
-            if (existingData.status === 'in-progress') {
-                const resume = confirm(`${playerName} has already joined this round. Would you like to resume scoring?`);
-                if (resume) {
-                    window.location.href = `live-scores.html?round=${createdRoundId}&score=${existingScore.id}`;
-                }
-                return;
-            } else {
-                alert(`${playerName} has already completed this round.`);
-                return;
+            const resume = confirm(`${playerName} has already joined this round. Would you like to resume scoring?`);
+            if (resume) {
+                window.location.href = `live-scores.html?round=${createdRoundId}&score=${existingScore.id}`;
             }
+            return;
+        }
+        
+        // Check if this player has already completed this round
+        const completedRef = collection(window.db, 'completedRounds');
+        const completedQuery = query(completedRef,
+            where('roundId', '==', createdRoundId),
+            where('playerName', '==', playerName)
+        );
+        const completedDocs = await getDocs(completedQuery);
+        
+        if (!completedDocs.empty) {
+            alert(`${playerName} has already completed this round.`);
+            return;
         }
         
         // Create score document for this player/team in the round
@@ -886,9 +938,24 @@ const courseData = {
 };
 
 // View scorecard for a completed round
-function viewScorecard(roundId) {
-    const completedRounds = JSON.parse(localStorage.getItem('completedRounds') || '[]');
-    const round = completedRounds.find(r => r.id === roundId);
+async function viewScorecard(roundId) {
+    let round = null;
+    
+    // Fetch from Firebase (check completedRounds first, then archivedRounds)
+    if (window.db && window.firestoreHelpers) {
+        try {
+            const { doc, getDoc } = window.firestoreHelpers;
+            let docSnap = await getDoc(doc(window.db, 'completedRounds', roundId));
+            if (!docSnap.exists()) {
+                docSnap = await getDoc(doc(window.db, 'archivedRounds', roundId));
+            }
+            if (docSnap.exists()) {
+                round = { id: docSnap.id, ...docSnap.data() };
+            }
+        } catch (error) {
+            console.error('Error fetching round from Firebase:', error);
+        }
+    }
     
     if (!round) {
         alert('Round not found');
@@ -920,15 +987,29 @@ function closeScorecardModal() {
 }
 
 // Load and display archived rounds
-function loadArchivedRounds() {
+async function loadArchivedRounds() {
     const container = document.getElementById('archived-rounds-list');
     if (!container) return;
     
     const currentPlayerName = localStorage.getItem('currentPlayerName');
-    const allArchivedRounds = JSON.parse(localStorage.getItem('archivedRounds') || '[]');
-    const archivedRounds = currentPlayerName
-        ? allArchivedRounds.filter(r => r.playerName === currentPlayerName)
-        : allArchivedRounds;
+    let archivedRounds = [];
+    
+    // Fetch archived rounds from Firebase
+    if (window.db && window.firestoreHelpers && currentPlayerName) {
+        try {
+            const { collection, query, where, getDocs } = window.firestoreHelpers;
+            const q = query(
+                collection(window.db, 'archivedRounds'),
+                where('playerName', '==', currentPlayerName)
+            );
+            const snapshot = await getDocs(q);
+            snapshot.forEach(doc => {
+                archivedRounds.push({ id: doc.id, ...doc.data() });
+            });
+        } catch (error) {
+            console.error('Error loading archived rounds from Firebase:', error);
+        }
+    }
 
     if (archivedRounds.length === 0) {
         container.innerHTML = '<div class="no-rounds-message">No archived rounds</div>';
@@ -936,7 +1017,7 @@ function loadArchivedRounds() {
     }
     
     // Sort by archived date, most recent first
-    archivedRounds.sort((a, b) => new Date(b.archivedAt) - new Date(a.archivedAt));
+    archivedRounds.sort((a, b) => new Date(b.archivedAt || b.updatedAt) - new Date(a.archivedAt || a.updatedAt));
     
     let html = '';
     
@@ -961,7 +1042,7 @@ function loadArchivedRounds() {
         
         html += `
             <div class="my-round-card archived">
-                <button class="remove-btn archived-remove-btn" onclick="permanentlyDeleteRound(${index})" title="Delete permanently">✕</button>
+                <button class="remove-btn archived-remove-btn" onclick="permanentlyDeleteRound('${round.id}')" title="Delete permanently">✕</button>
                 <div class="my-round-info">
                     <h4>${roundName}</h4>
                     <p class="my-round-course">${courseName}</p>
@@ -983,44 +1064,151 @@ function loadArchivedRounds() {
 }
 
 // Permanently delete a single archived round
-function permanentlyDeleteRound(index) {
+// Check if any other scores reference a round across all collections
+async function hasOtherScoresForRound(roundId) {
+    if (!window.db || !window.firestoreHelpers) return false;
+    
+    const { collection, query, where, getDocs } = window.firestoreHelpers;
+    
+    // Check scores (active), completedRounds, and archivedRounds
+    const collections = ['scores', 'completedRounds', 'archivedRounds'];
+    for (const col of collections) {
+        const q = query(
+            collection(window.db, col),
+            where('roundId', '==', roundId)
+        );
+        const snapshot = await getDocs(q);
+        if (snapshot.size > 0) return true;
+    }
+    
+    return false;
+}
+
+async function permanentlyDeleteRound(roundId) {
     if (!confirm('Permanently delete this round? This cannot be undone.')) return;
     
-    let archivedRounds = JSON.parse(localStorage.getItem('archivedRounds') || '[]');
-    archivedRounds.splice(index, 1);
-    localStorage.setItem('archivedRounds', JSON.stringify(archivedRounds));
+    // Delete from Firebase
+    if (window.db && window.firestoreHelpers) {
+        try {
+            const { doc, getDoc, deleteDoc } = window.firestoreHelpers;
+            
+            // Get the archived round to find the parent round ID
+            const archivedSnap = await getDoc(doc(window.db, 'archivedRounds', roundId));
+            const parentRoundId = archivedSnap.exists() ? archivedSnap.data().roundId : null;
+            
+            // Delete from archivedRounds
+            await deleteDoc(doc(window.db, 'archivedRounds', roundId));
+            console.log('Deleted archived round from Firebase:', roundId);
+            
+            // Also delete from scores collection (safety cleanup)
+            try {
+                await deleteDoc(doc(window.db, 'scores', roundId));
+                console.log('Deleted score from Firebase:', roundId);
+            } catch (e) {
+                // May not exist, that's fine
+            }
+            
+            // Delete from rounds collection only if no other scores reference it
+            if (parentRoundId) {
+                try {
+                    const hasOtherScores = await hasOtherScoresForRound(parentRoundId);
+                    console.log('Has other scores for round', parentRoundId, ':', hasOtherScores);
+                    if (!hasOtherScores) {
+                        await deleteDoc(doc(window.db, 'rounds', parentRoundId));
+                        console.log('Deleted round from Firebase (no remaining scores):', parentRoundId);
+                    } else {
+                        console.log('Round still has other scores, keeping:', parentRoundId);
+                    }
+                } catch (e) {
+                    console.log('Could not delete parent round (may not exist or already deleted):', e);
+                }
+            }
+        } catch (e) {
+            console.error('Error deleting from Firebase:', e);
+        }
+    }
     
     loadArchivedRounds();
 }
 
 // Delete all archived rounds permanently
-function deleteAllArchivedRounds() {
+async function deleteAllArchivedRounds() {
     if (!confirm('Permanently delete all archived rounds? This cannot be undone.')) return;
     
-    localStorage.removeItem('archivedRounds');
+    const currentPlayerName = localStorage.getItem('currentPlayerName');
+    
+    // Fetch and delete all archived rounds from Firebase
+    if (window.db && window.firestoreHelpers && currentPlayerName) {
+        try {
+            const { collection, query, where, getDocs, doc, deleteDoc } = window.firestoreHelpers;
+            const q = query(
+                collection(window.db, 'archivedRounds'),
+                where('playerName', '==', currentPlayerName)
+            );
+            const snapshot = await getDocs(q);
+            for (const docSnap of snapshot.docs) {
+                const parentRoundId = docSnap.data().roundId;
+                
+                await deleteDoc(doc(window.db, 'archivedRounds', docSnap.id));
+                console.log('Deleted archived round from Firebase:', docSnap.id);
+                
+                // Also delete from scores collection (safety cleanup)
+                try {
+                    await deleteDoc(doc(window.db, 'scores', docSnap.id));
+                    console.log('Deleted score from Firebase:', docSnap.id);
+                } catch (e) {
+                    // May not exist, that's fine
+                }
+                
+                // Delete from rounds collection only if no other scores reference it
+                if (parentRoundId) {
+                    try {
+                        const hasOtherScores = await hasOtherScoresForRound(parentRoundId);
+                        if (!hasOtherScores) {
+                            await deleteDoc(doc(window.db, 'rounds', parentRoundId));
+                            console.log('Deleted round from Firebase (no remaining scores):', parentRoundId);
+                        } else {
+                            console.log('Round still has other scores, keeping:', parentRoundId);
+                        }
+                    } catch (e) {
+                        console.log('Could not delete parent round:', e);
+                    }
+                }
+            }
+        } catch (e) {
+            console.error('Error deleting archived rounds from Firebase:', e);
+        }
+    }
+    
     loadArchivedRounds();
 }
 
 // Remove a completed round
-function removeCompletedRound(roundId) {
+async function removeCompletedRound(roundId) {
     if (!confirm('Are you sure you want to archive this round?')) {
         return;
     }
     
-    let completedRounds = JSON.parse(localStorage.getItem('completedRounds') || '[]');
-    const roundToArchive = completedRounds.find(r => r.id === roundId);
-    
-    if (roundToArchive) {
-        // Add to archived rounds
-        let archivedRounds = JSON.parse(localStorage.getItem('archivedRounds') || '[]');
-        roundToArchive.archivedAt = new Date().toISOString();
-        archivedRounds.push(roundToArchive);
-        localStorage.setItem('archivedRounds', JSON.stringify(archivedRounds));
+    // Move from completedRounds to archivedRounds in Firebase
+    if (window.db && window.firestoreHelpers) {
+        try {
+            const { doc, getDoc, setDoc, deleteDoc } = window.firestoreHelpers;
+            // Read the completed round
+            const docSnap = await getDoc(doc(window.db, 'completedRounds', roundId));
+            if (docSnap.exists()) {
+                const roundData = docSnap.data();
+                roundData.status = 'archived';
+                roundData.archivedAt = new Date().toISOString();
+                // Write to archivedRounds
+                await setDoc(doc(window.db, 'archivedRounds', roundId), roundData);
+                // Delete from completedRounds
+                await deleteDoc(doc(window.db, 'completedRounds', roundId));
+                console.log('Round moved to archivedRounds:', roundId);
+            }
+        } catch (e) {
+            console.error('Error archiving round in Firebase:', e);
+        }
     }
-    
-    // Remove from completed rounds
-    completedRounds = completedRounds.filter(r => r.id !== roundId);
-    localStorage.setItem('completedRounds', JSON.stringify(completedRounds));
     
     // Refresh the list
     loadMyActiveRounds();
