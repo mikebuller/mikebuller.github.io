@@ -20,15 +20,11 @@
         };
     </script>
 </head>
-<body>
+<body class="rounds-page">
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="nav-logo">
-                <a href="index.html">
-                    <img src="images/bonville-logo.jpg" alt="Bonville Golf Resort">
-                </a>
-            </div>
+            <div class="option-icon">⛳️</div>
             <button class="mobile-menu-toggle" aria-label="Toggle navigation menu">
                 <span class="hamburger-line"></span>
                 <span class="hamburger-line"></span>
@@ -47,7 +43,7 @@
     </nav>
 
     <!-- Main Content -->
-    <section id="live-scores" class="page-section live-scores-section" style="padding-top: 120px;">
+    <section id="live-scores" class="page-section live-scores-section" style="padding-top: 80px;">
         <div class="container">
             <div class="section-header">
                 <h2>Rounds</h2>
@@ -69,16 +65,22 @@
                     </div>
                 </div>
 
+                <div class="rounds-divider"></div>
+
                 <!-- My Rounds Section with Tabs -->
                 <div id="my-rounds-section" class="my-rounds-section" style="display: none;">
                     <div class="my-rounds-tabs">
-                        <button class="my-rounds-tab active" onclick="switchRoundsTab('active')" id="tab-active">Active Rounds</button>
-                        <button class="my-rounds-tab" onclick="switchRoundsTab('completed')" id="tab-completed">Completed Rounds</button>
+                        <button class="my-rounds-tab active" onclick="switchRoundsTab('active')" id="tab-active">Active</button>
+                        <button class="my-rounds-tab" onclick="switchRoundsTab('completed')" id="tab-completed">Completed</button>
+                        <button class="my-rounds-tab" onclick="switchRoundsTab('archived')" id="tab-archived">Archived</button>
                     </div>
                     <div id="active-rounds-list" class="my-rounds-list">
                         <!-- Populated by JavaScript -->
                     </div>
                     <div id="completed-rounds-list" class="my-rounds-list" style="display: none;">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                    <div id="archived-rounds-list" class="my-rounds-list" style="display: none;">
                         <!-- Populated by JavaScript -->
                     </div>
                 </div>
@@ -90,7 +92,7 @@
                 <div class="setup-card">
                     <div class="setup-field">
                         <label for="round-name">Round Name</label>
-                        <input type="text" id="round-name" class="setup-input" placeholder="e.g., Saturday Morning Round">
+                        <input type="text" id="round-name" class="setup-input" placeholder="e.g. Saturday Morning Round">
                     </div>
 
                     <div class="setup-field">
@@ -244,24 +246,10 @@
                     </div>
 
                     <div class="setup-field">
-                        <label>Number of Holes</label>
-                        <div class="tee-options">
-                            <label class="tee-option">
-                                <input type="radio" name="holes" value="18" checked>
-                                <span class="tee-label">18 Holes</span>
-                            </label>
-                            <label class="tee-option">
-                                <input type="radio" name="holes" value="9">
-                                <span class="tee-label">9 Holes</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="setup-field">
                         <label>Tees</label>
-                        <div class="tee-options">
+                        <div class="tee-options" id="tee-options">
                             <label class="tee-option">
-                                <input type="radio" name="create-tees" value="tallwood" checked>
+                                <input type="radio" name="tees" value="tallwood" checked>
                                 <span class="tee-label">Tallwood (6,146m)</span>
                             </label>
                             <label class="tee-option">
@@ -392,11 +380,6 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <h3>The Bonville G.C. Invitational</h3>
-        <p>A Tradition Unlike Any Other</p>
-        <p style="margin-top: 10px;">Bonville Golf Resort, NSW Australia</p>
-        <img src="images/bonville-logo.jpg" alt="Bonville Logo" class="footer-logo">
-        <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.8;">© 2026 The Bonville G.C. Invitational. All rights reserved.</p>
     </footer>
 
     <script src="rounds.js"></script>

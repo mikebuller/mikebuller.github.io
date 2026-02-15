@@ -2,14 +2,9 @@
 
 // Player data (same as live-scores.js)
 const allPlayers = [
-    { id: 1, name: "Marty Buller", handicap: 19 },
-    { id: 2, name: "Alan Pankhurst", handicap: 24 },
-    { id: 3, name: "Scott Hooper", handicap: 15 },
-    { id: 4, name: "Sam Buller", handicap: 18 },
-    { id: 5, name: "David Buller", handicap: 21 },
-    { id: 6, name: "Matt Buller", handicap: 22 },
-    { id: 7, name: "Simon Pannell", handicap: 32 },
-    { id: 8, name: "Cameron Jones", handicap: 10 }
+    { id: 1, name: "Mike Buller", handicap: 9.0 },
+    { id: 2, name: "Adrian Platas", handicap: 3.2 },
+    { id: 3, name: "Darren Shadlow", handicap: 6.0 },
 ];
 
 // State
@@ -27,13 +22,20 @@ function generateJoinCode() {
 }
 
 // Initialize the rounds page
-function initializeRoundsPage() {
+async function initializeRoundsPage() {
     console.log('Initializing rounds page...');
     
     // Set default date to today
     const dateInput = document.getElementById('round-date');
     if (dateInput) {
         dateInput.valueAsDate = new Date();
+    }
+    
+    // Listen for course changes to update tee options
+    const courseInput = document.getElementById('round-course');
+    if (courseInput) {
+        courseInput.addEventListener('input', updateTeeOptions);
+        updateTeeOptions();
     }
     
     // Populate player dropdown
@@ -43,7 +45,10 @@ function initializeRoundsPage() {
     checkUrlForJoinCode();
     
     // Load user's active rounds
-    loadMyActiveRounds();
+    await loadMyActiveRounds();
+    
+    // Check if redirected from a completed round
+    checkForCompletedRound();
     
     // Initialize mobile menu
     initializeMobileMenu();
@@ -69,6 +74,82 @@ function populatePlayerDropdown() {
     });
 }
 
+// Check if redirected from a completed round and highlight it
+function checkForCompletedRound() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const completedId = urlParams.get('completed');
+    
+    if (!completedId) return;
+    
+    // Switch to the Completed tab
+    switchRoundsTab('completed');
+    
+    // Find the completed round card and highlight it
+    const card = document.querySelector(`.my-round-card[data-score-id="${completedId}"]`);
+    if (card) {
+        card.classList.add('highlight-completed');
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Remove highlight after 2 seconds
+        setTimeout(() => {
+            card.classList.remove('highlight-completed');
+        }, 2000);
+    }
+    
+    // Clean up the URL
+    window.history.replaceState({}, '', 'rounds.html');
+}
+
+// Format tee value for display
+function formatTeeName(tee) {
+    const teeNames = {
+        tallwood: 'Tallwood (6,146m)',
+        bloodwood: 'Bloodwood (5,664m)',
+        front: 'Front Tees',
+        middle: 'Middle Tees',
+        back: 'Back Tees'
+    };
+    return teeNames[tee] || tee.charAt(0).toUpperCase() + tee.slice(1);
+}
+
+// Update tee options based on selected course
+function updateTeeOptions() {
+    const courseInput = document.getElementById('round-course');
+    const teeOptions = document.getElementById('tee-options');
+    if (!courseInput || !teeOptions) return;
+    
+    const course = courseInput.value.trim().toLowerCase();
+    const isBonville = course.includes('bonville');
+    
+    if (isBonville) {
+        teeOptions.innerHTML = `
+            <label class="tee-option">
+                <input type="radio" name="tees" value="tallwood" checked>
+                <span class="tee-label">Tallwood (6,146m)</span>
+            </label>
+            <label class="tee-option">
+                <input type="radio" name="tees" value="bloodwood">
+                <span class="tee-label">Bloodwood (5,664m)</span>
+            </label>
+        `;
+    } else {
+        teeOptions.innerHTML = `
+            <label class="tee-option">
+                <input type="radio" name="tees" value="front" checked>
+                <span class="tee-label">Front</span>
+            </label>
+            <label class="tee-option">
+                <input type="radio" name="tees" value="middle">
+                <span class="tee-label">Middle</span>
+            </label>
+            <label class="tee-option">
+                <input type="radio" name="tees" value="back">
+                <span class="tee-label">Back</span>
+            </label>
+        `;
+    }
+}
+
 // Check URL for join code parameter
 function checkUrlForJoinCode() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -89,7 +170,9 @@ async function loadMyActiveRounds() {
     // Get completed rounds from local storage
     const completedRounds = JSON.parse(localStorage.getItem('completedRounds') || '[]');
     
-    if (joinedRounds.length === 0 && completedRounds.length === 0) {
+    const archivedRounds = JSON.parse(localStorage.getItem('archivedRounds') || '[]');
+    
+    if (joinedRounds.length === 0 && completedRounds.length === 0 && archivedRounds.length === 0) {
         document.getElementById('my-rounds-section').style.display = 'none';
         return;
     }
@@ -139,28 +222,34 @@ async function loadMyActiveRounds() {
 
 // Switch between Active and Completed tabs
 function switchRoundsTab(tab) {
-    const activeTab = document.getElementById('tab-active');
-    const completedTab = document.getElementById('tab-completed');
-    const activeList = document.getElementById('active-rounds-list');
-    const completedList = document.getElementById('completed-rounds-list');
+    const tabs = {
+        active: document.getElementById('tab-active'),
+        completed: document.getElementById('tab-completed'),
+        archived: document.getElementById('tab-archived')
+    };
+    const lists = {
+        active: document.getElementById('active-rounds-list'),
+        completed: document.getElementById('completed-rounds-list'),
+        archived: document.getElementById('archived-rounds-list')
+    };
     
-    if (tab === 'active') {
-        activeTab.classList.add('active');
-        completedTab.classList.remove('active');
-        activeList.style.display = 'flex';
-        completedList.style.display = 'none';
-    } else {
-        activeTab.classList.remove('active');
-        completedTab.classList.add('active');
-        activeList.style.display = 'none';
-        completedList.style.display = 'flex';
-    }
+    // Deactivate all tabs and hide all lists
+    Object.values(tabs).forEach(t => t && t.classList.remove('active'));
+    Object.values(lists).forEach(l => { if (l) l.style.display = 'none'; });
+    
+    // Activate selected tab and show its list
+    if (tabs[tab]) tabs[tab].classList.add('active');
+    if (lists[tab]) lists[tab].style.display = 'flex';
+    
+    // Load archived rounds when switching to that tab
+    if (tab === 'archived') loadArchivedRounds();
 }
 
 // Create a card for completed rounds
 function createCompletedRoundCard(completedRound) {
     const card = document.createElement('div');
     card.className = 'my-round-card completed';
+    card.dataset.scoreId = completedRound.id;
     
     const dateStr = completedRound.date ? new Date(completedRound.date).toLocaleDateString('en-AU', {
         weekday: 'short',
@@ -227,16 +316,32 @@ function createMyRoundCard(roundId, roundData, scoreId) {
 
 // Remove a round from My Active Rounds
 async function removeRound(roundId, scoreId) {
-    if (!confirm('Are you sure you want to remove this round from your list?')) {
+    if (!confirm('Are you sure you want to archive this round?')) {
         return;
     }
     
-    // Remove from session storage
+    // Find the round data before removing
     let joinedRounds = JSON.parse(sessionStorage.getItem('joinedRounds') || '[]');
+    const roundToArchive = joinedRounds.find(r => r.roundId === roundId && r.scoreId === scoreId);
+    
+    if (roundToArchive) {
+        // Add to archived rounds
+        let archivedRounds = JSON.parse(localStorage.getItem('archivedRounds') || '[]');
+        archivedRounds.push({
+            id: scoreId,
+            roundId: roundId,
+            type: 'active',
+            archivedAt: new Date().toISOString(),
+            ...roundToArchive
+        });
+        localStorage.setItem('archivedRounds', JSON.stringify(archivedRounds));
+    }
+    
+    // Remove from session storage
     joinedRounds = joinedRounds.filter(r => r.roundId !== roundId || r.scoreId !== scoreId);
     sessionStorage.setItem('joinedRounds', JSON.stringify(joinedRounds));
     
-    // Optionally delete the score from Firebase
+    // Delete the score from Firebase
     if (window.db && window.firestoreHelpers && scoreId) {
         try {
             const { doc, deleteDoc } = window.firestoreHelpers;
@@ -315,7 +420,7 @@ async function createRound() {
     const course = document.getElementById('round-course').value;
     const date = document.getElementById('round-date').value;
     const holes = document.querySelector('input[name="holes"]:checked')?.value || '18';
-    const tees = document.querySelector('input[name="create-tees"]:checked')?.value || 'tallwood';
+    const tees = document.querySelector('input[name="tees"]:checked')?.value || 'tallwood';
     
     // Validation
     if (!name) {
@@ -432,7 +537,7 @@ function joinCreatedRound() {
             year: 'numeric'
         });
         document.getElementById('join-round-info').textContent = 
-            `${dateStr} • ${currentRoundData.settings.holes} holes • ${currentRoundData.settings.tees}`;
+            `${dateStr} • ${currentRoundData.settings.holes} holes • ${formatTeeName(currentRoundData.settings.tees)}`;
         
         showJoinDetails();
     }
@@ -480,7 +585,7 @@ async function lookupRound() {
             year: 'numeric'
         });
         document.getElementById('join-round-info').textContent = 
-            `${dateStr} • ${currentRoundData.settings.holes} holes • ${currentRoundData.settings.tees}`;
+            `${dateStr} • ${currentRoundData.settings.holes} holes • ${formatTeeName(currentRoundData.settings.tees)}`;
         
         showJoinDetails();
         
@@ -646,6 +751,8 @@ window.shareRound = shareRound;
 window.switchRoundsTab = switchRoundsTab;
 window.viewScorecard = viewScorecard;
 window.removeCompletedRound = removeCompletedRound;
+window.permanentlyDeleteRound = permanentlyDeleteRound;
+window.deleteAllArchivedRounds = deleteAllArchivedRounds;
 window.closeScorecardModal = closeScorecardModal;
 window.initializeRoundsPage = initializeRoundsPage;
 
@@ -708,13 +815,102 @@ function closeScorecardModal() {
     document.getElementById('scorecard-modal').style.display = 'none';
 }
 
+// Load and display archived rounds
+function loadArchivedRounds() {
+    const container = document.getElementById('archived-rounds-list');
+    if (!container) return;
+    
+    const archivedRounds = JSON.parse(localStorage.getItem('archivedRounds') || '[]');
+    
+    if (archivedRounds.length === 0) {
+        container.innerHTML = '<div class="no-rounds-message">No archived rounds</div>';
+        return;
+    }
+    
+    // Sort by archived date, most recent first
+    archivedRounds.sort((a, b) => new Date(b.archivedAt) - new Date(a.archivedAt));
+    
+    let html = '';
+    
+    archivedRounds.forEach((round, index) => {
+        const dateStr = round.date ? new Date(round.date).toLocaleDateString('en-AU', {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+        }) : (round.archivedAt ? new Date(round.archivedAt).toLocaleDateString('en-AU', {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+        }) : 'No date');
+        
+        const courseName = round.course || 'Bonville Golf Resort';
+        const totalScore = round.totalScore || '-';
+        const stablefordPoints = round.stablefordPoints || '-';
+        
+        const roundName = round.name || 'Archived Round';
+        
+        html += `
+            <div class="my-round-card archived">
+                <button class="remove-btn archived-remove-btn" onclick="permanentlyDeleteRound(${index})" title="Delete permanently">✕</button>
+                <div class="my-round-info">
+                    <h4>${roundName}</h4>
+                    <p class="my-round-course">${courseName}</p>
+                    <p>${dateStr}</p>
+                    <p class="round-score-summary">Score: ${totalScore} | Stableford: ${stablefordPoints}</p>
+                </div>
+            </div>
+        `;
+    });
+    
+    // Add Delete All button
+    html += `
+        <div class="archived-actions">
+            <button class="delete-all-btn" onclick="deleteAllArchivedRounds()">Delete All Archived Rounds</button>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+}
+
+// Permanently delete a single archived round
+function permanentlyDeleteRound(index) {
+    if (!confirm('Permanently delete this round? This cannot be undone.')) return;
+    
+    let archivedRounds = JSON.parse(localStorage.getItem('archivedRounds') || '[]');
+    archivedRounds.splice(index, 1);
+    localStorage.setItem('archivedRounds', JSON.stringify(archivedRounds));
+    
+    loadArchivedRounds();
+}
+
+// Delete all archived rounds permanently
+function deleteAllArchivedRounds() {
+    if (!confirm('Permanently delete all archived rounds? This cannot be undone.')) return;
+    
+    localStorage.removeItem('archivedRounds');
+    loadArchivedRounds();
+}
+
 // Remove a completed round
 function removeCompletedRound(roundId) {
-    if (!confirm('Are you sure you want to remove this completed round?')) {
+    if (!confirm('Are you sure you want to archive this round?')) {
         return;
     }
     
     let completedRounds = JSON.parse(localStorage.getItem('completedRounds') || '[]');
+    const roundToArchive = completedRounds.find(r => r.id === roundId);
+    
+    if (roundToArchive) {
+        // Add to archived rounds
+        let archivedRounds = JSON.parse(localStorage.getItem('archivedRounds') || '[]');
+        roundToArchive.archivedAt = new Date().toISOString();
+        archivedRounds.push(roundToArchive);
+        localStorage.setItem('archivedRounds', JSON.stringify(archivedRounds));
+    }
+    
+    // Remove from completed rounds
     completedRounds = completedRounds.filter(r => r.id !== roundId);
     localStorage.setItem('completedRounds', JSON.stringify(completedRounds));
     

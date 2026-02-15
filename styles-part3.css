@@ -380,6 +380,11 @@
     box-shadow: 0 5px 20px rgba(0, 103, 71, 0.4);
 }
 
+.nav-container .option-icon {
+    font-size: 2rem;
+    margin-bottom: 0rem;
+}
+
 /* Responsive Design */
 @media (max-width: 1200px) {
     .players-grid {
@@ -470,8 +475,12 @@
     .nav-container {
         flex-direction: row;
         flex-wrap: wrap;
-        padding: 10px 15px;
         justify-content: space-between;
+    }
+
+    .nav-container .option-icon {
+        font-size: 2rem;
+        margin-bottom: 0rem;
     }
     
     .nav-logo {
@@ -753,7 +762,24 @@
 .live-scores-section {
     background: linear-gradient(180deg, var(--masters-cream) 0%, #e8e4d0 100%);
     padding-top: 80px;
+    padding-bottom: 15px;
     min-height: 100vh;
+}
+
+.rounds-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.rounds-page .page-section,
+.rounds-page .live-scores-section {
+    min-height: auto;
+    flex: 1;
+}
+
+.rounds-page .footer {
+    margin-top: auto;
 }
 
 @media (max-width: 600px) {
@@ -848,39 +874,58 @@ input[type="date"].setup-input {
 
 .tee-options {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 10px;
+}
+
+.tee-options .tee-option {
+    flex: 1 1 0;
+    min-width: 0;
 }
 
 .tee-option {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px 15px;
-    background: var(--masters-cream);
+    gap: 5px;
+    padding: 8px 10px;
+    background: none;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
+    white-space: nowrap;
 }
 
 .tee-option:hover {
-    background: rgba(201, 162, 39, 0.2);
+    background: none;
 }
 
 .tee-option input[type="radio"] {
     width: 18px;
     height: 18px;
+    flex-shrink: 0;
     accent-color: var(--masters-green);
+    margin: 0;
+    vertical-align: middle;
 }
 
 .tee-label {
     color: var(--masters-dark-green);
     font-weight: 500;
+    font-size: 1rem;
+    line-height: 18px;
+    vertical-align: middle;
+}
+
+@media (max-width: 600px) {
+    .tee-label {
+        font-size: 0.85rem;
+    }
 }
 
 .start-round-btn {
     width: 100%;
-    margin-top: 20px;
+    margin-top: 0px;
 }
 
 /* Score Entry Container */
@@ -1115,6 +1160,63 @@ input[type="date"].setup-input {
     margin-bottom: 0;
 }
 
+.fir-gir-row {
+    justify-content: center;
+    gap: 40px;
+    margin-top: 5px;
+    padding-top: 25px;
+    border-top: 1px solid rgba(0, 103, 71, 0.15);
+}
+
+.fir-gir-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--masters-dark-green);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.fir-gir-checkbox input[type="checkbox"] {
+    display: none;
+}
+
+.fir-gir-checkmark {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 2px solid var(--masters-green);
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+}
+
+.fir-gir-checkmark::after {
+    content: '';
+    display: none;
+    width: 8px;
+    height: 14px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+    margin-top: -2px;
+}
+
+.fir-gir-checkbox input[type="checkbox"]:checked + .fir-gir-checkmark {
+    background: var(--masters-green);
+    border-color: var(--masters-green);
+}
+
+.fir-gir-checkbox input[type="checkbox"]:checked + .fir-gir-checkmark::after {
+    display: block;
+}
+
 .score-input-row label {
     font-size: 1.2rem;
     font-weight: 600;
@@ -1180,7 +1282,7 @@ input[type="date"].setup-input {
 }
 
 .total-item {
-    padding: 15px 10px;
+    padding: 10px 10px;
     text-align: center;
     border-right: 1px solid var(--masters-cream);
 }
@@ -1193,7 +1295,7 @@ input[type="date"].setup-input {
     display: block;
     font-size: 0.8rem;
     color: var(--masters-brown);
-    margin-bottom: 5px;
+    margin-bottom: 0px;
 }
 
 .total-value {
@@ -1332,7 +1434,7 @@ input[type="date"].setup-input {
 .header-leaderboard-container {
     width: 100%;
     max-width: none;
-    padding: 10px 20px;
+    padding: 0px 0px;
     position: relative;
     box-sizing: border-box;
 }
@@ -1340,8 +1442,8 @@ input[type="date"].setup-input {
 .header-leaderboard-title {
     color: var(--masters-gold);
     font-family: 'Playfair Display', serif;
-    font-size: 1rem;
-    font-weight: 700;
+    font-size: 0.9rem;
+    font-weight: 300;
     text-align: center;
     margin-top: 8px;
     margin-bottom: 8px;
@@ -1371,11 +1473,11 @@ input[type="date"].setup-input {
     max-height: 500px;
     overflow-x: auto;
     overflow-y: hidden;
-    transition: max-height 0.15s ease-out, opacity 0.15s ease-out, padding 0.15s ease-out;
+    transition: max-height 0.1s ease-out, opacity 0.1s ease-out, padding 0.1s ease-out;
     opacity: 1;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    padding: 5px 10px;
+    padding: 5px 5px 10px;
 }
 
 .header-leaderboard-content::-webkit-scrollbar {
@@ -1772,6 +1874,9 @@ input[type="date"].setup-input {
     border-collapse: collapse;
     background: white;
     font-size: 0.9rem;
+    border: 2px solid var(--masters-gold);
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 .modal-scorecard th,
@@ -1781,9 +1886,10 @@ input[type="date"].setup-input {
     border-bottom: 1px solid #eee;
 }
 
+/* Header row - masters green with gold text */
 .modal-scorecard thead {
     background: var(--masters-green);
-    color: white;
+    color: var(--masters-gold);
 }
 
 .modal-scorecard thead th {
@@ -1793,6 +1899,20 @@ input[type="date"].setup-input {
 
 .modal-scorecard tbody tr:hover {
     background: #f9f9f9;
+}
+
+/* Hole number column - masters green with gold text */
+.modal-scorecard-vertical tbody td:first-child {
+    background: var(--masters-green);
+    color: var(--masters-gold);
+    font-weight: 700;
+}
+
+/* Par column - masters cream with brown text */
+.modal-scorecard-vertical tbody td:nth-child(2) {
+    background: var(--masters-cream);
+    color: var(--masters-brown);
+    font-weight: 600;
 }
 
 .modal-scorecard .under-par {
@@ -1805,13 +1925,24 @@ input[type="date"].setup-input {
     font-weight: 700;
 }
 
+/* OUT / IN subtotal rows - grey background */
 .modal-scorecard .subtotal-row {
-    background: rgba(0, 102, 51, 0.1);
+    background: #e8e8e8;
     font-weight: 600;
 }
 
 .modal-scorecard .subtotal-row td {
-    border-bottom: 2px solid var(--masters-green);
+    border-bottom: 2px solid #ccc;
+}
+
+.modal-scorecard .subtotal-row td:first-child {
+    background: #e8e8e8;
+    color: var(--masters-dark-green);
+}
+
+.modal-scorecard .subtotal-row td:nth-child(2) {
+    background: #e8e8e8;
+    color: var(--masters-brown);
 }
 
 .modal-scorecard .total-row {
@@ -1822,6 +1953,16 @@ input[type="date"].setup-input {
 
 .modal-scorecard .total-row td {
     border-bottom: none;
+}
+
+.modal-scorecard .total-row td:first-child {
+    background: var(--masters-gold);
+    color: var(--masters-dark-green);
+}
+
+.modal-scorecard .total-row td:nth-child(2) {
+    background: var(--masters-gold);
+    color: var(--masters-dark-green);
 }
 
 @keyframes currentHolePulse {
@@ -1889,7 +2030,7 @@ body.header-lb-active {
 .footer {
     background: linear-gradient(135deg, var(--masters-dark-green) 0%, var(--masters-green) 100%);
     color: var(--masters-white);
-    padding: 40px 20px;
+    padding: 10px 20px;
     text-align: center;
     border-top: 4px solid var(--masters-gold);
 }
@@ -1972,7 +2113,7 @@ body.header-lb-active {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
-    margin-bottom: 3rem;
+    /*margin-bottom: 1.5rem;*/
 }
 
 .round-option-card {
@@ -2008,8 +2149,22 @@ body.header-lb-active {
 }
 
 /* My Active Rounds Section */
+.rounds-divider {
+    width: 80%;
+    max-width: 1200px;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        var(--masters-gold) 20%, 
+        var(--masters-brown) 50%, 
+        var(--masters-gold) 80%, 
+        transparent 100%
+    );
+    opacity: 0.5;
+    margin: 1.5rem auto;
+}
+
 .my-rounds-section {
-    margin-top: 2rem;
     padding: 1.5rem;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 12px;
@@ -2026,7 +2181,7 @@ body.header-lb-active {
 .my-rounds-tabs {
     display: flex;
     gap: 0;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     border-radius: 8px;
     overflow: hidden;
     background: rgba(255, 255, 255, 0.9);
@@ -2074,10 +2229,67 @@ body.header-lb-active {
     border-left: 4px solid var(--masters-gold);
 }
 
+.my-round-card.archived {
+    border-left: 4px solid #999;
+    opacity: 0.7;
+    position: relative;
+}
+
+.archived-remove-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.archived-actions {
+    width: 100%;
+    text-align: center;
+    padding: 15px 0;
+}
+
+.delete-all-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.delete-all-btn:hover {
+    background: #c82333;
+}
+
+.no-rounds-message {
+    width: 100%;
+    text-align: center;
+    padding: 30px;
+    color: #888;
+    font-style: italic;
+}
+
+.my-round-card.highlight-completed {
+    animation: highlightBorderPulse 1.5s ease-in-out;
+    border: 1px solid var(--masters-green);
+}
+
+@keyframes highlightBorderPulse {
+    0% { border-color: #00a86b; box-shadow: 0 0 10px 5px rgba(0, 168, 107, 0.4); }
+    25% { border-color: var(--masters-dark-green); box-shadow: 0 0 10px 5px rgba(0, 168, 107, 0.8); }
+    50% { border-color: #00a86b; box-shadow: 0 0 10px 5px rgba(0, 168, 107, 0.4); }
+    75% { border-color: var(--masters-dark-green); box-shadow: 0 0 10px 5px rgba(0, 168, 107, 0.8); }
+    100% { border-color: var(--masters-green); box-shadow: none; }
+}
+
 .my-rounds-list {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    max-height: 50vh;
+    overflow-y: auto;
 }
 
 .my-round-card {
@@ -2089,6 +2301,7 @@ body.header-lb-active {
     padding: 1rem 1.25rem;
     padding-right: 2.5rem;
     border-radius: 10px;
+    border-left: 4px solid var(--masters-green);
     transition: all 0.2s ease;
 }
 
@@ -2109,7 +2322,7 @@ body.header-lb-active {
 }
 
 .my-round-info .my-round-course {
-    color: var(--masters-green);
+    color: var(--masters-brown);
     font-weight: 500;
     margin-bottom: 0.25rem;
 }
@@ -2184,16 +2397,7 @@ body.header-lb-active {
     color: #c00;
 }
 
-/* Live Scores Section Padding - with-leaderboard modifier */
-.live-scores-section.with-leaderboard {
-    padding-top: 140px;
-}
-
-@media (max-width: 600px) {
-    .live-scores-section.with-leaderboard {
-        padding-top: 120px;
-    }
-}
+/* Live Scores Section Padding - with-leaderboard modifier is set dynamically by JS */
 
 /* Loading and No Round States */
 .round-loading-container,
@@ -2569,12 +2773,11 @@ body.header-lb-active {
     
     /* My Rounds Section Mobile */
     .my-rounds-section {
-        margin-top: 1.5rem;
-        padding: 1rem;
+        padding: 0 1rem 0 1rem;
     }
     
     .my-rounds-tabs {
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.5rem;
     }
     
     .my-rounds-tab {
@@ -2619,8 +2822,7 @@ body.header-lb-active {
     }
     
     .empty-rounds-message {
-        padding: 1.5rem 1rem;
-        font-size: 0.9rem;
+        padding: 30px;
     }
     
     .round-score-summary {
