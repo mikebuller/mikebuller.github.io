@@ -777,11 +777,11 @@ async function saveRound() {
             }
         }
         
-        // Remove from joinedRounds in sessionStorage
+        // Remove from joinedRounds in localStorage
         if (currentRound.roundId) {
-            let joinedRounds = JSON.parse(sessionStorage.getItem('joinedRounds') || '[]');
+            let joinedRounds = JSON.parse(localStorage.getItem('joinedRounds') || '[]');
             joinedRounds = joinedRounds.filter(r => r.roundId !== currentRound.roundId || r.scoreId !== currentRound.scoreId);
-            sessionStorage.setItem('joinedRounds', JSON.stringify(joinedRounds));
+            localStorage.setItem('joinedRounds', JSON.stringify(joinedRounds));
         }
         
         // Add to completedRounds in localStorage
@@ -812,7 +812,7 @@ async function saveRound() {
         //
         // // Show success message
         // alert('🎉 Round saved successfully!');
-        
+
         // Reset
         currentRound = null;
         

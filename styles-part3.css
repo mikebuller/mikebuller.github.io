@@ -1,3 +1,8 @@
+/* Stop zooming on double-tap */
+html {
+    touch-action: manipulation;
+}
+
 /* Dinner Section */
 .dinner-section {
     background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
