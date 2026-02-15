@@ -166,6 +166,7 @@ async function loadRoundFromParams(roundId, scoreId) {
             handicap: scoreData.handicap || 18,
             tees: scoreData.tees || roundData.settings?.tees || 'tallwood',
             course: roundData.settings?.course || 'Bonville Golf Resort',
+            roundName: roundData.name || 'Round',
             holePrizes: roundData.settings?.holePrizes || [],
             date: roundData.date,
             currentHole: 1,
@@ -263,72 +264,6 @@ function initializeQuickNav() {
 function checkForTodaysActiveRounds() {
     // Placeholder - can be implemented to show active rounds
     console.log('Checking for active rounds...');
-}
-
-// Start a new round
-function startRound() {
-    const entryType = document.querySelector('input[name="entry-type"]:checked')?.value || 'player';
-    const tees = document.querySelector('input[name="tees"]:checked')?.value || 'tallwood';
-    const date = document.getElementById('score-date')?.value;
-    
-    let playerName, handicap, playerId, teamName;
-    
-    if (entryType === 'player') {
-        const playerSelect = document.getElementById('score-player');
-        if (!playerSelect.value) {
-            alert('Please select a player');
-            return;
-        }
-        playerId = parseInt(playerSelect.value);
-        const player = allPlayers.find(p => p.id === playerId);
-        playerName = player.name;
-        handicap = player.handicap;
-    } else {
-        teamName = document.getElementById('team-name')?.value?.trim();
-        if (!teamName) {
-            alert('Please enter a team name');
-            return;
-        }
-        playerName = teamName;
-        handicap = 18; // Default team handicap
-    }
-    
-    // Initialize current round
-    currentRound = {
-        entryType: entryType,
-        playerId: playerId || null,
-        playerName: playerName,
-        teamName: entryType === 'team' ? teamName : null,
-        handicap: handicap,
-        tees: tees,
-        date: date,
-        currentHole: 1,
-        scores: {},
-        putts: {},
-        fir: {},
-        gir: {},
-        ctp: {},
-        longestDrive: {},
-        holePrizes: []
-    };
-    
-    // Update UI
-    document.getElementById('current-player-name').textContent = playerName;
-    const teesDisplay = document.getElementById('current-tees-display');
-    if (teesDisplay) {
-        teesDisplay.textContent = tees.charAt(0).toUpperCase() + tees.slice(1);
-    }
-    
-    // Show score entry, hide setup
-    document.getElementById('round-setup').style.display = 'none';
-    document.getElementById('score-entry').style.display = 'block';
-    
-    // Initialize first hole
-    updateHoleDisplay();
-    
-    // Save active round to Firebase and show header leaderboard
-    saveActiveRoundToFirebase();
-    showHeaderLeaderboard();
 }
 
 // Exit current round
@@ -745,10 +680,12 @@ async function saveRound() {
             roundId: currentRound.roundId || null,
             playerId: currentRound.playerId,
             playerName: currentRound.playerName,
+            name: currentRound.playerName + ' - ' + currentRound.roundName,
             entryType: currentRound.entryType,
             teamName: currentRound.teamName,
             handicap: currentRound.handicap,
             tees: currentRound.tees,
+            course: currentRound.course || 'Bonville Golf Resort',
             date: currentRound.date,
             scores: currentRound.scores,
             putts: currentRound.putts,
@@ -756,24 +693,24 @@ async function saveRound() {
             gir: currentRound.gir,
             ctp: currentRound.ctp,
             longestDrive: currentRound.longestDrive,
+            totalScore: totalScore,
+            stablefordPoints: totalStableford,
             status: 'completed',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
         
-        await setDoc(doc(window.db, 'scores', scoreId), scoreData);
+        // Save to completedRounds collection
+        await setDoc(doc(window.db, 'completedRounds', scoreId), scoreData);
         
-        // Mark as finished in activeRounds collection so leaderboard shows "F"
+        // Delete from activeRounds collection
         if (currentRound.roundId && currentRound.scoreId) {
             const activeRoundId = `${currentRound.roundId}_${currentRound.scoreId}`;
             try {
-                await updateDoc(doc(window.db, 'activeRounds', activeRoundId), {
-                    status: 'finished',
-                    updatedAt: new Date().toISOString()
-                });
-                console.log('Marked active round as finished:', activeRoundId);
+                await deleteDoc(doc(window.db, 'activeRounds', activeRoundId));
+                console.log('Deleted active round:', activeRoundId);
             } catch (e) {
-                console.log('Could not update active round (may not exist):', e);
+                console.log('Could not delete active round (may not exist):', e);
             }
         }
         
@@ -783,29 +720,6 @@ async function saveRound() {
             joinedRounds = joinedRounds.filter(r => r.roundId !== currentRound.roundId || r.scoreId !== currentRound.scoreId);
             localStorage.setItem('joinedRounds', JSON.stringify(joinedRounds));
         }
-        
-        // Add to completedRounds in localStorage
-        const completedRounds = JSON.parse(localStorage.getItem('completedRounds') || '[]');
-        completedRounds.unshift({
-            id: scoreId,
-            roundId: currentRound.roundId,
-            name: currentRound.playerName + ' - Round',
-            playerName: currentRound.playerName,
-            course: currentRound.course || 'Bonville Golf Resort',
-            date: currentRound.date,
-            handicap: currentRound.handicap,
-            tees: currentRound.tees,
-            scores: currentRound.scores,
-            putts: currentRound.putts,
-            fir: currentRound.fir,
-            gir: currentRound.gir,
-            ctp: currentRound.ctp,
-            longestDrive: currentRound.longestDrive,
-            totalScore: totalScore,
-            stablefordPoints: totalStableford,
-            joinCode: ''
-        });
-        localStorage.setItem('completedRounds', JSON.stringify(completedRounds));
         
         // Fire confetti celebration!
         fireConfetti();
