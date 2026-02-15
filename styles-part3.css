@@ -874,39 +874,58 @@ input[type="date"].setup-input {
 
 .tee-options {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 10px;
+}
+
+.tee-options .tee-option {
+    flex: 1 1 0;
+    min-width: 0;
 }
 
 .tee-option {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 12px 15px;
-    background: var(--masters-cream);
+    gap: 5px;
+    padding: 8px 10px;
+    background: none;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
+    white-space: nowrap;
 }
 
 .tee-option:hover {
-    background: rgba(201, 162, 39, 0.2);
+    background: none;
 }
 
 .tee-option input[type="radio"] {
     width: 18px;
     height: 18px;
+    flex-shrink: 0;
     accent-color: var(--masters-green);
+    margin: 0;
+    vertical-align: middle;
 }
 
 .tee-label {
     color: var(--masters-dark-green);
     font-weight: 500;
+    font-size: 1rem;
+    line-height: 18px;
+    vertical-align: middle;
+}
+
+@media (max-width: 600px) {
+    .tee-label {
+        font-size: 0.85rem;
+    }
 }
 
 .start-round-btn {
     width: 100%;
-    margin-top: 20px;
+    margin-top: 0px;
 }
 
 /* Score Entry Container */
@@ -2094,7 +2113,7 @@ body.header-lb-active {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
-    margin-bottom: 3rem;
+    /*margin-bottom: 1.5rem;*/
 }
 
 .round-option-card {
@@ -2130,8 +2149,22 @@ body.header-lb-active {
 }
 
 /* My Active Rounds Section */
+.rounds-divider {
+    width: 80%;
+    max-width: 1200px;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        var(--masters-gold) 20%, 
+        var(--masters-brown) 50%, 
+        var(--masters-gold) 80%, 
+        transparent 100%
+    );
+    opacity: 0.5;
+    margin: 1.5rem auto;
+}
+
 .my-rounds-section {
-    margin-top: 2rem;
     padding: 1.5rem;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 12px;
@@ -2148,7 +2181,7 @@ body.header-lb-active {
 .my-rounds-tabs {
     display: flex;
     gap: 0;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     border-radius: 8px;
     overflow: hidden;
     background: rgba(255, 255, 255, 0.9);
@@ -2255,6 +2288,8 @@ body.header-lb-active {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    max-height: 50vh;
+    overflow-y: auto;
 }
 
 .my-round-card {
@@ -2738,12 +2773,11 @@ body.header-lb-active {
     
     /* My Rounds Section Mobile */
     .my-rounds-section {
-        margin-top: 1.5rem;
-        padding: 1rem;
+        padding: 0 1rem 0 1rem;
     }
     
     .my-rounds-tabs {
-        margin-bottom: 0.75rem;
+        margin-bottom: 0.5rem;
     }
     
     .my-rounds-tab {

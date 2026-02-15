@@ -100,6 +100,18 @@ function checkForCompletedRound() {
     window.history.replaceState({}, '', 'rounds.html');
 }
 
+// Format tee value for display
+function formatTeeName(tee) {
+    const teeNames = {
+        tallwood: 'Tallwood (6,146m)',
+        bloodwood: 'Bloodwood (5,664m)',
+        front: 'Front Tees',
+        middle: 'Middle Tees',
+        back: 'Back Tees'
+    };
+    return teeNames[tee] || tee.charAt(0).toUpperCase() + tee.slice(1);
+}
+
 // Update tee options based on selected course
 function updateTeeOptions() {
     const courseInput = document.getElementById('round-course');
@@ -408,7 +420,7 @@ async function createRound() {
     const course = document.getElementById('round-course').value;
     const date = document.getElementById('round-date').value;
     const holes = document.querySelector('input[name="holes"]:checked')?.value || '18';
-    const tees = document.querySelector('input[name="create-tees"]:checked')?.value || 'tallwood';
+    const tees = document.querySelector('input[name="tees"]:checked')?.value || 'tallwood';
     
     // Validation
     if (!name) {
@@ -525,7 +537,7 @@ function joinCreatedRound() {
             year: 'numeric'
         });
         document.getElementById('join-round-info').textContent = 
-            `${dateStr} • ${currentRoundData.settings.holes} holes • ${currentRoundData.settings.tees}`;
+            `${dateStr} • ${currentRoundData.settings.holes} holes • ${formatTeeName(currentRoundData.settings.tees)}`;
         
         showJoinDetails();
     }
@@ -573,7 +585,7 @@ async function lookupRound() {
             year: 'numeric'
         });
         document.getElementById('join-round-info').textContent = 
-            `${dateStr} • ${currentRoundData.settings.holes} holes • ${currentRoundData.settings.tees}`;
+            `${dateStr} • ${currentRoundData.settings.holes} holes • ${formatTeeName(currentRoundData.settings.tees)}`;
         
         showJoinDetails();
         

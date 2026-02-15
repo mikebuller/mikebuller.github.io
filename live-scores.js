@@ -165,6 +165,7 @@ async function loadRoundFromParams(roundId, scoreId) {
             teamName: scoreData.teamName,
             handicap: scoreData.handicap || 18,
             tees: scoreData.tees || roundData.settings?.tees || 'tallwood',
+            course: roundData.settings?.course || 'Bonville Golf Resort',
             date: roundData.date,
             currentHole: 1,
             scores: scoreData.scores || {},
@@ -326,7 +327,7 @@ function startRound() {
 
 // Exit current round
 function exitRound() {
-    if (confirm('Are you sure you want to exit this round?')) {
+    if (confirm('Do you want to exit this round? You can continue the round after exiting.')) {
         currentRound = null;
         window.location.href = 'rounds.html';
     }
@@ -365,7 +366,15 @@ function updateHoleDisplay() {
     const tees = currentRound.tees;
     
     document.getElementById('current-hole-number').textContent = `Hole ${hole}`;
-    document.getElementById('current-hole-details').textContent = `Par ${holeData.par} • ${holeData[tees]}m • Index ${holeData.si}`;
+    
+    const holeDetailsEl = document.getElementById('current-hole-details');
+    const isBonville = (currentRound.course || '').toLowerCase().includes('bonville');
+    if (isBonville) {
+        holeDetailsEl.textContent = `Par ${holeData.par} • ${holeData[tees]}m • Index ${holeData.si}`;
+        holeDetailsEl.style.display = '';
+    } else {
+        holeDetailsEl.style.display = 'none';
+    }
     
     // Update score and putts display
     const score = currentRound.scores[hole];
@@ -713,7 +722,7 @@ async function saveRound() {
             roundId: currentRound.roundId,
             name: currentRound.playerName + ' - Round',
             playerName: currentRound.playerName,
-            course: 'Bonville Golf Resort',
+            course: currentRound.course || 'Bonville Golf Resort',
             date: currentRound.date,
             handicap: currentRound.handicap,
             tees: currentRound.tees,
