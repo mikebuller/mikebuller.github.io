@@ -55,6 +55,9 @@
                 <!-- Player Info Bar -->
                 <div class="score-player-bar">
                     <span id="current-player-name">Player Name</span>
+                    <div id="hole-prize-indicator" class="hole-prize-indicator" style="display: none;">
+                        <span id="hole-prize-text"></span>
+                    </div>
                     <button onclick="exitRound()" class="exit-round-btn">✕</button>
                 </div>
 
@@ -97,6 +100,15 @@
                             <span class="fir-gir-checkmark"></span>
                             GIR
                         </label>
+                    </div>
+                    <!-- Prize Distance Input (shown only for prize holes) -->
+                    <div id="prize-divider" class="prize-divider" style="display: none;"></div>
+                    <div id="prize-input-row" class="score-input-row prize-input-row" style="display: none;">
+                        <label id="prize-input-label">⛳ Closest to Pin</label>
+                        <div class="prize-distance-input">
+                            <input type="number" id="prize-distance" min="0" step="1" placeholder="0" onchange="updatePrizeDistance()">
+                            <span id="prize-unit" class="prize-unit">cm</span>
+                        </div>
                     </div>
                 </div>
 
