@@ -54,7 +54,7 @@
             <div id="score-entry" class="score-entry-container" style="display: none;">
                 <!-- Player Info Bar -->
                 <div class="score-player-bar">
-                    <span id="current-player-name">Player Name</span>
+                    <span id="current-course-name">Course</span>
                     <div id="hole-prize-indicator" class="hole-prize-indicator" style="display: none;">
                         <span id="hole-prize-text"></span>
                     </div>
@@ -176,8 +176,14 @@
         <div class="scorecard-modal-overlay" onclick="closeScorecardModal()"></div>
         <div class="scorecard-modal-content">
             <div class="score-player-bar">
-                <span id="modal-player-name">Player Name</span>
-                <button onclick="closeScorecardModal()" class="exit-round-btn">✕</button>
+                <div class="modal-player-info">
+                    <span id="modal-player-name">Player Name</span>
+                    <span id="modal-course-info" class="modal-course-info"></span>
+                    <span id="modal-round-date" class="modal-course-info"></span>
+                </div>
+                <div class="modal-right-info">
+                    <button onclick="closeScorecardModal()" class="exit-round-btn">✕</button>
+                </div>
             </div>
             <div class="modal-scorecard-wrapper">
                 <div id="modal-scorecard-table"></div>
@@ -191,6 +197,7 @@
 
     <!-- Firebase SDK (shared initialization) -->
     <script type="module" src="firebase-init.js"></script>
+    <script src="courses/course-data.js"></script>
     <script src="live-scores.js"></script>
 </body>
 </html>

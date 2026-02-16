@@ -1,8 +1,3 @@
-/* Stop zooming on double-tap */
-html {
-    touch-action: manipulation;
-}
-
 /* Dinner Section */
 .dinner-section {
     background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
@@ -395,11 +390,11 @@ html {
     .players-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+
     .battle-royale {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+
     .hole-flyovers-grid .hole-card {
         flex: 0 1 200px;
     }
@@ -410,33 +405,33 @@ html {
     .dinner-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .nav-links li a {
         padding: 15px;
         font-size: 0.9rem;
     }
-    
+
     .bracket {
         flex-direction: column;
         align-items: center;
     }
-    
+
     .dinner-features {
         grid-template-columns: 1fr;
     }
-    
+
     .hole-flyovers-grid .hole-card {
         flex: 0 1 180px;
     }
-    
+
     .tee-times-container {
         gap: 30px;
     }
-    
+
     .tee-time-box {
         padding: 20px 30px;
     }
-    
+
     .tee-time-box .tee-time {
         font-size: 1.5rem;
     }
@@ -447,13 +442,13 @@ html {
     .mobile-menu-toggle {
         display: flex;
     }
-    
+
     /* Team Configuration Mobile (inline in bracket) */
     .team-name-config {
         flex-wrap: nowrap;
         gap: 5px;
     }
-    
+
     .team-name-config .player-select {
         min-width: 70px;
         max-width: none;
@@ -461,22 +456,22 @@ html {
         font-size: 0.75rem;
         padding: 6px 4px;
     }
-    
+
     .team-ampersand {
         font-size: 0.9rem;
     }
-    
+
     .team {
         flex-direction: column;
         gap: 10px;
         padding: 12px;
     }
-    
+
     .team-score-input {
         width: 100%;
         max-width: 100px;
     }
-    
+
     .nav-container {
         flex-direction: row;
         flex-wrap: wrap;
@@ -487,19 +482,19 @@ html {
         font-size: 2rem;
         margin-bottom: 0rem;
     }
-    
+
     .nav-logo {
         flex: 1;
     }
-    
+
     .nav-logo h1 {
         font-size: 1rem;
     }
-    
+
     .nav-logo img {
         height: 40px;
     }
-    
+
     .nav-links {
         display: none;
         flex-direction: column;
@@ -511,197 +506,197 @@ html {
         padding: 0;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     }
-    
+
     .nav-links.active {
         display: flex;
     }
-    
+
     .nav-links li {
         width: 100%;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
-    
+
     .nav-links li a {
         display: block;
         padding: 15px 20px;
         text-align: center;
         border-bottom: none;
     }
-    
+
     .nav-links li a:hover,
     .nav-links li a.active {
         border-bottom: none;
         background: rgba(201, 162, 39, 0.2);
     }
-    
+
     /* Hero Section */
     .hero-content {
         padding: 20px;
     }
-    
+
     .hero-content h1 {
         font-size: 2rem;
     }
-    
+
     .hero-content h2 {
         font-size: 1.1rem;
     }
-    
+
     .hero-content p {
         font-size: 1rem;
     }
-    
+
     .cta-button {
         padding: 12px 25px;
         font-size: 0.9rem;
     }
-    
+
     /* Section Headers */
     .section-header h2 {
         font-size: 1.8rem;
     }
-    
+
     .section-header p {
         font-size: 1rem;
     }
-    
+
     .page-section {
         padding: 40px 15px 40px;
     }
-    
+
     /* Players Grid */
     .players-grid,
     .battle-royale {
         grid-template-columns: 1fr;
     }
-    
+
     /* Hole Flyovers */
     .hole-flyovers-grid {
         gap: 10px;
     }
-    
+
     .hole-flyovers-grid .hole-card {
         flex: 0 1 calc(50% - 10px);
         min-width: 140px;
         max-width: none;
     }
-    
+
     .hole-card h4 {
         font-size: 0.95rem;
     }
-    
+
     /* Tee Times */
     .tee-times-container {
         flex-wrap: nowrap;
         gap: 10px;
         padding: 0 15px;
     }
-    
+
     .tee-time-box {
         flex: 1;
         max-width: 200px;
         padding: 12px 10px;
     }
-    
+
     .tee-time-box h4 {
         font-size: 0.85rem;
     }
-    
+
     .tee-time-box .tee-time {
         font-size: 1.1rem;
     }
-    
+
     /* Tournament Bracket */
     .match {
         min-width: 250px;
     }
-    
+
     .team {
         flex-direction: column;
         gap: 10px;
         text-align: center;
     }
-    
+
     .team-score-input {
         width: 100% !important;
     }
-    
+
     /* Score Form */
     .score-form {
         padding: 20px;
         margin: 20px 10px;
     }
-    
+
     .score-form-grid {
         grid-template-columns: 1fr;
     }
-    
+
     /* Leaderboard */
     .leaderboard-row {
         grid-template-columns: 30px 1fr 35px 55px 45px;
         font-size: 0.85rem;
         padding: 12px 10px;
     }
-    
+
     .gross-score-input {
         width: 45px;
         padding: 5px 4px;
         font-size: 0.85rem;
     }
-    
+
     /* Team Leaderboard Mobile */
     #team-leaderboard .leaderboard-row {
         grid-template-columns: 25px 1fr 45px;
         padding: 10px 6px;
     }
-    
+
     #team-leaderboard .team-name-config {
         gap: 5px;
     }
-    
+
     #team-leaderboard .team-name-config .player-select {
         font-size: 0.68rem;
         padding: 4px 2px;
         max-width: 120px;
     }
-    
+
     #team-leaderboard .team-ampersand {
         font-size: 0.7rem;
     }
-    
+
     #team-leaderboard .team-score-input {
         width: 38px;
         font-size: 0.8rem;
         padding: 4px 2px;
     }
-    
+
     .leaderboard-header {
         font-size: 1.2rem;
         padding: 15px;
     }
-    
+
     /* Dinner Section */
     .dinner-details p {
         font-size: 1rem;
     }
-    
+
     .dinner-image {
         height: 200px;
     }
-    
+
     .dinner-info {
         padding: 20px;
     }
-    
+
     .dinner-info h3 {
         font-size: 1.4rem;
     }
-    
+
     /* Footer */
     .footer {
         padding: 30px 15px;
     }
-    
+
     .footer h3 {
         font-size: 1.4rem;
     }
@@ -711,53 +706,53 @@ html {
     .hero-content h1 {
         font-size: 1.6rem;
     }
-    
+
     .hero-content h2 {
         font-size: 1rem;
     }
-    
+
     .section-header h2 {
         font-size: 1.5rem;
     }
-    
+
     .hole-flyovers-grid {
         gap: 8px;
     }
-    
+
     .hole-flyovers-grid .hole-card {
         flex: 0 1 calc(50% - 8px);
         min-width: 120px;
     }
-    
+
     .hole-card h4 {
         font-size: 0.85rem;
         margin-bottom: 2px;
     }
-    
+
     .hole-card .par {
         font-size: 0.75rem;
     }
-    
+
     .player-image {
         height: 200px;
     }
-    
+
     .leaderboard-row {
         grid-template-columns: 25px 1fr 30px 45px 40px;
         font-size: 0.75rem;
         padding: 10px 8px;
     }
-    
+
     .gross-score-input {
         width: 40px;
         padding: 4px 2px;
         font-size: 0.8rem;
     }
-    
+
     .position {
         font-size: 1.1rem;
     }
-    
+
     .trophy-icon {
         font-size: 3rem;
     }
@@ -879,52 +874,58 @@ input[type="date"].setup-input {
 
 .tee-options {
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.tee-options .tee-option {
-    flex: 1 1 0;
-    min-width: 0;
+    flex-direction: column;
+    /*gap: 8px;*/
 }
 
 .tee-option {
     display: flex;
     align-items: center;
-    gap: 5px;
-    padding: 8px 10px;
-    background: none;
+    gap: 6px;
+    padding: 10px 12px;
+    background: rgba(0, 100, 0, 0.05);
+    border: 1px solid rgba(0, 100, 0, 0.15);
     border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    white-space: nowrap;
+    transition: all 0.2s ease;
+    line-height: 1;
 }
 
 .tee-option:hover {
-    background: none;
+    background: rgba(0, 100, 0, 0.1);
+    border-color: rgba(0, 100, 0, 0.3);
+}
+
+.tee-option:has(input[type="radio"]:checked) {
+    background: rgba(0, 100, 0, 0.12);
+    border-color: var(--masters-green);
 }
 
 .tee-option input[type="radio"] {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
     flex-shrink: 0;
     accent-color: var(--masters-green);
     margin: 0;
+    -webkit-appearance: auto;
+    appearance: auto;
     vertical-align: middle;
+    position: relative;
+    top: -1px;
 }
 
 .tee-label {
     color: var(--masters-dark-green);
     font-weight: 500;
-    font-size: 1rem;
-    line-height: 18px;
+    font-size: 0.9rem;
+    line-height: 16px;
+    white-space: nowrap;
     vertical-align: middle;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 400px) {
     .tee-label {
-        font-size: 0.85rem;
+        font-size: 0.75rem;
     }
 }
 
@@ -956,12 +957,6 @@ input[type="date"].setup-input {
 
 .optional-content {
     padding: 0.5rem 0;
-}
-
-.field-hint {
-    font-size: 0.8rem;
-    color: #888;
-    margin: 0 0 0.5rem 0;
 }
 
 .hole-prizes-list {
@@ -1196,11 +1191,23 @@ input[type="date"].setup-input {
 
 .exit-round-btn {
     background: transparent;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.4);
     color: white;
-    font-size: 1.2rem;
+    font-size: 1rem;
     cursor: pointer;
-    padding: 5px 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.exit-round-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.7);
 }
 
 .hole-navigation {
@@ -1536,32 +1543,32 @@ input[type="date"].setup-input {
     .setup-card {
         padding: 20px;
     }
-    
+
     .hole-nav-btn {
         width: 40px;
         height: 40px;
         font-size: 1rem;
     }
-    
+
     .stepper-btn {
         width: 45px;
         height: 45px;
         font-size: 1.3rem;
     }
-    
+
     .stepper-value {
         font-size: 1.6rem;
         min-width: 40px;
     }
-    
+
     .running-totals {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+
     .total-item {
         border-bottom: 1px solid var(--masters-cream);
     }
-    
+
     .quick-nav-grid {
         grid-template-columns: repeat(6, 1fr);
     }
@@ -1838,6 +1845,29 @@ input[type="date"].setup-input {
 
 .scorecard-modal-content .score-player-bar {
     border-radius: 12px 12px 0 0;
+    align-items: stretch;
+}
+
+.modal-player-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 2px;
+}
+
+.modal-course-info {
+    font-size: 0.75rem;
+    opacity: 0.85;
+    font-weight: 400;
+}
+
+.modal-right-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-left: auto;
+    gap: 2px;
 }
 
 .scorecard-modal-header {
@@ -1875,15 +1905,15 @@ input[type="date"].setup-input {
     .scorecard-modal-header {
         padding: 15px 20px;
     }
-    
+
     .scorecard-modal-header h3 {
         font-size: 1.2rem;
     }
-    
+
     .scorecard-modal-header p {
         font-size: 0.8rem;
     }
-    
+
     .modal-scorecard-wrapper {
         padding: 15px;
     }
@@ -2005,7 +2035,7 @@ input[type="date"].setup-input {
         height: 32px;
         font-size: 1rem;
     }
-    
+
     .hole-image-caption {
         font-size: 1.1rem;
     }
@@ -2148,20 +2178,20 @@ body.header-lb-active {
     .header-leaderboard {
         top: 60px;
     }
-    
+
     .header-leaderboard-content {
         gap: 8px;
     }
-    
+
     .header-lb-player {
         padding: 4px 8px;
         font-size: 0.75rem;
     }
-    
+
     .header-lb-name {
         /* Width controlled by grid */
     }
-    
+
     .header-leaderboard-toggle {
         width: 25px;
         height: 25px;
@@ -2175,12 +2205,12 @@ body.header-lb-active {
         align-items: center;
         gap: 5px;
     }
-    
+
     .header-lb-player {
         width: fit-content;
         max-width: none;
     }
-    
+
     .header-lb-name {
         /* Width controlled by grid */
     }
@@ -2313,11 +2343,11 @@ body.header-lb-active {
     width: 80%;
     max-width: 1200px;
     height: 1px;
-    background: linear-gradient(90deg, 
-        transparent 0%, 
-        var(--masters-gold) 20%, 
-        var(--masters-brown) 50%, 
-        var(--masters-gold) 80%, 
+    background: linear-gradient(90deg,
+        transparent 0%,
+        var(--masters-gold) 20%,
+        var(--masters-brown) 50%,
+        var(--masters-gold) 80%,
         transparent 100%
     );
     opacity: 0.5;
@@ -2892,106 +2922,106 @@ body.header-lb-active {
     .rounds-section {
         padding-top: 80px;
     }
-    
+
     .rounds-options {
         grid-template-columns: repeat(2, 1fr);
         gap: 0.75rem;
     }
-    
+
     .round-option-card {
         padding: 1.25rem 0.75rem;
     }
-    
+
     .round-option-card .option-icon {
         font-size: 2rem;
         margin-bottom: 0.5rem;
     }
-    
+
     .round-option-card h3 {
         font-size: 1rem;
         margin-bottom: 0.25rem;
     }
-    
+
     .round-option-card p {
         font-size: 0.75rem;
         line-height: 1.3;
     }
-    
+
     .form-card {
         padding: 1.5rem;
     }
-    
+
     .option-buttons {
         flex-direction: column;
     }
-    
+
     .join-code-display span {
         font-size: 1.5rem;
         letter-spacing: 2px;
     }
-    
+
     .share-link-display {
         flex-direction: column;
     }
-    
+
     .share-link-input {
         width: 100%;
     }
-    
+
     /* My Rounds Section Mobile */
     .my-rounds-section {
         padding: 0 1rem 0 1rem;
     }
-    
+
     .my-rounds-tabs {
         margin-bottom: 0.5rem;
     }
-    
+
     .my-rounds-tab {
         padding: 0.6rem 0.5rem;
         font-size: 0.85rem;
     }
-    
+
     .my-rounds-list {
         gap: 0.5rem;
     }
-    
+
     .my-round-card {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.75rem;
         padding: 1rem;
     }
-    
+
     .my-round-info h4 {
         font-size: 0.95rem;
     }
-    
+
     .my-round-info p {
         font-size: 0.8rem;
     }
-    
+
     .my-round-actions {
         width: 100%;
         justify-content: space-between;
     }
-    
+
     .continue-btn {
         flex: 1;
         text-align: center;
         padding: 0.6rem 0.75rem;
         font-size: 0.9rem;
     }
-    
+
     .remove-btn {
         width: 36px;
         height: 36px;
     }
-    
+
     .empty-rounds-message {
         padding: 30px;
     }
-    
+
     .round-score-summary {
         font-size: 0.8rem !important;
     }
@@ -3061,54 +3091,54 @@ body.header-lb-active {
         max-height: 95vh;
         overflow: visible;
     }
-    
+
     .scorecard-modal-header {
         padding: 12px 15px;
     }
-    
+
     .scorecard-modal-header h3 {
         font-size: 1.1rem;
     }
-    
+
     .scorecard-modal-header p {
         font-size: 0.75rem;
         padding-bottom: 10px;
         margin-top: 5px;
     }
-    
+
     .modal-scorecard-wrapper {
         padding: 0;
         overflow: visible;
     }
-    
+
     #modal-scorecard-table {
         padding: 0;
     }
-    
+
     /* Hide horizontal table completely on mobile */
     .modal-scorecard-horizontal-wrapper {
         display: none !important;
     }
-    
+
     /* Show vertical table on mobile */
     .modal-scorecard-vertical {
         display: table !important;
     }
-    
+
     .modal-scorecard-vertical th,
     .modal-scorecard-vertical td {
         padding: 4px 4px;
         font-size: 0.75rem;
     }
-    
+
     .modal-scorecard-vertical thead th {
         padding: 6px 4px;
     }
-    
+
     .modal-scorecard-vertical .row-label {
         padding-left: 8px;
     }
-    
+
     /* Force all tables to fit */
     .modal-scorecard {
         min-width: unset !important;
@@ -3122,7 +3152,7 @@ body.header-lb-active {
     .modal-scorecard-vertical {
         display: none !important;
     }
-    
+
     .modal-scorecard-horizontal-wrapper {
         display: block !important;
     }
@@ -3194,7 +3224,7 @@ body.header-lb-active {
         max-width: 900px;
         width: 95%;
     }
-    
+
     .modal-scorecard-wrapper {
         padding: 20px;
     }
