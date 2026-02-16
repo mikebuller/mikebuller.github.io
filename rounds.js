@@ -24,7 +24,6 @@ function generateJoinCode() {
 
 // Initialize the rounds page
 async function initializeRoundsPage() {
-    console.log('Initializing rounds page...');
     
     // Set default date to today
     const dateInput = document.getElementById('round-date');
@@ -440,9 +439,7 @@ async function removeRound(roundId, scoreId) {
             const activeRoundId = `${roundId}_${scoreId}`;
             try {
                 await deleteDoc(doc(window.db, 'activeRounds', activeRoundId));
-                console.log('Deleted from activeRounds:', activeRoundId);
             } catch (e) {
-                console.log('Could not delete active round (may not exist):', e);
             }
             
             // Move score to archivedRounds
@@ -453,7 +450,6 @@ async function removeRound(roundId, scoreId) {
                 scoreData.archivedAt = new Date().toISOString();
                 await setDoc(doc(window.db, 'archivedRounds', scoreId), scoreData);
                 await deleteDoc(doc(window.db, 'scores', scoreId));
-                console.log('Score moved to archivedRounds:', scoreId);
             }
         } catch (error) {
             console.error('Error archiving round:', error);
@@ -487,40 +483,20 @@ function shareRound(joinCode) {
 }
 
 // Show/hide different views
-function showRoundsHub() {
-    document.getElementById('rounds-hub').style.display = 'block';
-    document.getElementById('create-round-form').style.display = 'none';
-    document.getElementById('round-created-success').style.display = 'none';
-    document.getElementById('join-round-form').style.display = 'none';
-    document.getElementById('join-round-details').style.display = 'none';
-    
-    // Reload active rounds
-    loadMyActiveRounds();
+const viewIds = ['rounds-hub', 'create-round-form', 'round-created-success', 'join-round-form', 'join-round-details'];
+
+function showView(activeId) {
+    viewIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = id === activeId ? 'block' : 'none';
+    });
+    if (activeId === 'rounds-hub') loadMyActiveRounds();
 }
 
-function showCreateRound() {
-    document.getElementById('rounds-hub').style.display = 'none';
-    document.getElementById('create-round-form').style.display = 'block';
-    document.getElementById('round-created-success').style.display = 'none';
-    document.getElementById('join-round-form').style.display = 'none';
-    document.getElementById('join-round-details').style.display = 'none';
-}
-
-function showJoinRound() {
-    document.getElementById('rounds-hub').style.display = 'none';
-    document.getElementById('create-round-form').style.display = 'none';
-    document.getElementById('round-created-success').style.display = 'none';
-    document.getElementById('join-round-form').style.display = 'block';
-    document.getElementById('join-round-details').style.display = 'none';
-}
-
-function showJoinDetails() {
-    document.getElementById('rounds-hub').style.display = 'none';
-    document.getElementById('create-round-form').style.display = 'none';
-    document.getElementById('round-created-success').style.display = 'none';
-    document.getElementById('join-round-form').style.display = 'none';
-    document.getElementById('join-round-details').style.display = 'block';
-}
+function showRoundsHub()  { showView('rounds-hub'); }
+function showCreateRound() { showView('create-round-form'); }
+function showJoinRound()  { showView('join-round-form'); }
+function showJoinDetails() { showView('join-round-details'); }
 
 // Create a new round
 async function createRound() {
@@ -587,7 +563,6 @@ async function createRound() {
         document.getElementById('create-round-form').style.display = 'none';
         document.getElementById('round-created-success').style.display = 'block';
         
-        console.log('Round created:', roundData);
         
     } catch (error) {
         console.error('Error creating round:', error);
@@ -851,7 +826,6 @@ async function joinRound() {
         });
         localStorage.setItem('joinedRounds', JSON.stringify(joinedRounds));
         
-        console.log('Joined round:', scoreData);
         
         // Navigate to scoring page
         window.location.href = `live-scores.html?round=${createdRoundId}&score=${scoreId}`;
@@ -1065,12 +1039,10 @@ async function permanentlyDeleteRound(roundId) {
             
             // Delete from archivedRounds
             await deleteDoc(doc(window.db, 'archivedRounds', roundId));
-            console.log('Deleted archived round from Firebase:', roundId);
             
             // Also delete from scores collection (safety cleanup)
             try {
                 await deleteDoc(doc(window.db, 'scores', roundId));
-                console.log('Deleted score from Firebase:', roundId);
             } catch (e) {
                 // May not exist, that's fine
             }
@@ -1079,15 +1051,11 @@ async function permanentlyDeleteRound(roundId) {
             if (parentRoundId) {
                 try {
                     const hasOtherScores = await hasOtherScoresForRound(parentRoundId);
-                    console.log('Has other scores for round', parentRoundId, ':', hasOtherScores);
                     if (!hasOtherScores) {
                         await deleteDoc(doc(window.db, 'rounds', parentRoundId));
-                        console.log('Deleted round from Firebase (no remaining scores):', parentRoundId);
                     } else {
-                        console.log('Round still has other scores, keeping:', parentRoundId);
                     }
                 } catch (e) {
-                    console.log('Could not delete parent round (may not exist or already deleted):', e);
                 }
             }
         } catch (e) {
@@ -1117,12 +1085,10 @@ async function deleteAllArchivedRounds() {
                 const parentRoundId = docSnap.data().roundId;
                 
                 await deleteDoc(doc(window.db, 'archivedRounds', docSnap.id));
-                console.log('Deleted archived round from Firebase:', docSnap.id);
                 
                 // Also delete from scores collection (safety cleanup)
                 try {
                     await deleteDoc(doc(window.db, 'scores', docSnap.id));
-                    console.log('Deleted score from Firebase:', docSnap.id);
                 } catch (e) {
                     // May not exist, that's fine
                 }
@@ -1133,12 +1099,9 @@ async function deleteAllArchivedRounds() {
                         const hasOtherScores = await hasOtherScoresForRound(parentRoundId);
                         if (!hasOtherScores) {
                             await deleteDoc(doc(window.db, 'rounds', parentRoundId));
-                            console.log('Deleted round from Firebase (no remaining scores):', parentRoundId);
                         } else {
-                            console.log('Round still has other scores, keeping:', parentRoundId);
                         }
                     } catch (e) {
-                        console.log('Could not delete parent round:', e);
                     }
                 }
             }
@@ -1170,7 +1133,6 @@ async function removeCompletedRound(roundId) {
                 await setDoc(doc(window.db, 'archivedRounds', roundId), roundData);
                 // Delete from completedRounds
                 await deleteDoc(doc(window.db, 'completedRounds', roundId));
-                console.log('Round moved to archivedRounds:', roundId);
             }
         } catch (e) {
             console.error('Error archiving round in Firebase:', e);
@@ -1183,291 +1145,6 @@ async function removeCompletedRound(roundId) {
 
 // Generate scorecard table HTML
 function generateScorecardTable(round) {
-    const container = document.getElementById('modal-scorecard-table');
-    const handicap = round.handicap || 0;
-    const scores = round.scores || {};
-    const putts = round.putts || {};
-    const courseData = getCourseData(round.course);
-    const hasCourse = !!courseData;
-    
-    // Helper to get hole data safely
-    const hd = (i) => hasCourse ? courseData.holes[i] : null;
-    
-    // Calculate stableford points helper
-    const getStablefordPoints = (score, par, si) => {
-        if (!score || par === undefined || si === undefined) return 0;
-        let strokes = 0;
-        if (handicap >= si) strokes++;
-        if (handicap >= 18 + si) strokes++;
-        const adjustedPar = par + strokes;
-        const diff = adjustedPar - score;
-        if (diff <= -2) return 0;
-        return diff + 2;
-    };
-    
-    // Calculate totals
-    let front9Score = 0, back9Score = 0, front9Par = 0, back9Par = 0;
-    let front9Stableford = 0, back9Stableford = 0;
-    let front9Putts = 0, back9Putts = 0;
-    
-    for (let i = 1; i <= 9; i++) {
-        if (hd(i)) front9Par += hd(i).par;
-        if (scores[i]) {
-            front9Score += scores[i];
-            if (hd(i)) front9Stableford += getStablefordPoints(scores[i], hd(i).par, hd(i).si);
-        }
-        if (putts[i]) front9Putts += putts[i];
-    }
-    for (let i = 10; i <= 18; i++) {
-        if (hd(i)) back9Par += hd(i).par;
-        if (scores[i]) {
-            back9Score += scores[i];
-            if (hd(i)) back9Stableford += getStablefordPoints(scores[i], hd(i).par, hd(i).si);
-        }
-        if (putts[i]) back9Putts += putts[i];
-    }
-    
-    const totalScore = front9Score + back9Score;
-    const totalPar = front9Par + back9Par;
-    const totalStableford = front9Stableford + back9Stableford;
-    const totalPutts = front9Putts + back9Putts;
-    
-    // Helper to get score class
-    const getScoreClass = (hole, score) => {
-        if (!score || !hd(hole)) return '';
-        const par = hd(hole).par;
-        if (score < par) return 'under-par';
-        if (score > par) return 'over-par';
-        return '';
-    };
-    
-    // Helper to get stableford class
-    const getStablefordClass = (pts) => {
-        if (pts >= 3) return 'under-par';
-        if (pts === 0) return 'over-par';
-        return '';
-    };
-    
-    // Check if stroke index data is available
-    const hasIndex = hasCourse && hd(1) && hd(1).si !== undefined;
-    
-    // ========================================
-    // VERTICAL TABLE (Mobile) - holes as rows
-    // ========================================
-    let verticalRows = '';
-    
-    // Front 9
-    for (let i = 1; i <= 9; i++) {
-        const score = scores[i];
-        const putt = putts[i];
-        const par = hd(i)?.par;
-        const si = hd(i)?.si;
-        const pts = (score && par !== undefined) ? getStablefordPoints(score, par, si) : null;
-        
-        verticalRows += `
-            <tr>
-                <td class="row-label">${i}</td>
-                ${hasIndex ? `<td>${si}</td>` : ''}
-                ${hasCourse ? `<td>${par}</td>` : ''}
-                <td class="${getScoreClass(i, score)}">${score || '-'}</td>
-                ${hasCourse ? `<td class="${pts !== null ? getStablefordClass(pts) : ''}">${pts !== null ? pts : '-'}</td>` : ''}
-                <td class="${putt >= 3 ? 'over-par' : ''}">${putt || '-'}</td>
-            </tr>
-        `;
-    }
-    
-    // Front 9 subtotal
-    verticalRows += `
-        <tr class="subtotal-row">
-            <td class="row-label">OUT</td>
-            ${hasIndex ? `<td class="subtotal-col"></td>` : ''}
-            ${hasCourse ? `<td class="subtotal-col">${front9Par}</td>` : ''}
-            <td class="subtotal-col">${front9Score || '-'}</td>
-            ${hasCourse ? `<td class="subtotal-col">${front9Stableford || '-'}</td>` : ''}
-            <td class="subtotal-col">${front9Putts || '-'}</td>
-        </tr>
-    `;
-    
-    // Back 9
-    for (let i = 10; i <= 18; i++) {
-        const score = scores[i];
-        const putt = putts[i];
-        const par = hd(i)?.par;
-        const si = hd(i)?.si;
-        const pts = (score && par !== undefined) ? getStablefordPoints(score, par, si) : null;
-        
-        verticalRows += `
-            <tr>
-                <td class="row-label">${i}</td>
-                ${hasIndex ? `<td>${si}</td>` : ''}
-                ${hasCourse ? `<td>${par}</td>` : ''}
-                <td class="${getScoreClass(i, score)}">${score || '-'}</td>
-                ${hasCourse ? `<td class="${pts !== null ? getStablefordClass(pts) : ''}">${pts !== null ? pts : '-'}</td>` : ''}
-                <td class="${putt >= 3 ? 'over-par' : ''}">${putt || '-'}</td>
-            </tr>
-        `;
-    }
-    
-    // Back 9 subtotal
-    verticalRows += `
-        <tr class="subtotal-row">
-            <td class="row-label">IN</td>
-            ${hasIndex ? `<td class="subtotal-col"></td>` : ''}
-            ${hasCourse ? `<td class="subtotal-col">${back9Par}</td>` : ''}
-            <td class="subtotal-col">${back9Score || '-'}</td>
-            ${hasCourse ? `<td class="subtotal-col">${back9Stableford || '-'}</td>` : ''}
-            <td class="subtotal-col">${back9Putts || '-'}</td>
-        </tr>
-    `;
-    
-    // Total row
-    verticalRows += `
-        <tr class="total-row">
-            <td class="row-label">TOT</td>
-            ${hasIndex ? `<td class="total-col"></td>` : ''}
-            ${hasCourse ? `<td class="total-col">${totalPar}</td>` : ''}
-            <td class="total-col">${totalScore || '-'}</td>
-            ${hasCourse ? `<td class="total-col">${totalStableford || '-'}</td>` : ''}
-            <td class="total-col">${totalPutts || '-'}</td>
-        </tr>
-    `;
-    
-    const verticalTable = `
-        <table class="modal-scorecard modal-scorecard-vertical">
-            <thead>
-                <tr>
-                    <th class="row-label">Hole</th>
-                    ${hasIndex ? `<th>Index</th>` : ''}
-                    ${hasCourse ? `<th>Par</th>` : ''}
-                    <th>Score</th>
-                    ${hasCourse ? `<th>Pts</th>` : ''}
-                    <th>Putts</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${verticalRows}
-            </tbody>
-        </table>
-    `;
-    
-    // ========================================
-    // HORIZONTAL TABLE (Desktop) - holes as columns
-    // ========================================
-    
-    // Build hole numbers row
-    let holeRow = '<th class="row-label">Hole</th>';
-    for (let i = 1; i <= 9; i++) {
-        holeRow += `<th>${i}</th>`;
-    }
-    holeRow += '<th class="subtotal-col">OUT</th>';
-    for (let i = 10; i <= 18; i++) {
-        holeRow += `<th>${i}</th>`;
-    }
-    holeRow += '<th class="subtotal-col">IN</th>';
-    holeRow += '<th class="total-col">TOT</th>';
-    
-    // Build index row (if available)
-    let indexRow = '';
-    if (hasIndex) {
-        indexRow = '<td class="row-label">Index</td>';
-        for (let i = 1; i <= 9; i++) {
-            indexRow += `<td>${hd(i)?.si ?? '-'}</td>`;
-        }
-        indexRow += '<td class="subtotal-col"></td>';
-        for (let i = 10; i <= 18; i++) {
-            indexRow += `<td>${hd(i)?.si ?? '-'}</td>`;
-        }
-        indexRow += '<td class="subtotal-col"></td>';
-        indexRow += '<td class="total-col"></td>';
-    }
-    
-    // Build par row (only if course data available)
-    let parRow = '';
-    if (hasCourse) {
-        parRow = '<td class="row-label">Par</td>';
-        for (let i = 1; i <= 9; i++) {
-            parRow += `<td>${hd(i)?.par ?? '-'}</td>`;
-        }
-        parRow += `<td class="subtotal-col">${front9Par}</td>`;
-        for (let i = 10; i <= 18; i++) {
-            parRow += `<td>${hd(i)?.par ?? '-'}</td>`;
-        }
-        parRow += `<td class="subtotal-col">${back9Par}</td>`;
-        parRow += `<td class="total-col">${totalPar}</td>`;
-    }
-    
-    // Build score row
-    let scoreRow = '<td class="row-label">Score</td>';
-    for (let i = 1; i <= 9; i++) {
-        const score = scores[i];
-        scoreRow += `<td class="${getScoreClass(i, score)}">${score || '-'}</td>`;
-    }
-    scoreRow += `<td class="subtotal-col">${front9Score || '-'}</td>`;
-    for (let i = 10; i <= 18; i++) {
-        const score = scores[i];
-        scoreRow += `<td class="${getScoreClass(i, score)}">${score || '-'}</td>`;
-    }
-    scoreRow += `<td class="subtotal-col">${back9Score || '-'}</td>`;
-    scoreRow += `<td class="total-col">${totalScore || '-'}</td>`;
-    
-    // Build stableford row (only if course data available)
-    let stablefordRow = '';
-    if (hasCourse) {
-        stablefordRow = '<td class="row-label">Pts</td>';
-        for (let i = 1; i <= 9; i++) {
-            const score = scores[i];
-            if (score && hd(i)) {
-                const pts = getStablefordPoints(score, hd(i).par, hd(i).si);
-                stablefordRow += `<td class="${getStablefordClass(pts)}">${pts}</td>`;
-            } else {
-                stablefordRow += '<td>-</td>';
-            }
-        }
-        stablefordRow += `<td class="subtotal-col">${front9Stableford || '-'}</td>`;
-        for (let i = 10; i <= 18; i++) {
-            const score = scores[i];
-            if (score && hd(i)) {
-                const pts = getStablefordPoints(score, hd(i).par, hd(i).si);
-                stablefordRow += `<td class="${getStablefordClass(pts)}">${pts}</td>`;
-            } else {
-                stablefordRow += '<td>-</td>';
-            }
-        }
-        stablefordRow += `<td class="subtotal-col">${back9Stableford || '-'}</td>`;
-        stablefordRow += `<td class="total-col">${totalStableford || '-'}</td>`;
-    }
-    
-    // Build putts row
-    let puttsRow = '<td class="row-label">Putts</td>';
-    for (let i = 1; i <= 9; i++) {
-        const putt = putts[i];
-        puttsRow += `<td class="${putt >= 3 ? 'over-par' : ''}">${putt || '-'}</td>`;
-    }
-    puttsRow += `<td class="subtotal-col">${front9Putts || '-'}</td>`;
-    for (let i = 10; i <= 18; i++) {
-        const putt = putts[i];
-        puttsRow += `<td class="${putt >= 3 ? 'over-par' : ''}">${putt || '-'}</td>`;
-    }
-    puttsRow += `<td class="subtotal-col">${back9Putts || '-'}</td>`;
-    puttsRow += `<td class="total-col">${totalPutts || '-'}</td>`;
-    
-    const horizontalTable = `
-        <div class="modal-scorecard-horizontal-wrapper">
-            <table class="modal-scorecard modal-scorecard-horizontal">
-                <thead>
-                    <tr>${holeRow}</tr>
-                </thead>
-                <tbody>
-                    ${hasIndex ? `<tr class="index-row">${indexRow}</tr>` : ''}
-                    ${hasCourse ? `<tr class="par-row">${parRow}</tr>` : ''}
-                    <tr class="score-row">${scoreRow}</tr>
-                    ${hasCourse ? `<tr class="pts-row">${stablefordRow}</tr>` : ''}
-                    <tr>${puttsRow}</tr>
-                </tbody>
-            </table>
-        </div>
-    `;
-    
-    // Output both tables - CSS will show/hide based on screen size
-    container.innerHTML = verticalTable + horizontalTable;
+    document.getElementById('modal-scorecard-table').innerHTML =
+        generateScorecardHTML(round.scores || {}, round.putts || {}, getCourseData(round.course), round.handicap || 0);
 }

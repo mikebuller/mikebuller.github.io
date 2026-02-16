@@ -98,3 +98,170 @@ function getHoleImagePath(courseName, holeNumber) {
     if (!course || !course.holeImagePath) return null;
     return course.holeImagePath.replace('{hole}', holeNumber);
 }
+
+/**
+ * Get CSS class for a score relative to par.
+ */
+function getScoreClass(score, par) {
+    if (!score || par === undefined) return '';
+    return score < par ? 'under-par' : (score > par ? 'over-par' : '');
+}
+
+/**
+ * Get CSS class for stableford points.
+ */
+function getStablefordClass(pts) {
+    if (pts >= 3) return 'under-par';
+    if (pts === 0) return 'over-par';
+    return '';
+}
+
+/**
+ * Generate scorecard HTML (vertical + horizontal layouts).
+ * @param {Object} scores - { 1: 4, 2: 5, ... } hole scores
+ * @param {Object} putts  - { 1: 2, 2: 1, ... } hole putts
+ * @param {Object|null} courseData - course object from getCourseData(), or null
+ * @param {number} handicap
+ * @returns {string} HTML string with both table layouts
+ */
+function generateScorecardHTML(scores, putts, courseData, handicap) {
+    const hasCourse = !!courseData;
+    const hd = (i) => hasCourse ? courseData.holes[i] : null;
+    const t = calcRoundTotals(scores, putts, courseData, handicap);
+
+    // Per-hole helpers
+    const holeScore = (i) => scores[i] || '-';
+    const holePutts = (i) => putts[i] || '-';
+    const holePar = (i) => hd(i)?.par ?? '-';
+    const holePts = (i) => {
+        if (!scores[i] || !hd(i)) return '-';
+        return calcStablefordPoints(scores[i], hd(i).par, hd(i).si, handicap);
+    };
+    const holeScoreClass = (i) => scores[i] && hd(i) ? getScoreClass(scores[i], hd(i).par) : '';
+    const holePtsClass = (i) => { const p = holePts(i); return typeof p === 'number' ? getStablefordClass(p) : ''; };
+    const holePuttClass = (i) => (putts[i] >= 3 ? 'over-par' : '');
+
+    let html = '';
+
+    // ===== VERTICAL LAYOUT (Mobile) =====
+    html += '<table class="modal-scorecard modal-scorecard-vertical">';
+    html += `<thead><tr style="border-bottom: 2px solid rgba(255,255,255,0.3);"><th>Hole</th>${hasCourse ? '<th>Par</th>' : ''}<th>Putts</th><th>Score</th>${hasCourse ? '<th>Points</th>' : ''}</tr></thead><tbody>`;
+
+    const verticalRow = (i) => `<tr>
+        <td>${i}</td>
+        ${hasCourse ? `<td>${holePar(i)}</td>` : ''}
+        <td class="${holePuttClass(i)}">${holePutts(i)}</td>
+        <td class="${holeScoreClass(i)}">${holeScore(i)}</td>
+        ${hasCourse ? `<td class="${holePtsClass(i)}">${holePts(i)}</td>` : ''}</tr>`;
+
+    const subtotalRow = (label, half) => `<tr class="subtotal-row">
+        <td>${label}</td>
+        ${hasCourse ? `<td>${half.par}</td>` : ''}
+        <td>${half.putts || '-'}</td>
+        <td>${half.score || '-'}</td>
+        ${hasCourse ? `<td>${half.stableford || '-'}</td>` : ''}</tr>`;
+
+    for (let i = 1; i <= 9; i++) html += verticalRow(i);
+    html += subtotalRow('OUT', t.front9);
+    for (let i = 10; i <= 18; i++) html += verticalRow(i);
+    html += subtotalRow('IN', t.back9);
+
+    html += `<tr class="total-row"><td>TOT</td>
+        ${hasCourse ? `<td>${t.totalPar}</td>` : ''}
+        <td>${t.totalPutts || '-'}</td>
+        <td>${t.totalScore || '-'}</td>
+        ${hasCourse ? `<td>${t.totalStableford || '-'}</td>` : ''}</tr>`;
+    html += '</tbody></table>';
+
+    // ===== HORIZONTAL LAYOUT (Desktop) =====
+    html += '<div class="modal-scorecard-horizontal-wrapper"><table class="modal-scorecard modal-scorecard-horizontal"><thead><tr><th class="row-label">Hole</th>';
+    for (let i = 1; i <= 9; i++) html += `<th>${i}</th>`;
+    html += '<th class="subtotal-col">OUT</th>';
+    for (let i = 10; i <= 18; i++) html += `<th>${i}</th>`;
+    html += '<th class="subtotal-col">IN</th><th class="total-col">TOT</th></tr></thead><tbody>';
+
+    // Helper to build a horizontal data row
+    const hRow = (label, cls, cellFn, f9, b9, tot) => {
+        let r = `<tr class="${cls}"><td class="row-label">${label}</td>`;
+        for (let i = 1; i <= 9; i++) r += cellFn(i);
+        r += `<td class="subtotal-col">${f9}</td>`;
+        for (let i = 10; i <= 18; i++) r += cellFn(i);
+        r += `<td class="subtotal-col">${b9}</td><td class="total-col">${tot}</td></tr>`;
+        return r;
+    };
+
+    // Stroke index row
+    if (hasCourse && hd(1)?.si !== undefined) {
+        html += hRow('SI', 'index-row', (i) => `<td>${hd(i)?.si ?? '-'}</td>`,
+            '', '', '');
+    }
+
+    // Par row
+    if (hasCourse) {
+        html += hRow('Par', 'par-row', (i) => `<td>${holePar(i)}</td>`,
+            t.front9.par, t.back9.par, t.totalPar);
+    }
+
+    // Putts row
+    html += hRow('Putts', '', (i) => `<td class="${holePuttClass(i)}">${holePutts(i)}</td>`,
+        t.front9.putts || '-', t.back9.putts || '-', t.totalPutts || '-');
+
+    // Score row
+    html += hRow('Score', 'score-row', (i) => `<td class="${holeScoreClass(i)}">${holeScore(i)}</td>`,
+        t.front9.score || '-', t.back9.score || '-', t.totalScore || '-');
+
+    // Points row
+    if (hasCourse) {
+        html += hRow('Points', 'pts-row', (i) => `<td class="${holePtsClass(i)}">${holePts(i)}</td>`,
+            t.front9.stableford || '-', t.back9.stableford || '-', t.totalStableford || '-');
+    }
+
+    html += '</tbody></table></div>';
+    return html;
+}
+
+/**
+ * Calculate stableford points for a single hole.
+ * Returns 0 if any required data is missing.
+ */
+function calcStablefordPoints(score, par, si, handicap) {
+    if (!score || par === undefined || si === undefined) return 0;
+    let strokes = 0;
+    if (handicap >= si) strokes++;
+    if (handicap >= 18 + si) strokes++;
+    const adjustedPar = par + strokes;
+    const diff = adjustedPar - score;
+    return diff <= -2 ? 0 : diff + 2;
+}
+
+/**
+ * Calculate front-9 and back-9 totals for a set of scores.
+ * Returns { front9, back9, total } with score/par/stableford/putts breakdowns.
+ */
+function calcRoundTotals(scores, putts, courseData, handicap) {
+    const result = {
+        front9: { score: 0, par: 0, stableford: 0, putts: 0, count: 0 },
+        back9:  { score: 0, par: 0, stableford: 0, putts: 0, count: 0 },
+    };
+
+    for (let i = 1; i <= 18; i++) {
+        const half = i <= 9 ? result.front9 : result.back9;
+        const hd = courseData ? courseData.holes[i] : null;
+        if (hd) half.par += hd.par;
+        if (scores[i] !== undefined) {
+            half.score += scores[i];
+            half.count++;
+            if (hd) half.stableford += calcStablefordPoints(scores[i], hd.par, hd.si, handicap);
+        }
+        if (putts[i] !== undefined) half.putts += putts[i];
+    }
+
+    return {
+        ...result,
+        totalScore:      result.front9.score + result.back9.score,
+        totalPar:        result.front9.par + result.back9.par,
+        totalStableford: result.front9.stableford + result.back9.stableford,
+        totalPutts:      result.front9.putts + result.back9.putts,
+        holesPlayed:     result.front9.count + result.back9.count,
+    };
+}

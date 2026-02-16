@@ -1,8 +1,3 @@
-/* Stop zooming on double-tap */
-html {
-    touch-action: manipulation;
-}
-
 /* Dinner Section */
 .dinner-section {
     background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
@@ -1196,11 +1191,23 @@ input[type="date"].setup-input {
 
 .exit-round-btn {
     background: transparent;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.4);
     color: white;
-    font-size: 1.2rem;
+    font-size: 1rem;
     cursor: pointer;
-    padding: 5px 10px;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.exit-round-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.7);
 }
 
 .hole-navigation {
@@ -1838,6 +1845,29 @@ input[type="date"].setup-input {
 
 .scorecard-modal-content .score-player-bar {
     border-radius: 12px 12px 0 0;
+    align-items: stretch;
+}
+
+.modal-player-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 2px;
+}
+
+.modal-course-info {
+    font-size: 0.75rem;
+    opacity: 0.85;
+    font-weight: 400;
+}
+
+.modal-right-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-left: auto;
+    gap: 2px;
 }
 
 .scorecard-modal-header {
