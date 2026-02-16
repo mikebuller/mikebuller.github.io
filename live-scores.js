@@ -1,39 +1,7 @@
-// Player data
-const allPlayers = [
-    { id: 1, name: "Marty Buller", handicap: 19 },
-    { id: 2, name: "Alan Pankhurst", handicap: 24 },
-    { id: 3, name: "Scott Hooper", handicap: 15 },
-    { id: 4, name: "Sam Buller", handicap: 18 },
-    { id: 5, name: "David Buller", handicap: 21 },
-    { id: 6, name: "Matt Buller", handicap: 22 },
-    { id: 7, name: "Simon Pannell", handicap: 32 },
-    { id: 8, name: "Cameron Jones", handicap: 10 }
-];
-
-// Course data
-const courseData = {
-    par: 71,
-    holes: {
-        1: { par: 4, si: 2, tallwood: 380, bloodwood: 353 },
-        2: { par: 4, si: 12, tallwood: 346, bloodwood: 308 },
-        3: { par: 3, si: 8, tallwood: 183, bloodwood: 170 },
-        4: { par: 5, si: 14, tallwood: 485, bloodwood: 465 },
-        5: { par: 3, si: 16, tallwood: 147, bloodwood: 139 },
-        6: { par: 4, si: 6, tallwood: 335, bloodwood: 328 },
-        7: { par: 5, si: 18, tallwood: 487, bloodwood: 453 },
-        8: { par: 3, si: 4, tallwood: 182, bloodwood: 158 },
-        9: { par: 4, si: 10, tallwood: 324, bloodwood: 304 },
-        10: { par: 5, si: 13, tallwood: 456, bloodwood: 419 },
-        11: { par: 3, si: 9, tallwood: 190, bloodwood: 150 },
-        12: { par: 4, si: 1, tallwood: 425, bloodwood: 372 },
-        13: { par: 4, si: 3, tallwood: 370, bloodwood: 346 },
-        14: { par: 5, si: 15, tallwood: 505, bloodwood: 466 },
-        15: { par: 4, si: 7, tallwood: 357, bloodwood: 326 },
-        16: { par: 4, si: 5, tallwood: 372, bloodwood: 340 },
-        17: { par: 3, si: 11, tallwood: 142, bloodwood: 131 },
-        18: { par: 4, si: 17, tallwood: 460, bloodwood: 436 }
-    }
-};
+// Course data is loaded from course-data.js (shared with rounds.js)
+// getCourseData(courseName) returns the course object or null
+// courseData is resolved per-round based on currentRound.course
+let courseData = null;
 
 // Current round state
 let currentRound = null;
@@ -43,10 +11,10 @@ let modalRoundData = null;
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     initializeQuickNav();
-    
+
     // Check for round/score URL parameters (coming from rounds.html)
     checkUrlForRoundParams();
-    
+
     setTimeout(checkForTodaysActiveRounds, 1000);
 });
 
@@ -58,12 +26,12 @@ function checkUrlForRoundParams() {
     const urlParams = new URLSearchParams(window.location.search);
     const roundId = urlParams.get('round');
     const scoreId = urlParams.get('score');
-    
+
     if (roundId && scoreId) {
         console.log('Loading round from URL params:', roundId, scoreId);
         // Show loading state
         showLoadingState();
-        
+
         // If Firebase is already ready, load immediately
         if (window.db && window.firestoreHelpers) {
             loadRoundFromParams(roundId, scoreId);
@@ -91,7 +59,7 @@ function showLoadingState() {
     const loading = document.getElementById('round-loading');
     const noRound = document.getElementById('no-round');
     const scoreEntry = document.getElementById('score-entry');
-    
+
     if (loading) loading.style.display = 'block';
     if (noRound) noRound.style.display = 'none';
     if (scoreEntry) scoreEntry.style.display = 'none';
@@ -102,7 +70,7 @@ function showNoRoundState() {
     const loading = document.getElementById('round-loading');
     const noRound = document.getElementById('no-round');
     const scoreEntry = document.getElementById('score-entry');
-    
+
     if (loading) loading.style.display = 'none';
     if (noRound) noRound.style.display = 'block';
     if (scoreEntry) scoreEntry.style.display = 'none';
@@ -113,7 +81,7 @@ function showScoreEntryState() {
     const loading = document.getElementById('round-loading');
     const noRound = document.getElementById('no-round');
     const scoreEntry = document.getElementById('score-entry');
-    
+
     if (loading) loading.style.display = 'none';
     if (noRound) noRound.style.display = 'none';
     if (scoreEntry) scoreEntry.style.display = 'block';
@@ -127,34 +95,34 @@ async function loadRoundFromParams(roundId, scoreId) {
         showNoRoundState();
         return;
     }
-    
+
     try {
         const { doc, getDoc } = window.firestoreHelpers;
-        
+
         // Fetch the round data
         const roundRef = doc(window.db, 'rounds', roundId);
         const roundSnap = await getDoc(roundRef);
-        
+
         if (!roundSnap.exists()) {
             console.error('Round not found:', roundId);
             alert('Round not found. Please try again.');
             return;
         }
-        
+
         const roundData = roundSnap.data();
-        
+
         // Fetch the score data
         const scoreRef = doc(window.db, 'scores', scoreId);
         const scoreSnap = await getDoc(scoreRef);
-        
+
         if (!scoreSnap.exists()) {
             console.error('Score not found:', scoreId);
             alert('Score entry not found. Please try again.');
             return;
         }
-        
+
         const scoreData = scoreSnap.data();
-        
+
         // Initialize current round with the loaded data
         currentRound = {
             roundId: roundId,
@@ -177,7 +145,7 @@ async function loadRoundFromParams(roundId, scoreId) {
             ctp: scoreData.ctp || {},
             longestDrive: scoreData.longestDrive || {}
         };
-        
+
         // Find the last hole with a score to resume from
         for (let i = 18; i >= 1; i--) {
             if (currentRound.scores[i] !== undefined) {
@@ -185,49 +153,38 @@ async function loadRoundFromParams(roundId, scoreId) {
                 break;
             }
         }
-        
+
+        // Resolve course data from shared course-data.js
+        courseData = getCourseData(currentRound.course);
+
         // Update UI
         document.getElementById('current-player-name').textContent = currentRound.playerName;
         const teesDisplay = document.getElementById('current-tees-display');
         if (teesDisplay) {
             teesDisplay.textContent = currentRound.tees.charAt(0).toUpperCase() + currentRound.tees.slice(1);
         }
-        
+
+        // Hide stableford UI elements if course data is not available
+        const stablefordTotalItem = document.querySelector('.total-item.total-stableford');
+        if (stablefordTotalItem) {
+            stablefordTotalItem.style.display = courseData ? '' : 'none';
+        }
+
         // Show score entry
         showScoreEntryState();
-        
+
         // Initialize hole display
         updateHoleDisplay();
-        
+
         // Show header leaderboard and start listening for updates
         showHeaderLeaderboard();
-        
+
         console.log('Round loaded successfully:', currentRound);
-        
+
     } catch (error) {
         console.error('Error loading round:', error);
         alert('Failed to load round. Please try again.');
     }
-}
-
-// Initialize player dropdown
-function initializeLiveScoresPlayers() {
-    const select = document.getElementById('score-player');
-    if (!select) return;
-    
-    // Clear existing options except first
-    while (select.options.length > 1) {
-        select.remove(1);
-    }
-    
-    // Add players
-    allPlayers.forEach(player => {
-        const option = document.createElement('option');
-        option.value = player.id;
-        option.textContent = `${player.name} (HCP: ${player.handicap})`;
-        option.dataset.handicap = player.handicap;
-        select.appendChild(option);
-    });
 }
 
 // Toggle between player and team entry type
@@ -235,7 +192,7 @@ function toggleEntryType() {
     const entryType = document.querySelector('input[name="entry-type"]:checked')?.value;
     const playerField = document.getElementById('player-select-field');
     const teamField = document.getElementById('team-name-field');
-    
+
     if (entryType === 'team') {
         playerField.style.display = 'none';
         teamField.style.display = 'block';
@@ -249,7 +206,7 @@ function toggleEntryType() {
 function initializeQuickNav() {
     const grid = document.getElementById('quick-nav-grid');
     if (!grid) return;
-    
+
     grid.innerHTML = '';
     for (let i = 1; i <= 18; i++) {
         const btn = document.createElement('button');
@@ -301,44 +258,47 @@ function goToHole(holeNum) {
 // Update hole display
 function updateHoleDisplay() {
     if (!currentRound) return;
-    
+
     const hole = currentRound.currentHole;
-    const holeData = courseData.holes[hole];
     const tees = currentRound.tees;
-    
+    const holeData = courseData ? courseData.holes[hole] : null;
+
     document.getElementById('current-hole-number').textContent = `Hole ${hole}`;
-    
+
     const holeDetailsEl = document.getElementById('current-hole-details');
-    const isBonville = (currentRound.course || '').toLowerCase().includes('bonville');
-    if (isBonville) {
-        holeDetailsEl.textContent = `Par ${holeData.par} • ${holeData[tees]}m • Index ${holeData.si}`;
+    if (holeData) {
+        const distance = holeData[tees];
+        const parts = [`Par ${holeData.par}`];
+        if (distance) parts.push(`${distance}m`);
+        if (holeData.si !== undefined) parts.push(`Index ${holeData.si}`);
+        holeDetailsEl.textContent = parts.join(' • ');
         holeDetailsEl.style.display = '';
     } else {
         holeDetailsEl.style.display = 'none';
     }
-    
+
     // Update score and putts display
     const score = currentRound.scores[hole];
     const putts = currentRound.putts[hole];
     document.getElementById('current-score').textContent = score !== undefined ? score : '-';
     document.getElementById('current-putts').textContent = putts !== undefined ? putts : '-';
-    
+
     // Update FIR and GIR checkboxes
     const firCheckbox = document.getElementById('current-fir');
     const girCheckbox = document.getElementById('current-gir');
     if (firCheckbox) firCheckbox.checked = !!currentRound.fir[hole];
     if (girCheckbox) girCheckbox.checked = !!currentRound.gir[hole];
-    
+
     // Update navigation buttons
     document.getElementById('prev-hole-btn').disabled = hole === 1;
     document.getElementById('next-hole-btn').disabled = hole === 18;
-    
+
     // Update hole prize indicator and input
     updateHolePrizeDisplay(hole);
-    
+
     // Update quick nav
     updateQuickNav();
-    
+
     // Update totals
     updateTotals();
 }
@@ -350,30 +310,30 @@ function updateHolePrizeDisplay(hole) {
     const prizeLabel = document.getElementById('prize-input-label');
     const prizeDistance = document.getElementById('prize-distance');
     const prizeUnit = document.getElementById('prize-unit');
-    
+
     if (!indicator || !prizeRow || !currentRound) return;
-    
+
     // Find prize for this hole
     const prizes = currentRound.holePrizes || [];
     const prize = prizes.find(p => parseInt(p.hole) === hole);
-    
+
     const prizeDivider = document.getElementById('prize-divider');
-    
+
     if (prize) {
         const isCtp = prize.type === 'ctp';
         const emoji = isCtp ? '⛳' : '💪';
         const label = isCtp ? 'Closest to Pin' : 'Longest Drive';
-        
+
         // Show indicator
         indicator.style.display = '';
         document.getElementById('hole-prize-text').textContent = `${emoji} ${label}`;
-        
+
         // Show divider and input row
         if (prizeDivider) prizeDivider.style.display = '';
         prizeRow.style.display = '';
         prizeLabel.textContent = `${emoji} ${label}`;
         prizeUnit.textContent = isCtp ? 'cm' : 'm';
-        
+
         // Set current value
         const dataKey = isCtp ? 'ctp' : 'longestDrive';
         prizeDistance.value = currentRound[dataKey][hole] || '';
@@ -387,39 +347,39 @@ function updateHolePrizeDisplay(hole) {
 // Update prize distance value
 function updatePrizeDistance() {
     if (!currentRound) return;
-    
+
     const hole = currentRound.currentHole;
     const prizes = currentRound.holePrizes || [];
     const prize = prizes.find(p => parseInt(p.hole) === hole);
-    
+
     if (!prize) return;
-    
+
     const value = parseFloat(document.getElementById('prize-distance').value) || 0;
     const dataKey = prize.type === 'ctp' ? 'ctp' : 'longestDrive';
     currentRound[dataKey][hole] = value;
-    
+
     saveActiveRoundToFirebase();
 }
 
 // Adjust score
 function adjustScore(delta) {
     if (!currentRound) return;
-    
+
     const hole = currentRound.currentHole;
-    const holeData = courseData.holes[hole];
+    const holeData = courseData ? courseData.holes[hole] : null;
     let current = currentRound.scores[hole];
-    
+
     if (current === undefined) {
-        current = holeData.par; // Start at par
+        current = holeData ? holeData.par : 4; // Start at par, default 4 if unknown
     }
-    
+
     const newScore = Math.max(1, current + delta);
     currentRound.scores[hole] = newScore;
     document.getElementById('current-score').textContent = newScore;
-    
+
     updateQuickNav();
     updateTotals();
-    
+
     // Save to Firebase for real-time leaderboard updates
     saveActiveRoundToFirebase();
 }
@@ -427,22 +387,22 @@ function adjustScore(delta) {
 // Adjust putts
 function adjustPutts(delta) {
     if (!currentRound) return;
-    
+
     const hole = currentRound.currentHole;
     let current = currentRound.putts[hole];
-    
+
     if (current === undefined) {
         current = 0; // Start at 0, so first click of +1 gives 1
     }
-    
+
     const newPutts = Math.max(0, current + delta);
     currentRound.putts[hole] = newPutts;
     document.getElementById('current-putts').textContent = newPutts;
-    
+
     // Track when a 3+ putt occurs (the snake!)
     // The snake goes to whoever MOST RECENTLY recorded a 3+ putt
     const currentHolePutts = currentRound.putts[hole];
-    
+
     if (currentHolePutts >= 3) {
         // This hole has 3+ putts - update the timestamp to NOW
         // This means this player just got the snake
@@ -463,10 +423,10 @@ function adjustPutts(delta) {
             currentRound.lastThreePuttHole = null;
         }
     }
-    
+
     // Update totals display
     updateTotals();
-    
+
     // Save to Firebase for real-time leaderboard updates
     saveActiveRoundToFirebase();
 }
@@ -494,12 +454,12 @@ function toggleGIR() {
 // Update quick nav to show completed holes
 function updateQuickNav() {
     if (!currentRound) return;
-    
+
     const buttons = document.querySelectorAll('.quick-nav-btn');
     buttons.forEach((btn, index) => {
         const holeNum = index + 1;
         btn.classList.remove('active', 'completed');
-        
+
         if (holeNum === currentRound.currentHole) {
             btn.classList.add('active');
         }
@@ -512,12 +472,13 @@ function updateQuickNav() {
 // Update running totals
 function updateTotals() {
     if (!currentRound) return;
-    
+
     const handicap = currentRound.handicap || 0;
-    
+    const hasCourseData = !!courseData;
+
     // Helper to calculate stableford points for a hole
     const calcStablefordPoints = (score, par, si) => {
-        if (!score) return 0;
+        if (!score || par === undefined || si === undefined) return 0;
         let strokes = 0;
         if (handicap >= si) strokes++;
         if (handicap >= 18 + si) strokes++;
@@ -526,70 +487,72 @@ function updateTotals() {
         if (diff <= -2) return 0;
         return diff + 2;
     };
-    
+
     let front9Score = 0, back9Score = 0, front9Count = 0, back9Count = 0;
     let front9Par = 0, back9Par = 0;
     let front9Stableford = 0, back9Stableford = 0;
     let front9Putts = 0, back9Putts = 0;
-    
+
     for (let i = 1; i <= 9; i++) {
-        front9Par += courseData.holes[i].par;
+        const holeData = hasCourseData ? courseData.holes[i] : null;
+        if (holeData) front9Par += holeData.par;
         if (currentRound.scores[i] !== undefined) {
             front9Score += currentRound.scores[i];
             front9Count++;
-            front9Stableford += calcStablefordPoints(currentRound.scores[i], courseData.holes[i].par, courseData.holes[i].si);
+            if (holeData) front9Stableford += calcStablefordPoints(currentRound.scores[i], holeData.par, holeData.si);
         }
         if (currentRound.putts[i] !== undefined) {
             front9Putts += currentRound.putts[i];
         }
     }
-    
+
     for (let i = 10; i <= 18; i++) {
-        back9Par += courseData.holes[i].par;
+        const holeData = hasCourseData ? courseData.holes[i] : null;
+        if (holeData) back9Par += holeData.par;
         if (currentRound.scores[i] !== undefined) {
             back9Score += currentRound.scores[i];
             back9Count++;
-            back9Stableford += calcStablefordPoints(currentRound.scores[i], courseData.holes[i].par, courseData.holes[i].si);
+            if (holeData) back9Stableford += calcStablefordPoints(currentRound.scores[i], holeData.par, holeData.si);
         }
         if (currentRound.putts[i] !== undefined) {
             back9Putts += currentRound.putts[i];
         }
     }
-    
+
     const totalScore = front9Score + back9Score;
     const totalPutts = front9Putts + back9Putts;
     const totalStableford = front9Stableford + back9Stableford;
     const net = Math.round(totalScore - handicap);
-    
+
     // Format relative to par display
     const formatRelativeToPar = (score, par, hasScores) => {
-        if (!hasScores) return '-';
+        if (!hasScores || !hasCourseData) return '-';
         const diff = score - par;
         if (diff === 0) return 'E';
         return diff > 0 ? `+${diff}` : `${diff}`;
     };
-    
+
     // Calculate par for holes played only
     let front9ParPlayed = 0, back9ParPlayed = 0;
     for (let i = 1; i <= 9; i++) {
-        if (currentRound.scores[i] !== undefined) {
+        if (currentRound.scores[i] !== undefined && hasCourseData) {
             front9ParPlayed += courseData.holes[i].par;
         }
     }
     for (let i = 10; i <= 18; i++) {
-        if (currentRound.scores[i] !== undefined) {
+        if (currentRound.scores[i] !== undefined && hasCourseData) {
             back9ParPlayed += courseData.holes[i].par;
         }
     }
-    
+
     // Update display
-    document.getElementById('stableford-total').textContent = (front9Count + back9Count) > 0 ? totalStableford : '-';
+    document.getElementById('stableford-total').textContent = (front9Count + back9Count) > 0 && hasCourseData ? totalStableford : '-';
     document.getElementById('putts-total').textContent = totalPutts > 0 ? totalPutts : '-';
     document.getElementById('front-9-total').textContent = formatRelativeToPar(front9Score, front9ParPlayed, front9Count > 0);
     document.getElementById('back-9-total').textContent = formatRelativeToPar(back9Score, back9ParPlayed, back9Count > 0);
     document.getElementById('gross-total').textContent = (front9Count + back9Count) > 0 ? totalScore : '-';
     document.getElementById('net-total').textContent = (front9Count + back9Count) > 0 ? net : '-';
-    
+
     // Calculate FIR and GIR totals
     let firCount = 0, girCount = 0, holesPlayed = front9Count + back9Count;
     for (let i = 1; i <= 18; i++) {
@@ -639,7 +602,7 @@ async function saveRound() {
         alert('No active round to save');
         return;
     }
-    
+
     if (!window.db || !window.firestoreHelpers) {
         alert('Database not initialized. Please refresh the page.');
         return;
@@ -648,30 +611,32 @@ async function saveRound() {
     if (!confirm('You will not be able to update scores once a round is complete. Are you sure you want to submit?')) {
         return;
     }
-    
+
     try {
         const { doc, setDoc, updateDoc, deleteDoc } = window.firestoreHelpers;
-        
+
         // Calculate totals for the completed round
         let totalScore = 0;
         let totalStableford = 0;
         const handicap = currentRound.handicap || 0;
-        
+
         for (let i = 1; i <= 18; i++) {
             if (currentRound.scores[i] !== undefined) {
                 totalScore += currentRound.scores[i];
-                // Calculate stableford points
-                const par = courseData.holes[i].par;
-                const si = courseData.holes[i].si;
-                let strokes = 0;
-                if (handicap >= si) strokes++;
-                if (handicap >= 18 + si) strokes++;
-                const adjustedPar = par + strokes;
-                const diff = adjustedPar - currentRound.scores[i];
-                totalStableford += diff <= -2 ? 0 : diff + 2;
+                // Calculate stableford points (only if course data available)
+                if (courseData) {
+                    const par = courseData.holes[i].par;
+                    const si = courseData.holes[i].si;
+                    let strokes = 0;
+                    if (handicap >= si) strokes++;
+                    if (handicap >= 18 + si) strokes++;
+                    const adjustedPar = par + strokes;
+                    const diff = adjustedPar - currentRound.scores[i];
+                    totalStableford += diff <= -2 ? 0 : diff + 2;
+                }
             }
         }
-        
+
         // Use existing scoreId if we have one (from joining a round), otherwise create new
         const scoreId = currentRound.scoreId || `score_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         const scoreData = {
@@ -699,10 +664,10 @@ async function saveRound() {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
-        
+
         // Save to completedRounds collection
         await setDoc(doc(window.db, 'completedRounds', scoreId), scoreData);
-        
+
         // Delete from activeRounds collection
         if (currentRound.roundId && currentRound.scoreId) {
             const activeRoundId = `${currentRound.roundId}_${currentRound.scoreId}`;
@@ -713,14 +678,14 @@ async function saveRound() {
                 console.log('Could not delete active round (may not exist):', e);
             }
         }
-        
+
         // Remove from joinedRounds in localStorage
         if (currentRound.roundId) {
             let joinedRounds = JSON.parse(localStorage.getItem('joinedRounds') || '[]');
             joinedRounds = joinedRounds.filter(r => r.roundId !== currentRound.roundId || r.scoreId !== currentRound.scoreId);
             localStorage.setItem('joinedRounds', JSON.stringify(joinedRounds));
         }
-        
+
         // Fire confetti celebration!
         fireConfetti();
         //
@@ -729,12 +694,12 @@ async function saveRound() {
 
         // Reset
         currentRound = null;
-        
+
         // Redirect back to rounds page after a short delay to show confetti
         setTimeout(() => {
             window.location.href = `rounds.html?completed=${scoreId}`;
         }, 2000);
-        
+
     } catch (error) {
         console.error('Error saving round:', error);
         alert('Failed to save round. Please try again.');
@@ -750,15 +715,27 @@ function closeScorecardModal() {
 function showHoleImage() {
     if (!currentRound) return;
     const hole = currentRound.currentHole;
-    const holeData = courseData.holes[hole];
+    const holeData = courseData ? courseData.holes[hole] : null;
     const tees = currentRound.tees || 'tallwood';
-    const distance = holeData[tees];
+    const imagePath = getHoleImagePath(currentRound.course, hole);
     const modal = document.getElementById('hole-image-modal');
     const img = document.getElementById('hole-image-display');
     const caption = document.getElementById('hole-image-caption');
-    
-    img.src = `holes/hole-${hole}.jpg`;
-    caption.textContent = `Hole ${hole} - Par ${holeData.par} • SI ${holeData.si} • ${distance}m`;
+
+    if (!imagePath) return; // No hole images for this course
+
+    img.src = imagePath;
+
+    // Build caption from available data
+    const parts = [`Hole ${hole}`];
+    if (holeData) {
+        parts.push(`Par ${holeData.par}`);
+        if (holeData.si !== undefined) parts.push(`SI ${holeData.si}`);
+        const distance = holeData[tees];
+        if (distance) parts.push(`${distance}m`);
+    }
+    caption.textContent = parts.join(' - ');
+
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
@@ -777,12 +754,12 @@ function closeHoleImage() {
 function positionHeaderLeaderboard() {
     const headerLb = document.getElementById('header-leaderboard');
     const navbar = document.querySelector('.navbar');
-    
+
     if (headerLb && navbar) {
         const navbarHeight = navbar.offsetHeight;
         headerLb.style.top = navbarHeight + 'px';
     }
-    
+
     updateSectionPadding();
 }
 
@@ -790,9 +767,9 @@ function updateSectionPadding() {
     const headerLb = document.getElementById('header-leaderboard');
     const navbar = document.querySelector('.navbar');
     const section = document.getElementById('live-scores');
-    
+
     if (!section || !navbar) return;
-    
+
     if (headerLb && headerLb.style.display !== 'none') {
         const navbarHeight = navbar.offsetHeight;
         const lbHeight = headerLb.offsetHeight;
@@ -814,16 +791,16 @@ document.addEventListener('DOMContentLoaded', () => {
 function showHeaderLeaderboard() {
     const headerLb = document.getElementById('header-leaderboard');
     if (!headerLb) return;
-    
+
     headerLb.style.display = 'block';
     document.body.classList.add('header-lb-active');
-    
+
     // Position header leaderboard and section padding (must be after display:block)
     positionHeaderLeaderboard();
-    
+
     // Re-position on window resize
     window.addEventListener('resize', positionHeaderLeaderboard);
-    
+
     // Start real-time listener
     startActiveRoundsListener();
 }
@@ -832,20 +809,20 @@ function showHeaderLeaderboard() {
 function hideHeaderLeaderboard() {
     const headerLb = document.getElementById('header-leaderboard');
     if (!headerLb) return;
-    
+
     headerLb.style.display = 'none';
     document.body.classList.remove('header-lb-active');
-    
+
     // Reset section padding
     const section = document.getElementById('live-scores');
     if (section) {
         section.classList.remove('with-leaderboard');
         section.style.paddingTop = '';
     }
-    
+
     // Remove resize listener
     window.removeEventListener('resize', positionHeaderLeaderboard);
-    
+
     // Stop real-time listener
     stopActiveRoundsListener();
 }
@@ -857,16 +834,16 @@ function startActiveRoundsListener() {
         setTimeout(startActiveRoundsListener, 500);
         return;
     }
-    
+
     // Stop any existing listener first
     stopActiveRoundsListener();
-    
+
     try {
         const { collection, query, where, onSnapshot } = window.firestoreHelpers;
-        
+
         // Get the current round ID to filter by
         const currentRoundId = currentRound?.roundId || null;
-        
+
         let roundsQuery;
         if (currentRoundId) {
             // Filter by the current round
@@ -880,7 +857,7 @@ function startActiveRoundsListener() {
             roundsQuery = collection(window.db, 'activeRounds');
             console.log('Setting up listener for all active rounds');
         }
-        
+
         activeRoundsUnsubscribe = onSnapshot(
             roundsQuery,
             (snapshot) => {
@@ -888,9 +865,9 @@ function startActiveRoundsListener() {
                 snapshot.forEach(doc => {
                     activeRounds.push({ id: doc.id, ...doc.data() });
                 });
-                
+
                 console.log('Received active rounds update:', activeRounds.length, 'rounds');
-                
+
                 // Update the leaderboard with new data
                 renderHeaderLeaderboard(activeRounds);
             },
@@ -898,7 +875,7 @@ function startActiveRoundsListener() {
                 console.error('Error listening to active rounds:', error);
             }
         );
-        
+
         console.log('Real-time listener started for active rounds');
     } catch (error) {
         console.error('Error starting listener:', error);
@@ -918,9 +895,9 @@ function stopActiveRoundsListener() {
 function toggleHeaderLeaderboard() {
     const content = document.getElementById('header-leaderboard-content');
     const chevron = document.getElementById('header-leaderboard-chevron');
-    
+
     if (!content) return;
-    
+
     if (content.classList.contains('collapsed')) {
         content.classList.remove('collapsed');
         if (chevron) chevron.textContent = '▲';
@@ -928,7 +905,7 @@ function toggleHeaderLeaderboard() {
         content.classList.add('collapsed');
         if (chevron) chevron.textContent = '▼';
     }
-    
+
     updateSectionPadding();
 }
 
@@ -936,15 +913,15 @@ function toggleHeaderLeaderboard() {
 async function updateHeaderLeaderboard() {
     const container = document.getElementById('header-leaderboard-content');
     if (!container) return;
-    
+
     // Fetch active rounds from Firebase
     let activeRounds = [];
     const currentRoundId = currentRound?.roundId || null;
-    
+
     if (window.db && window.firestoreHelpers) {
         try {
             const { collection, query, where, getDocs } = window.firestoreHelpers;
-            
+
             let roundsQuery;
             if (currentRoundId) {
                 // Filter by the current round
@@ -956,9 +933,9 @@ async function updateHeaderLeaderboard() {
                 // Fallback to all active rounds
                 roundsQuery = collection(window.db, 'activeRounds');
             }
-            
+
             const snapshot = await getDocs(roundsQuery);
-            
+
             snapshot.forEach(doc => {
                 activeRounds.push({ id: doc.id, ...doc.data() });
             });
@@ -966,7 +943,7 @@ async function updateHeaderLeaderboard() {
             console.error('Error fetching active rounds:', error);
         }
     }
-    
+
     // If no active rounds in Firebase, check if current local round exists
     if (activeRounds.length === 0 && currentRound) {
         // Fallback to local current round
@@ -979,7 +956,7 @@ async function updateHeaderLeaderboard() {
             roundId: currentRound.roundId
         });
     }
-    
+
     // Render using the shared function
     renderHeaderLeaderboard(activeRounds);
 }
@@ -1000,9 +977,9 @@ function renderHeaderLeaderboard(activeRounds) {
     const container = document.getElementById('header-leaderboard-content');
     const headerLb = document.getElementById('header-leaderboard');
     if (!container) return;
-    
+
     console.log('renderHeaderLeaderboard called with', activeRounds?.length || 0, 'rounds');
-    
+
     // Filter to only rounds with at least one score entered
     const roundsWithScores = (activeRounds || []).filter(round => {
         if (!round.holes) {
@@ -1019,31 +996,31 @@ function renderHeaderLeaderboard(activeRounds) {
         console.log('Round has no scores:', round.playerName, 'holes:', JSON.stringify(round.holes));
         return false;
     });
-    
+
     console.log('Rounds with scores:', roundsWithScores.length);
-    
+
     // If no rounds with scores, show empty state but keep leaderboard visible
     if (roundsWithScores.length === 0) {
         container.innerHTML = '<div class="header-lb-empty">Waiting for scores...</div>';
         // Don't hide - keep it visible so users know it's there
         return;
     }
-    
+
     // Show the leaderboard (only when there are scores)
     if (headerLb) {
         headerLb.style.display = 'block';
         positionHeaderLeaderboard();
     }
-    
+
     // Find who has the snake (most recent 3+ putt across all players)
     // Only consider players who CURRENTLY have at least one 3+ putt
     let snakePlayerKey = null;
     let snakeTimestamp = null;
-    
+
     console.log('Snake detection - checking all rounds:');
     roundsWithScores.forEach(round => {
         console.log(`  Player: ${round.playerName}, lastThreePuttTime: ${round.lastThreePuttTime}`);
-        
+
         // Check if this player currently has any 3+ putts
         let hasThreePutt = false;
         if (round.holes) {
@@ -1055,11 +1032,11 @@ function renderHeaderLeaderboard(activeRounds) {
                 }
             }
         }
-        
+
         if (!hasThreePutt) {
             console.log(`    No 3+ putts found`);
         }
-        
+
         // Only consider for snake if they currently have a 3+ putt AND have a timestamp
         if (hasThreePutt && round.lastThreePuttTime) {
             const timestamp = new Date(round.lastThreePuttTime);
@@ -1072,9 +1049,9 @@ function renderHeaderLeaderboard(activeRounds) {
             }
         }
     });
-    
+
     console.log(`Snake result: ${snakePlayerKey}`);
-    
+
     // Build leaderboard data from rounds with scores only
     const leaderboardData = roundsWithScores.map(round => {
         let holesPlayed = 0;
@@ -1082,25 +1059,27 @@ function renderHeaderLeaderboard(activeRounds) {
         let totalPar = 0;
         let stablefordPoints = 0;
         const handicap = round.playerHandicap || 0;
-        
+
         // Calculate scores from holes data
         for (let i = 1; i <= 18; i++) {
             if (round.holes && round.holes[i] && round.holes[i].score !== null) {
                 holesPlayed = i;
                 totalScore += round.holes[i].score;
-                totalPar += courseData.holes[i].par;
-                stablefordPoints += getStablefordPoints(
-                    round.holes[i].score,
-                    courseData.holes[i].par,
-                    courseData.holes[i].si,
-                    handicap
-                );
+                if (courseData) {
+                    totalPar += courseData.holes[i].par;
+                    stablefordPoints += getStablefordPoints(
+                        round.holes[i].score,
+                        courseData.holes[i].par,
+                        courseData.holes[i].si,
+                        handicap
+                    );
+                }
             }
         }
-        
+
         // Use a unique key for this round - prefer id, fallback to scoreId, then playerName
         const roundKey = round.id || round.scoreId || round.playerName;
-        
+
         return {
             id: round.playerId,
             uniqueKey: roundKey,
@@ -1117,51 +1096,56 @@ function renderHeaderLeaderboard(activeRounds) {
             hasSnake: roundKey === snakePlayerKey
         };
     });
-    
+
     // Sort by stableford points (highest first), then by holes played (more holes first)
     leaderboardData.sort((a, b) => {
         // Players with scores come first
         if (a.holesPlayed > 0 && b.holesPlayed === 0) return -1;
         if (b.holesPlayed > 0 && a.holesPlayed === 0) return 1;
         if (a.holesPlayed === 0 && b.holesPlayed === 0) return 0;
-        
+
         // Sort by stableford points (highest first)
         if (a.stablefordPoints !== b.stablefordPoints) return b.stablefordPoints - a.stablefordPoints;
-        
+
         // If tied, more holes played is better
         return b.holesPlayed - a.holesPlayed;
     });
-    
+
     // Render leaderboard
     container.innerHTML = leaderboardData.map((player, index) => {
         const pos = index + 1;
         let scoreClass = 'even-par';
         let scoreDisplay = 'E';
         let parDisplay = 'E';
-        
+
         if (player.holesPlayed > 0) {
-            if (player.scoreToPar < 0) {
-                scoreClass = 'under-par';
-                parDisplay = player.scoreToPar.toString();
-            } else if (player.scoreToPar > 0) {
-                scoreClass = 'over-par';
-                parDisplay = '+' + player.scoreToPar;
+            if (courseData) {
+                if (player.scoreToPar < 0) {
+                    scoreClass = 'under-par';
+                    parDisplay = player.scoreToPar.toString();
+                } else if (player.scoreToPar > 0) {
+                    scoreClass = 'over-par';
+                    parDisplay = '+' + player.scoreToPar;
+                }
+                // Format: "-5 (12)" where -5 is to par and 12 is stableford
+                scoreDisplay = `${parDisplay} (${player.stablefordPoints})`;
+            } else {
+                // No course data — show gross score only
+                scoreDisplay = `${player.totalScore}`;
             }
-            // Format: "-5 (12)" where -5 is to par and 12 is stableford
-            scoreDisplay = `${parDisplay} (${player.stablefordPoints})`;
         } else {
             scoreDisplay = '-';
         }
-        
+
         let playerClass = 'header-lb-player';
         if (pos === 1 && player.holesPlayed > 0) playerClass += ' leader';
         if (player.isCurrentPlayer) playerClass += ' current-player';
         if (!player.isFinished) playerClass += ' live';
         if (player.isFinished) playerClass += ' finished';
-        
+
         const holeDisplay = player.isFinished ? 'F' : (player.currentHole > 0 ? `H${player.currentHole}` : 'Tee');
         const snakeIcon = player.hasSnake ? '🐍' : '';
-        
+
         return `
             <div class="${playerClass}" onclick="openScorecardModal('${player.id}')">
                 <span class="header-lb-pos">${pos}</span>
@@ -1172,10 +1156,10 @@ function renderHeaderLeaderboard(activeRounds) {
             </div>
         `;
     }).join('');
-    
+
     // Recalculate section padding now that leaderboard content has changed
     updateSectionPadding();
-    
+
     // Start auto-scroll if needed (desktop only)
     setTimeout(() => startLeaderboardAutoScroll(), 500);
 }
@@ -1206,22 +1190,22 @@ desktopMediaQuery.addEventListener('change', (e) => {
 function startLeaderboardAutoScroll() {
     const container = document.getElementById('header-leaderboard-content');
     if (!container) return;
-    
+
     // Clear existing interval
     if (autoScrollInterval) {
         clearInterval(autoScrollInterval);
     }
-    
+
     // Only auto-scroll on desktop and when there's overflow
     if (!desktopMediaQuery.matches) return;
-    
+
     const needsScroll = container.scrollWidth > container.clientWidth;
     if (!needsScroll) return;
-    
+
     // Auto-scroll every 3 seconds
     autoScrollInterval = setInterval(() => {
         if (autoScrollPaused) return;
-        
+
         const maxScroll = container.scrollWidth - container.clientWidth;
         if (container.scrollLeft >= maxScroll - 10) {
             container.scrollLeft = 0;
@@ -1229,7 +1213,7 @@ function startLeaderboardAutoScroll() {
             container.scrollLeft += 150;
         }
     }, 3000);
-    
+
     // Pause on hover
     container.addEventListener('mouseenter', () => { autoScrollPaused = true; });
     container.addEventListener('mouseleave', () => { autoScrollPaused = false; });
@@ -1250,43 +1234,43 @@ async function openScorecardModal(playerId) {
         console.log('Firebase not initialized');
         return;
     }
-    
+
     try {
         const { collection, query, where, getDocs } = window.firestoreHelpers;
-        
+
         // First try to find by the activeRounds document ID pattern
         const currentRoundId = currentRound?.roundId || null;
         let roundData = null;
-        
+
         // Query activeRounds for this player in the current round
         const activeRoundsRef = collection(window.db, 'activeRounds');
         const snapshot = await getDocs(activeRoundsRef);
-        
+
         snapshot.forEach(doc => {
             const data = doc.data();
             // Match by playerId or playerName, and optionally by roundId
-            if ((data.playerId == playerId || data.playerName == playerId) && 
+            if ((data.playerId == playerId || data.playerName == playerId) &&
                 (!currentRoundId || data.roundId == currentRoundId)) {
                 roundData = data;
             }
         });
-        
+
         if (!roundData) {
             console.log('No active round found for player:', playerId);
             return;
         }
-        
+
         modalRoundData = roundData;
-        
+
         // Populate modal header
         document.getElementById('modal-player-name').textContent = modalRoundData.playerName;
-        
+
         // Generate scorecard table
         generateModalScorecard();
-        
+
         // Show modal
         document.getElementById('scorecard-modal').style.display = 'flex';
-        
+
     } catch (error) {
         console.error('Error fetching player round:', error);
     }
@@ -1295,14 +1279,18 @@ async function openScorecardModal(playerId) {
 // Generate the scorecard table for the modal
 function generateModalScorecard() {
     if (!modalRoundData) return;
-    
+
     const container = document.getElementById('modal-scorecard-table');
     const handicap = modalRoundData.playerHandicap || 0;
     const holes = modalRoundData.holes || {};
-    
+    const hasCourse = !!courseData;
+
+    // Helper to get hole data safely
+    const hd = (i) => hasCourse ? courseData.holes[i] : null;
+
     // Helper to calculate stableford points
     const calcStablefordPoints = (score, par, si) => {
-        if (!score) return 0;
+        if (!score || par === undefined || si === undefined) return 0;
         let strokes = 0;
         if (handicap >= si) strokes++;
         if (handicap >= 18 + si) strokes++;
@@ -1311,145 +1299,147 @@ function generateModalScorecard() {
         if (diff <= -2) return 0;
         return diff + 2;
     };
-    
+
     // Calculate totals
     let front9Score = 0, back9Score = 0, front9Par = 0, back9Par = 0;
     let front9Stableford = 0, back9Stableford = 0;
     let front9Putts = 0, back9Putts = 0;
-    
+
     for (let i = 1; i <= 9; i++) {
-        front9Par += courseData.holes[i].par;
+        if (hd(i)) front9Par += hd(i).par;
         if (holes[i] && holes[i].score) {
             front9Score += holes[i].score;
-            front9Stableford += calcStablefordPoints(holes[i].score, courseData.holes[i].par, courseData.holes[i].si);
+            if (hd(i)) front9Stableford += calcStablefordPoints(holes[i].score, hd(i).par, hd(i).si);
         }
         if (holes[i] && holes[i].putts) front9Putts += holes[i].putts;
     }
-    
+
     for (let i = 10; i <= 18; i++) {
-        back9Par += courseData.holes[i].par;
+        if (hd(i)) back9Par += hd(i).par;
         if (holes[i] && holes[i].score) {
             back9Score += holes[i].score;
-            back9Stableford += calcStablefordPoints(holes[i].score, courseData.holes[i].par, courseData.holes[i].si);
+            if (hd(i)) back9Stableford += calcStablefordPoints(holes[i].score, hd(i).par, hd(i).si);
         }
         if (holes[i] && holes[i].putts) back9Putts += holes[i].putts;
     }
-    
+
     const totalScore = front9Score + back9Score;
     const totalPar = front9Par + back9Par;
     const totalStableford = front9Stableford + back9Stableford;
     const totalPutts = front9Putts + back9Putts;
-    
+
     // Generate BOTH layouts - CSS will show/hide based on screen size
     let html = '';
-    
+
     // ========== VERTICAL LAYOUT (Mobile) ==========
     html += '<table class="modal-scorecard modal-scorecard-vertical">';
-    html += '<thead><tr style="border-bottom: 2px solid rgba(255,255,255,0.3);"><th>Hole</th><th>Par</th><th>Score</th><th>Pts</th><th>Putts</th></tr></thead>';
+    html += `<thead><tr style="border-bottom: 2px solid rgba(255,255,255,0.3);"><th>Hole</th>${hasCourse ? '<th>Par</th>' : ''}<th>Score</th>${hasCourse ? '<th>Pts</th>' : ''}<th>Putts</th></tr></thead>`;
     html += '<tbody>';
-    
+
     // Front 9
     for (let i = 1; i <= 9; i++) {
         const hole = holes[i] || {};
         const score = hole.score || '-';
         const putts = hole.putts || '-';
-        const pts = hole.score ? calcStablefordPoints(hole.score, courseData.holes[i].par, courseData.holes[i].si) : '-';
-        
+        const pts = (hole.score && hd(i)) ? calcStablefordPoints(hole.score, hd(i).par, hd(i).si) : '-';
+
         let scoreClass = '';
-        if (hole.score) {
-            if (hole.score < courseData.holes[i].par) scoreClass = 'under-par';
-            else if (hole.score > courseData.holes[i].par) scoreClass = 'over-par';
+        if (hole.score && hd(i)) {
+            if (hole.score < hd(i).par) scoreClass = 'under-par';
+            else if (hole.score > hd(i).par) scoreClass = 'over-par';
         }
-        
+
         html += `<tr>
             <td>${i}</td>
-            <td>${courseData.holes[i].par}</td>
+            ${hasCourse ? `<td>${hd(i)?.par ?? '-'}</td>` : ''}
             <td class="${scoreClass}">${score}</td>
-            <td>${pts}</td>
+            ${hasCourse ? `<td>${pts}</td>` : ''}
             <td>${putts}</td>
         </tr>`;
     }
-    
+
     // Front 9 totals
     html += `<tr class="subtotal-row">
         <td>OUT</td>
-        <td>${front9Par}</td>
+        ${hasCourse ? `<td>${front9Par}</td>` : ''}
         <td>${front9Score || '-'}</td>
-        <td>${front9Stableford || '-'}</td>
+        ${hasCourse ? `<td>${front9Stableford || '-'}</td>` : ''}
         <td>${front9Putts || '-'}</td>
     </tr>`;
-    
+
     // Back 9
     for (let i = 10; i <= 18; i++) {
         const hole = holes[i] || {};
         const score = hole.score || '-';
         const putts = hole.putts || '-';
-        const pts = hole.score ? calcStablefordPoints(hole.score, courseData.holes[i].par, courseData.holes[i].si) : '-';
-        
+        const pts = (hole.score && hd(i)) ? calcStablefordPoints(hole.score, hd(i).par, hd(i).si) : '-';
+
         let scoreClass = '';
-        if (hole.score) {
-            if (hole.score < courseData.holes[i].par) scoreClass = 'under-par';
-            else if (hole.score > courseData.holes[i].par) scoreClass = 'over-par';
+        if (hole.score && hd(i)) {
+            if (hole.score < hd(i).par) scoreClass = 'under-par';
+            else if (hole.score > hd(i).par) scoreClass = 'over-par';
         }
-        
+
         html += `<tr>
             <td>${i}</td>
-            <td>${courseData.holes[i].par}</td>
+            ${hasCourse ? `<td>${hd(i)?.par ?? '-'}</td>` : ''}
             <td class="${scoreClass}">${score}</td>
-            <td>${pts}</td>
+            ${hasCourse ? `<td>${pts}</td>` : ''}
             <td>${putts}</td>
         </tr>`;
     }
-    
+
     // Back 9 totals
     html += `<tr class="subtotal-row">
         <td>IN</td>
-        <td>${back9Par}</td>
+        ${hasCourse ? `<td>${back9Par}</td>` : ''}
         <td>${back9Score || '-'}</td>
-        <td>${back9Stableford || '-'}</td>
+        ${hasCourse ? `<td>${back9Stableford || '-'}</td>` : ''}
         <td>${back9Putts || '-'}</td>
     </tr>`;
-    
+
     // Grand total
     html += `<tr class="total-row">
         <td>TOT</td>
-        <td>${totalPar}</td>
+        ${hasCourse ? `<td>${totalPar}</td>` : ''}
         <td>${totalScore || '-'}</td>
-        <td>${totalStableford || '-'}</td>
+        ${hasCourse ? `<td>${totalStableford || '-'}</td>` : ''}
         <td>${totalPutts || '-'}</td>
     </tr>`;
-    
+
     html += '</tbody></table>';
-    
+
     // ========== HORIZONTAL LAYOUT (Desktop) ==========
     html += '<div class="modal-scorecard-horizontal-wrapper">';
     html += '<table class="modal-scorecard modal-scorecard-horizontal">';
-    
+
     // Hole numbers row
     html += '<thead><tr><th class="row-label">Hole</th>';
     for (let i = 1; i <= 9; i++) html += `<th>${i}</th>`;
     html += '<th class="subtotal-col">OUT</th>';
     for (let i = 10; i <= 18; i++) html += `<th>${i}</th>`;
     html += '<th class="subtotal-col">IN</th><th class="total-col">TOT</th></tr></thead>';
-    
+
     html += '<tbody>';
-    
-    // Par row
-    html += '<tr class="par-row"><td class="row-label">Par</td>';
-    for (let i = 1; i <= 9; i++) html += `<td>${courseData.holes[i].par}</td>`;
-    html += `<td class="subtotal-col">${front9Par}</td>`;
-    for (let i = 10; i <= 18; i++) html += `<td>${courseData.holes[i].par}</td>`;
-    html += `<td class="subtotal-col">${back9Par}</td><td class="total-col">${totalPar}</td></tr>`;
-    
+
+    // Par row (only if course data available)
+    if (hasCourse) {
+        html += '<tr class="par-row"><td class="row-label">Par</td>';
+        for (let i = 1; i <= 9; i++) html += `<td>${hd(i)?.par ?? '-'}</td>`;
+        html += `<td class="subtotal-col">${front9Par}</td>`;
+        for (let i = 10; i <= 18; i++) html += `<td>${hd(i)?.par ?? '-'}</td>`;
+        html += `<td class="subtotal-col">${back9Par}</td><td class="total-col">${totalPar}</td></tr>`;
+    }
+
     // Score row
     html += '<tr class="score-row"><td class="row-label">Score</td>';
     for (let i = 1; i <= 9; i++) {
         const hole = holes[i] || {};
         const score = hole.score || '-';
         let scoreClass = '';
-        if (hole.score) {
-            if (hole.score < courseData.holes[i].par) scoreClass = 'under-par';
-            else if (hole.score > courseData.holes[i].par) scoreClass = 'over-par';
+        if (hole.score && hd(i)) {
+            if (hole.score < hd(i).par) scoreClass = 'under-par';
+            else if (hole.score > hd(i).par) scoreClass = 'over-par';
         }
         html += `<td class="${scoreClass}">${score}</td>`;
     }
@@ -1458,39 +1448,41 @@ function generateModalScorecard() {
         const hole = holes[i] || {};
         const score = hole.score || '-';
         let scoreClass = '';
-        if (hole.score) {
-            if (hole.score < courseData.holes[i].par) scoreClass = 'under-par';
-            else if (hole.score > courseData.holes[i].par) scoreClass = 'over-par';
+        if (hole.score && hd(i)) {
+            if (hole.score < hd(i).par) scoreClass = 'under-par';
+            else if (hole.score > hd(i).par) scoreClass = 'over-par';
         }
         html += `<td class="${scoreClass}">${score}</td>`;
     }
     html += `<td class="subtotal-col">${back9Score || '-'}</td><td class="total-col">${totalScore || '-'}</td></tr>`;
-    
-    // Stableford points row
-    html += '<tr class="pts-row"><td class="row-label">Pts</td>';
-    for (let i = 1; i <= 9; i++) {
-        const hole = holes[i] || {};
-        const pts = hole.score ? calcStablefordPoints(hole.score, courseData.holes[i].par, courseData.holes[i].si) : '-';
-        let ptsClass = '';
-        if (hole.score) {
-            if (pts >= 3) ptsClass = 'under-par';
-            else if (pts === 0) ptsClass = 'over-par';
+
+    // Stableford points row (only if course data available)
+    if (hasCourse) {
+        html += '<tr class="pts-row"><td class="row-label">Pts</td>';
+        for (let i = 1; i <= 9; i++) {
+            const hole = holes[i] || {};
+            const pts = hole.score ? calcStablefordPoints(hole.score, hd(i).par, hd(i).si) : '-';
+            let ptsClass = '';
+            if (hole.score) {
+                if (pts >= 3) ptsClass = 'under-par';
+                else if (pts === 0) ptsClass = 'over-par';
+            }
+            html += `<td class="${ptsClass}">${pts}</td>`;
         }
-        html += `<td class="${ptsClass}">${pts}</td>`;
-    }
-    html += `<td class="subtotal-col">${front9Stableford || '-'}</td>`;
-    for (let i = 10; i <= 18; i++) {
-        const hole = holes[i] || {};
-        const pts = hole.score ? calcStablefordPoints(hole.score, courseData.holes[i].par, courseData.holes[i].si) : '-';
-        let ptsClass = '';
-        if (hole.score) {
-            if (pts >= 3) ptsClass = 'under-par';
-            else if (pts === 0) ptsClass = 'over-par';
+        html += `<td class="subtotal-col">${front9Stableford || '-'}</td>`;
+        for (let i = 10; i <= 18; i++) {
+            const hole = holes[i] || {};
+            const pts = hole.score ? calcStablefordPoints(hole.score, hd(i).par, hd(i).si) : '-';
+            let ptsClass = '';
+            if (hole.score) {
+                if (pts >= 3) ptsClass = 'under-par';
+                else if (pts === 0) ptsClass = 'over-par';
+            }
+            html += `<td class="${ptsClass}">${pts}</td>`;
         }
-        html += `<td class="${ptsClass}">${pts}</td>`;
+        html += `<td class="subtotal-col">${back9Stableford || '-'}</td><td class="total-col">${totalStableford || '-'}</td></tr>`;
     }
-    html += `<td class="subtotal-col">${back9Stableford || '-'}</td><td class="total-col">${totalStableford || '-'}</td></tr>`;
-    
+
     // Putts row
     html += '<tr class="putts-row"><td class="row-label">Putts</td>';
     for (let i = 1; i <= 9; i++) {
@@ -1507,9 +1499,9 @@ function generateModalScorecard() {
         html += `<td class="${puttClass}">${putts}</td>`;
     }
     html += `<td class="subtotal-col">${back9Putts || '-'}</td><td class="total-col">${totalPutts || '-'}</td></tr>`;
-    
+
     html += '</tbody></table></div>';
-    
+
     container.innerHTML = html;
 }
 
@@ -1530,10 +1522,10 @@ async function saveActiveRoundToFirebase() {
         console.log('saveActiveRoundToFirebase: Firebase not ready');
         return;
     }
-    
+
     try {
         const { doc, setDoc, updateDoc, deleteField } = window.firestoreHelpers;
-        
+
         // Convert scores to holes format expected by leaderboard
         const holes = {};
         for (let i = 1; i <= 18; i++) {
@@ -1549,9 +1541,9 @@ async function saveActiveRoundToFirebase() {
                 };
             }
         }
-        
+
         console.log('saveActiveRoundToFirebase: Saving holes data:', JSON.stringify(holes));
-        
+
         // If we have a scoreId (from joining a round), update the scores collection too
         if (currentRound.scoreId) {
             const scoreRef = doc(window.db, 'scores', currentRound.scoreId);
@@ -1565,7 +1557,7 @@ async function saveActiveRoundToFirebase() {
                 updatedAt: new Date().toISOString()
             });
         }
-        
+
         const roundData = {
             playerId: currentRound.playerId || currentRound.playerName,
             playerName: currentRound.playerName,
@@ -1578,15 +1570,15 @@ async function saveActiveRoundToFirebase() {
             roundId: currentRound.roundId || null,
             updatedAt: new Date().toISOString()
         };
-        
+
         // Include lastThreePuttTime for snake tracking
         if (currentRound.lastThreePuttTime) {
             roundData.lastThreePuttTime = currentRound.lastThreePuttTime;
         }
-        // Note: If lastThreePuttTime is null, we don't include it - 
-        // but setDoc replaces the whole document, so we need to use updateDoc 
+        // Note: If lastThreePuttTime is null, we don't include it -
+        // but setDoc replaces the whole document, so we need to use updateDoc
         // or merge option to properly handle the snake field
-        
+
         // Use roundId_scoreId if available (from joined rounds), otherwise fallback to old format
         let activeRoundId;
         if (currentRound.roundId && currentRound.scoreId) {
@@ -1594,18 +1586,18 @@ async function saveActiveRoundToFirebase() {
         } else {
             activeRoundId = `round_${currentRound.playerId || currentRound.playerName}_${currentRound.date}`;
         }
-        
-        // Use setDoc with merge to update only specified fields, 
+
+        // Use setDoc with merge to update only specified fields,
         // then use updateDoc with deleteField to remove lastThreePuttTime if needed
         await setDoc(doc(window.db, 'activeRounds', activeRoundId), roundData, { merge: true });
-        
+
         // If no snake, explicitly delete the lastThreePuttTime field
         if (!currentRound.lastThreePuttTime) {
             await updateDoc(doc(window.db, 'activeRounds', activeRoundId), {
                 lastThreePuttTime: deleteField()
             });
         }
-        
+
         console.log('Active round saved to Firebase:', activeRoundId, 'roundId:', roundData.roundId);
     } catch (error) {
         console.error('Error saving active round:', error);
@@ -1619,13 +1611,13 @@ async function checkForTodaysActiveRounds() {
         setTimeout(checkForTodaysActiveRounds, 1000);
         return;
     }
-    
+
     try {
         const { collection, getDocs, query, where } = window.firestoreHelpers;
         const today = new Date().toISOString().split('T')[0];
-        
+
         const snapshot = await getDocs(collection(window.db, 'activeRounds'));
-        
+
         let hasActiveRounds = false;
         snapshot.forEach(doc => {
             const data = doc.data();
@@ -1633,7 +1625,7 @@ async function checkForTodaysActiveRounds() {
                 hasActiveRounds = true;
             }
         });
-        
+
         if (hasActiveRounds) {
             console.log('Found active rounds, showing header leaderboard');
             showHeaderLeaderboard();

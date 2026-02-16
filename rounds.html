@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="styles-part2.css">
     <link rel="stylesheet" href="styles-part3.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    
+
     <!-- Firebase SDK (shared initialization) -->
     <script type="module" src="firebase-init.js"></script>
     <script>
@@ -267,7 +267,6 @@
                         <div id="optional-settings" class="optional-content" style="display: none;">
                             <div class="setup-field">
                                 <label>Hole Prizes</label>
-                                <p class="field-hint">Assign prizes to specific holes</p>
                                 <div id="hole-prizes-list" class="hole-prizes-list">
                                     <!-- Populated by JS -->
                                 </div>
@@ -286,7 +285,7 @@
                     <div class="success-icon">✓</div>
                     <h3>Round Created!</h3>
                     <p class="round-name-display" id="created-round-name"></p>
-                    
+
                     <div class="share-link-section">
                         <label>Share this link with others:</label>
                         <div class="share-link-display">
@@ -305,7 +304,7 @@
                 <button class="back-btn" onclick="showRoundsHub()">← Back</button>
                 <div class="setup-card">
                     <h3>Join a Round</h3>
-                    
+
                     <div class="setup-field">
                         <label for="join-code">Enter Join Code</label>
                         <input type="text" id="join-code" class="setup-input join-code-input" placeholder="e.g., A1B2C3D4E5" maxlength="10" oninput="this.value = this.value.toUpperCase()">
@@ -320,7 +319,7 @@
                 <button class="back-btn" onclick="showRoundsHub()">← Back</button>
                 <div class="setup-card">
                     <h3>Join Round</h3>
-                    
+
                     <div class="round-details-display">
                         <p class="round-name" id="join-round-name"></p>
                         <p class="round-info" id="join-round-info"></p>
@@ -399,6 +398,7 @@
     <footer class="footer">
     </footer>
 
+    <script src="courses/course-data.js"></script>
     <script src="rounds.js"></script>
 </body>
 </html>

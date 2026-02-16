@@ -102,15 +102,18 @@ function checkForCompletedRound() {
 }
 
 // Format tee value for display
-function formatTeeName(tee) {
-    const teeNames = {
-        tallwood: 'Tallwood (6,146m)',
-        bloodwood: 'Bloodwood (5,664m)',
-        front: 'Front Tees',
-        middle: 'Middle Tees',
-        back: 'Back Tees'
-    };
-    return teeNames[tee] || tee.charAt(0).toUpperCase() + tee.slice(1);
+function formatTeeName(tee, courseName) {
+    // Try to find tee info from course data
+    const course = courseName ? getCourseData(courseName) : null;
+    if (course && course.tees) {
+        const teeInfo = course.tees.find(t => t.key === tee);
+        if (teeInfo) {
+            const dist = teeInfo.totalDistance ? ` (${teeInfo.totalDistance.toLocaleString()}m)` : '';
+            return `${teeInfo.label}${dist}`;
+        }
+    }
+    // Fallback
+    return tee.charAt(0).toUpperCase() + tee.slice(1) + ' Tees';
 }
 
 // Toggle optional settings section
@@ -180,36 +183,18 @@ function updateTeeOptions() {
     const teeOptions = document.getElementById('tee-options');
     if (!courseInput || !teeOptions) return;
     
-    const course = courseInput.value.trim().toLowerCase();
-    const isBonville = course.includes('bonville');
+    const courseName = courseInput.value.trim();
+    const tees = getCourseTees(courseName);
     
-    if (isBonville) {
-        teeOptions.innerHTML = `
+    teeOptions.innerHTML = tees.map((tee, index) => {
+        const distLabel = tee.totalDistance ? ` (${tee.totalDistance.toLocaleString()}m)` : '';
+        return `
             <label class="tee-option">
-                <input type="radio" name="tees" value="tallwood" checked>
-                <span class="tee-label">Tallwood (6,146m)</span>
-            </label>
-            <label class="tee-option">
-                <input type="radio" name="tees" value="bloodwood">
-                <span class="tee-label">Bloodwood (5,664m)</span>
+                <input type="radio" name="tees" value="${tee.key}" ${index === 0 ? 'checked' : ''}>
+                <span class="tee-label">${tee.label}${distLabel}</span>
             </label>
         `;
-    } else {
-        teeOptions.innerHTML = `
-            <label class="tee-option">
-                <input type="radio" name="tees" value="front" checked>
-                <span class="tee-label">Front</span>
-            </label>
-            <label class="tee-option">
-                <input type="radio" name="tees" value="middle">
-                <span class="tee-label">Middle</span>
-            </label>
-            <label class="tee-option">
-                <input type="radio" name="tees" value="back">
-                <span class="tee-label">Back</span>
-            </label>
-        `;
-    }
+    }).join('');
 }
 
 // Check URL for join code parameter
@@ -379,6 +364,10 @@ function createCompletedRoundCard(completedRound) {
     const totalScore = completedRound.totalScore || '-';
     const stablefordPoints = completedRound.stablefordPoints || '-';
     const joinCode = completedRound.joinCode || '';
+    const hasCourseInfo = !!getCourseData(courseName);
+    const scoreSummary = hasCourseInfo 
+        ? `Score: ${totalScore} | Stableford: ${stablefordPoints}` 
+        : `Score: ${totalScore}`;
     
     card.innerHTML = `
         <button class="share-btn-corner" onclick="shareRound('${joinCode}')" title="Share round">
@@ -388,7 +377,7 @@ function createCompletedRoundCard(completedRound) {
             <h4>${completedRound.name || 'Completed Round'}</h4>
             <p class="my-round-course">${courseName}</p>
             <p>${dateStr}</p>
-            <p class="round-score-summary">Score: ${totalScore} | Stableford: ${stablefordPoints}</p>
+            <p class="round-score-summary">${scoreSummary}</p>
         </div>
         <div class="my-round-actions">
             <button class="continue-btn" onclick="viewScorecard('${completedRound.id}')">View Scorecard</button>
@@ -912,30 +901,8 @@ window.deleteAllArchivedRounds = deleteAllArchivedRounds;
 window.closeScorecardModal = closeScorecardModal;
 window.initializeRoundsPage = initializeRoundsPage;
 
-// Course data for scorecard generation
-const courseData = {
-    par: 71,
-    holes: {
-        1: { par: 4, si: 2 },
-        2: { par: 4, si: 12 },
-        3: { par: 3, si: 8 },
-        4: { par: 5, si: 14 },
-        5: { par: 3, si: 16 },
-        6: { par: 4, si: 6 },
-        7: { par: 5, si: 18 },
-        8: { par: 3, si: 4 },
-        9: { par: 4, si: 10 },
-        10: { par: 5, si: 13 },
-        11: { par: 3, si: 9 },
-        12: { par: 4, si: 1 },
-        13: { par: 4, si: 3 },
-        14: { par: 5, si: 15 },
-        15: { par: 4, si: 7 },
-        16: { par: 4, si: 5 },
-        17: { par: 3, si: 11 },
-        18: { par: 4, si: 17 }
-    }
-};
+// Course data is loaded from course-data.js (shared with live-scores.js)
+// getCourseData(courseName) returns the course object or null
 
 // View scorecard for a completed round
 async function viewScorecard(roundId) {
@@ -1220,10 +1187,15 @@ function generateScorecardTable(round) {
     const handicap = round.handicap || 0;
     const scores = round.scores || {};
     const putts = round.putts || {};
+    const courseData = getCourseData(round.course);
+    const hasCourse = !!courseData;
+    
+    // Helper to get hole data safely
+    const hd = (i) => hasCourse ? courseData.holes[i] : null;
     
     // Calculate stableford points helper
     const getStablefordPoints = (score, par, si) => {
-        if (!score) return 0;
+        if (!score || par === undefined || si === undefined) return 0;
         let strokes = 0;
         if (handicap >= si) strokes++;
         if (handicap >= 18 + si) strokes++;
@@ -1239,18 +1211,18 @@ function generateScorecardTable(round) {
     let front9Putts = 0, back9Putts = 0;
     
     for (let i = 1; i <= 9; i++) {
-        front9Par += courseData.holes[i].par;
+        if (hd(i)) front9Par += hd(i).par;
         if (scores[i]) {
             front9Score += scores[i];
-            front9Stableford += getStablefordPoints(scores[i], courseData.holes[i].par, courseData.holes[i].si);
+            if (hd(i)) front9Stableford += getStablefordPoints(scores[i], hd(i).par, hd(i).si);
         }
         if (putts[i]) front9Putts += putts[i];
     }
     for (let i = 10; i <= 18; i++) {
-        back9Par += courseData.holes[i].par;
+        if (hd(i)) back9Par += hd(i).par;
         if (scores[i]) {
             back9Score += scores[i];
-            back9Stableford += getStablefordPoints(scores[i], courseData.holes[i].par, courseData.holes[i].si);
+            if (hd(i)) back9Stableford += getStablefordPoints(scores[i], hd(i).par, hd(i).si);
         }
         if (putts[i]) back9Putts += putts[i];
     }
@@ -1262,8 +1234,8 @@ function generateScorecardTable(round) {
     
     // Helper to get score class
     const getScoreClass = (hole, score) => {
-        if (!score) return '';
-        const par = courseData.holes[hole].par;
+        if (!score || !hd(hole)) return '';
+        const par = hd(hole).par;
         if (score < par) return 'under-par';
         if (score > par) return 'over-par';
         return '';
@@ -1277,7 +1249,7 @@ function generateScorecardTable(round) {
     };
     
     // Check if stroke index data is available
-    const hasIndex = courseData.holes[1] && courseData.holes[1].si !== undefined;
+    const hasIndex = hasCourse && hd(1) && hd(1).si !== undefined;
     
     // ========================================
     // VERTICAL TABLE (Mobile) - holes as rows
@@ -1288,17 +1260,17 @@ function generateScorecardTable(round) {
     for (let i = 1; i <= 9; i++) {
         const score = scores[i];
         const putt = putts[i];
-        const par = courseData.holes[i].par;
-        const si = courseData.holes[i].si;
-        const pts = score ? getStablefordPoints(score, par, si) : null;
+        const par = hd(i)?.par;
+        const si = hd(i)?.si;
+        const pts = (score && par !== undefined) ? getStablefordPoints(score, par, si) : null;
         
         verticalRows += `
             <tr>
                 <td class="row-label">${i}</td>
                 ${hasIndex ? `<td>${si}</td>` : ''}
-                <td>${par}</td>
+                ${hasCourse ? `<td>${par}</td>` : ''}
                 <td class="${getScoreClass(i, score)}">${score || '-'}</td>
-                <td class="${pts !== null ? getStablefordClass(pts) : ''}">${pts !== null ? pts : '-'}</td>
+                ${hasCourse ? `<td class="${pts !== null ? getStablefordClass(pts) : ''}">${pts !== null ? pts : '-'}</td>` : ''}
                 <td class="${putt >= 3 ? 'over-par' : ''}">${putt || '-'}</td>
             </tr>
         `;
@@ -1309,9 +1281,9 @@ function generateScorecardTable(round) {
         <tr class="subtotal-row">
             <td class="row-label">OUT</td>
             ${hasIndex ? `<td class="subtotal-col"></td>` : ''}
-            <td class="subtotal-col">${front9Par}</td>
+            ${hasCourse ? `<td class="subtotal-col">${front9Par}</td>` : ''}
             <td class="subtotal-col">${front9Score || '-'}</td>
-            <td class="subtotal-col">${front9Stableford || '-'}</td>
+            ${hasCourse ? `<td class="subtotal-col">${front9Stableford || '-'}</td>` : ''}
             <td class="subtotal-col">${front9Putts || '-'}</td>
         </tr>
     `;
@@ -1320,17 +1292,17 @@ function generateScorecardTable(round) {
     for (let i = 10; i <= 18; i++) {
         const score = scores[i];
         const putt = putts[i];
-        const par = courseData.holes[i].par;
-        const si = courseData.holes[i].si;
-        const pts = score ? getStablefordPoints(score, par, si) : null;
+        const par = hd(i)?.par;
+        const si = hd(i)?.si;
+        const pts = (score && par !== undefined) ? getStablefordPoints(score, par, si) : null;
         
         verticalRows += `
             <tr>
                 <td class="row-label">${i}</td>
                 ${hasIndex ? `<td>${si}</td>` : ''}
-                <td>${par}</td>
+                ${hasCourse ? `<td>${par}</td>` : ''}
                 <td class="${getScoreClass(i, score)}">${score || '-'}</td>
-                <td class="${pts !== null ? getStablefordClass(pts) : ''}">${pts !== null ? pts : '-'}</td>
+                ${hasCourse ? `<td class="${pts !== null ? getStablefordClass(pts) : ''}">${pts !== null ? pts : '-'}</td>` : ''}
                 <td class="${putt >= 3 ? 'over-par' : ''}">${putt || '-'}</td>
             </tr>
         `;
@@ -1341,9 +1313,9 @@ function generateScorecardTable(round) {
         <tr class="subtotal-row">
             <td class="row-label">IN</td>
             ${hasIndex ? `<td class="subtotal-col"></td>` : ''}
-            <td class="subtotal-col">${back9Par}</td>
+            ${hasCourse ? `<td class="subtotal-col">${back9Par}</td>` : ''}
             <td class="subtotal-col">${back9Score || '-'}</td>
-            <td class="subtotal-col">${back9Stableford || '-'}</td>
+            ${hasCourse ? `<td class="subtotal-col">${back9Stableford || '-'}</td>` : ''}
             <td class="subtotal-col">${back9Putts || '-'}</td>
         </tr>
     `;
@@ -1353,9 +1325,9 @@ function generateScorecardTable(round) {
         <tr class="total-row">
             <td class="row-label">TOT</td>
             ${hasIndex ? `<td class="total-col"></td>` : ''}
-            <td class="total-col">${totalPar}</td>
+            ${hasCourse ? `<td class="total-col">${totalPar}</td>` : ''}
             <td class="total-col">${totalScore || '-'}</td>
-            <td class="total-col">${totalStableford || '-'}</td>
+            ${hasCourse ? `<td class="total-col">${totalStableford || '-'}</td>` : ''}
             <td class="total-col">${totalPutts || '-'}</td>
         </tr>
     `;
@@ -1366,9 +1338,9 @@ function generateScorecardTable(round) {
                 <tr>
                     <th class="row-label">Hole</th>
                     ${hasIndex ? `<th>Index</th>` : ''}
-                    <th>Par</th>
+                    ${hasCourse ? `<th>Par</th>` : ''}
                     <th>Score</th>
-                    <th>Pts</th>
+                    ${hasCourse ? `<th>Pts</th>` : ''}
                     <th>Putts</th>
                 </tr>
             </thead>
@@ -1399,27 +1371,30 @@ function generateScorecardTable(round) {
     if (hasIndex) {
         indexRow = '<td class="row-label">Index</td>';
         for (let i = 1; i <= 9; i++) {
-            indexRow += `<td>${courseData.holes[i].si}</td>`;
+            indexRow += `<td>${hd(i)?.si ?? '-'}</td>`;
         }
         indexRow += '<td class="subtotal-col"></td>';
         for (let i = 10; i <= 18; i++) {
-            indexRow += `<td>${courseData.holes[i].si}</td>`;
+            indexRow += `<td>${hd(i)?.si ?? '-'}</td>`;
         }
         indexRow += '<td class="subtotal-col"></td>';
         indexRow += '<td class="total-col"></td>';
     }
     
-    // Build par row
-    let parRow = '<td class="row-label">Par</td>';
-    for (let i = 1; i <= 9; i++) {
-        parRow += `<td>${courseData.holes[i].par}</td>`;
+    // Build par row (only if course data available)
+    let parRow = '';
+    if (hasCourse) {
+        parRow = '<td class="row-label">Par</td>';
+        for (let i = 1; i <= 9; i++) {
+            parRow += `<td>${hd(i)?.par ?? '-'}</td>`;
+        }
+        parRow += `<td class="subtotal-col">${front9Par}</td>`;
+        for (let i = 10; i <= 18; i++) {
+            parRow += `<td>${hd(i)?.par ?? '-'}</td>`;
+        }
+        parRow += `<td class="subtotal-col">${back9Par}</td>`;
+        parRow += `<td class="total-col">${totalPar}</td>`;
     }
-    parRow += `<td class="subtotal-col">${front9Par}</td>`;
-    for (let i = 10; i <= 18; i++) {
-        parRow += `<td>${courseData.holes[i].par}</td>`;
-    }
-    parRow += `<td class="subtotal-col">${back9Par}</td>`;
-    parRow += `<td class="total-col">${totalPar}</td>`;
     
     // Build score row
     let scoreRow = '<td class="row-label">Score</td>';
@@ -1435,29 +1410,32 @@ function generateScorecardTable(round) {
     scoreRow += `<td class="subtotal-col">${back9Score || '-'}</td>`;
     scoreRow += `<td class="total-col">${totalScore || '-'}</td>`;
     
-    // Build stableford row
-    let stablefordRow = '<td class="row-label">Pts</td>';
-    for (let i = 1; i <= 9; i++) {
-        const score = scores[i];
-        if (score) {
-            const pts = getStablefordPoints(score, courseData.holes[i].par, courseData.holes[i].si);
-            stablefordRow += `<td class="${getStablefordClass(pts)}">${pts}</td>`;
-        } else {
-            stablefordRow += '<td>-</td>';
+    // Build stableford row (only if course data available)
+    let stablefordRow = '';
+    if (hasCourse) {
+        stablefordRow = '<td class="row-label">Pts</td>';
+        for (let i = 1; i <= 9; i++) {
+            const score = scores[i];
+            if (score && hd(i)) {
+                const pts = getStablefordPoints(score, hd(i).par, hd(i).si);
+                stablefordRow += `<td class="${getStablefordClass(pts)}">${pts}</td>`;
+            } else {
+                stablefordRow += '<td>-</td>';
+            }
         }
-    }
-    stablefordRow += `<td class="subtotal-col">${front9Stableford || '-'}</td>`;
-    for (let i = 10; i <= 18; i++) {
-        const score = scores[i];
-        if (score) {
-            const pts = getStablefordPoints(score, courseData.holes[i].par, courseData.holes[i].si);
-            stablefordRow += `<td class="${getStablefordClass(pts)}">${pts}</td>`;
-        } else {
-            stablefordRow += '<td>-</td>';
+        stablefordRow += `<td class="subtotal-col">${front9Stableford || '-'}</td>`;
+        for (let i = 10; i <= 18; i++) {
+            const score = scores[i];
+            if (score && hd(i)) {
+                const pts = getStablefordPoints(score, hd(i).par, hd(i).si);
+                stablefordRow += `<td class="${getStablefordClass(pts)}">${pts}</td>`;
+            } else {
+                stablefordRow += '<td>-</td>';
+            }
         }
+        stablefordRow += `<td class="subtotal-col">${back9Stableford || '-'}</td>`;
+        stablefordRow += `<td class="total-col">${totalStableford || '-'}</td>`;
     }
-    stablefordRow += `<td class="subtotal-col">${back9Stableford || '-'}</td>`;
-    stablefordRow += `<td class="total-col">${totalStableford || '-'}</td>`;
     
     // Build putts row
     let puttsRow = '<td class="row-label">Putts</td>';
@@ -1481,9 +1459,9 @@ function generateScorecardTable(round) {
                 </thead>
                 <tbody>
                     ${hasIndex ? `<tr class="index-row">${indexRow}</tr>` : ''}
-                    <tr class="par-row">${parRow}</tr>
+                    ${hasCourse ? `<tr class="par-row">${parRow}</tr>` : ''}
                     <tr class="score-row">${scoreRow}</tr>
-                    <tr class="pts-row">${stablefordRow}</tr>
+                    ${hasCourse ? `<tr class="pts-row">${stablefordRow}</tr>` : ''}
                     <tr>${puttsRow}</tr>
                 </tbody>
             </table>
