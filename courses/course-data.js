@@ -7,59 +7,142 @@ const allCourseData = [
         name: 'Bonville Golf Resort',
         par: 71,
         holeImagePath: 'courses/bonville-golf-resort/hole-{hole}.jpg',
+        holePageUrl: 'https://www.bonvillegolf.com.au/hole/hole-{hole}/',
+        holeFlyovers: {
+            1: {type: 'youtube', id: 'Z4OtMIxXbts'},
+            2: {type: 'youtube', id: 'sffkGMJvAI0'},
+            3: {type: 'youtube', id: 'Rs0itcMovSc'},
+            4: {type: 'youtube', id: 'Pt3gE3Yp4E0'},
+            5: {type: 'youtube', id: 'hURLN9CijB0'},
+            6: {type: 'youtube', id: 'JfyZgLvPWTM'},
+            7: {type: 'youtube', id: 'sEL4EUaFmEQ'},
+            8: {type: 'youtube', id: 'BX7nta7u27o'},
+            9: {type: 'youtube', id: 'ukTcPM-HHig'},
+            10: {type: 'youtube', id: 'F5SCMN0X3U4'},
+            11: {type: 'youtube', id: 'e4wFkVsWaug'},
+            12: {type: 'youtube', id: 'p9UBiaCt_es'},
+            13: {type: 'youtube', id: 'eGR7M642U3g'},
+            14: {type: 'youtube', id: 'vmj7mOaVpfU'},
+            15: {type: 'youtube', id: 'RY-BLD0ooBI'},
+            16: {type: 'youtube', id: 'BRrfggDEmWs'},
+            17: {type: 'youtube', id: 'wsXWvGKwY28'},
+            18: {type: 'youtube', id: 'YKwE-HvdXqg'}
+        },
         tees: [
-            { key: 'tallwood', label: 'Tallwood', totalDistance: 6146 },
-            { key: 'bloodwood', label: 'Bloodwood', totalDistance: 5664 }
+            {key: 'tallwood', label: 'Tallwood', totalDistance: 6146},
+            {key: 'bloodwood', label: 'Bloodwood', totalDistance: 5664}
         ],
         holes: {
-            1:  { par: 4, si: 2,  tallwood: 380, bloodwood: 353 },
-            2:  { par: 4, si: 12, tallwood: 346, bloodwood: 308 },
-            3:  { par: 3, si: 8,  tallwood: 183, bloodwood: 170 },
-            4:  { par: 5, si: 14, tallwood: 485, bloodwood: 465 },
-            5:  { par: 3, si: 16, tallwood: 147, bloodwood: 139 },
-            6:  { par: 4, si: 6,  tallwood: 335, bloodwood: 328 },
-            7:  { par: 5, si: 18, tallwood: 487, bloodwood: 453 },
-            8:  { par: 3, si: 4,  tallwood: 182, bloodwood: 158 },
-            9:  { par: 4, si: 10, tallwood: 324, bloodwood: 304 },
-            10: { par: 5, si: 13, tallwood: 456, bloodwood: 419 },
-            11: { par: 3, si: 9,  tallwood: 190, bloodwood: 150 },
-            12: { par: 4, si: 1,  tallwood: 425, bloodwood: 372 },
-            13: { par: 4, si: 3,  tallwood: 370, bloodwood: 346 },
-            14: { par: 5, si: 15, tallwood: 505, bloodwood: 466 },
-            15: { par: 4, si: 7,  tallwood: 357, bloodwood: 326 },
-            16: { par: 4, si: 5,  tallwood: 372, bloodwood: 340 },
-            17: { par: 3, si: 11, tallwood: 142, bloodwood: 131 },
-            18: { par: 4, si: 17, tallwood: 460, bloodwood: 436 }
+            1: {par: 4, si: 2, tallwood: 380, bloodwood: 353},
+            2: {par: 4, si: 12, tallwood: 346, bloodwood: 308},
+            3: {par: 3, si: 8, tallwood: 183, bloodwood: 170},
+            4: {par: 5, si: 14, tallwood: 485, bloodwood: 465},
+            5: {par: 3, si: 16, tallwood: 147, bloodwood: 139},
+            6: {par: 4, si: 6, tallwood: 335, bloodwood: 328},
+            7: {par: 5, si: 18, tallwood: 487, bloodwood: 453},
+            8: {par: 3, si: 4, tallwood: 182, bloodwood: 158},
+            9: {par: 4, si: 10, tallwood: 324, bloodwood: 304},
+            10: {par: 5, si: 13, tallwood: 456, bloodwood: 419},
+            11: {par: 3, si: 9, tallwood: 190, bloodwood: 150},
+            12: {par: 4, si: 1, tallwood: 425, bloodwood: 372},
+            13: {par: 4, si: 3, tallwood: 370, bloodwood: 346},
+            14: {par: 5, si: 15, tallwood: 505, bloodwood: 466},
+            15: {par: 4, si: 7, tallwood: 357, bloodwood: 326},
+            16: {par: 4, si: 5, tallwood: 372, bloodwood: 340},
+            17: {par: 3, si: 11, tallwood: 142, bloodwood: 131},
+            18: {par: 4, si: 17, tallwood: 460, bloodwood: 436}
         }
     },
     {
         name: 'Moore Park Golf Course',
         holeImagePath: 'courses/moore-park-golf-course/hole-{hole}.jpg',
+        holePageUrl: 'https://www.mooreparkgolf.com.au/the-course',
+        holeFlyovers: {
+            1:  {type: 'youtube', id: 'PYoLbATVW_8'},
+            2:  {type: 'youtube', id: 'cweXeEmc9SY'},
+            3:  {type: 'youtube', id: 'TCcFyIW-Jbo'},
+            4:  {type: 'youtube', id: 'xy_CXkSfpxU'},
+            5:  {type: 'youtube', id: 'sPuOtd1EZ4M'},
+            6:  {type: 'youtube', id: 'wkbnCgdI6S8'},
+            7:  {type: 'youtube', id: 'raAXDJXQqIY'},
+            8:  {type: 'youtube', id: 'VqDC5Wp5E7U'},
+            9:  {type: 'youtube', id: 'T6ypqC2brHE'},
+            10: {type: 'youtube', id: 'lRRaLOf2Y5I'},
+            11: {type: 'youtube', id: 'NcVZ8chi48M'},
+            12: {type: 'youtube', id: 'AFF-3g9jBBE'},
+            13: {type: 'youtube', id: 'cEw39AitQhQ'},
+            14: {type: 'youtube', id: 'rhawido04Mo'},
+            15: {type: 'youtube', id: 'MDMCBYqgEUA'},
+            16: {type: 'youtube', id: 'kEHmcBGcYmg'},
+            17: {type: 'youtube', id: 'w7cnOuMubMg'},
+            18: {type: 'youtube', id: 'G6EkqLikypM'}
+        },
         par: 70,
         tees: [
-            { key: 'blue', label: 'Blue', totalDistance: 5791 },
-            { key: 'white', label: 'White', totalDistance: 5559 },
-            { key: 'gold', label: 'Gold', totalDistance: 5208 }
+            {key: 'blue', label: 'Blue', totalDistance: 5791},
+            {key: 'white', label: 'White', totalDistance: 5559},
+            {key: 'gold', label: 'Gold', totalDistance: 5208}
         ],
         holes: {
-            1:  { par: 4, si: 3,  blue: 398, white: 378, gold: 364 },
-            2:  { par: 3, si: 18, blue: 137, white: 131, gold: 125 },
-            3:  { par: 4, si: 10, blue: 382, white: 333, gold: 349 },
-            4:  { par: 5, si: 2,  blue: 550, white: 535, gold: 503 },
-            5:  { par: 3, si: 12, blue: 158, white: 155, gold: 144 },
-            6:  { par: 5, si: 16, blue: 480, white: 463, gold: 439 },
-            7:  { par: 3, si: 6,  blue: 190, white: 171, gold: 174 },
-            8:  { par: 4, si: 7,  blue: 363, white: 358, gold: 332 },
-            9:  { par: 4, si: 14, blue: 286, white: 280, gold: 262 },
-            10: { par: 3, si: 4,  blue: 156, white: 144, gold: 143 },
-            11: { par: 5, si: 13, blue: 481, white: 476, gold: 440 },
-            12: { par: 4, si: 9,  blue: 310, white: 301, gold: 283 },
-            13: { par: 3, si: 5,  blue: 198, white: 192, gold: 187 },
-            14: { par: 4, si: 8,  blue: 360, white: 341, gold: 336 },
-            15: { par: 3, si: 11, blue: 162, white: 152, gold: 148 },
-            16: { par: 5, si: 17, blue: 442, white: 435, gold: 404 },
-            17: { par: 4, si: 15, blue: 331, white: 319, gold: 303 },
-            18: { par: 4, si: 1,  blue: 407, white: 395, gold: 272 }
+            1: {par: 4, si: 3, blue: 398, white: 378, gold: 364},
+            2: {par: 3, si: 18, blue: 137, white: 131, gold: 125},
+            3: {par: 4, si: 10, blue: 382, white: 333, gold: 349},
+            4: {par: 5, si: 2, blue: 550, white: 535, gold: 503},
+            5: {par: 3, si: 12, blue: 158, white: 155, gold: 144},
+            6: {par: 5, si: 16, blue: 480, white: 463, gold: 439},
+            7: {par: 3, si: 6, blue: 190, white: 171, gold: 174},
+            8: {par: 4, si: 7, blue: 363, white: 358, gold: 332},
+            9: {par: 4, si: 14, blue: 286, white: 280, gold: 262},
+            10: {par: 3, si: 4, blue: 156, white: 144, gold: 143},
+            11: {par: 5, si: 13, blue: 481, white: 476, gold: 440},
+            12: {par: 4, si: 9, blue: 310, white: 301, gold: 283},
+            13: {par: 3, si: 5, blue: 198, white: 192, gold: 187},
+            14: {par: 4, si: 8, blue: 360, white: 341, gold: 336},
+            15: {par: 3, si: 11, blue: 162, white: 152, gold: 148},
+            16: {par: 5, si: 17, blue: 442, white: 435, gold: 404},
+            17: {par: 4, si: 15, blue: 331, white: 319, gold: 303},
+            18: {par: 4, si: 1, blue: 407, white: 395, gold: 272}
+        }
+    },
+    {
+        name: 'Mount Derrimut Golf Club',
+        holeImagePath: 'courses/mount-derrimut-golf-club/hole-{hole}.jpg',
+        holePageUrl: 'https://mtderrimut.com.au/cms/course/hole-{hole}/',
+        holeFlyovers: {
+            1: {type: 'vimeo', id: '1160081396'},
+            2: {type: 'vimeo', id: '1160081436'},
+            3: {type: 'vimeo', id: '1160081458'},
+            4: {type: 'vimeo', id: '1160081485'},
+            5: {type: 'vimeo', id: '1160081519'},
+            6: {type: 'vimeo', id: '1160081562'},
+            8: {type: 'vimeo', id: '1160081583'},
+            9: {type: 'vimeo', id: '1160081620'}
+        },
+        par: 72,
+        tees: [
+            {key: 'blue', label: 'Blue', totalDistance: 6783},
+            {key: 'white', label: 'White', totalDistance: 6275},
+            {key: 'red', label: 'Red', totalDistance: 5777}
+        ],
+        holes: {
+            1: {par: 4, si: 7, blue: 407, white: 385, red: 359},
+            2: {par: 5, si: 9, blue: 519, white: 487, red: 460},
+            3: {par: 4, si: 15, blue: 375, white: 353, red: 334},
+            4: {par: 5, si: 1, blue: 540, white: 517, red: 480},
+            5: {par: 4, si: 5, blue: 392, white: 370, red: 342},
+            6: {par: 3, si: 3, blue: 155, white: 137, red: 115},
+            7: {par: 4, si: 17, blue: 424, white: 370, red: 341},
+            8: {par: 4, si: 13, blue: 385, white: 363, red: 334},
+            9: {par: 3, si: 11, blue: 151, white: 139, red: 128},
+            10: {par: 4, si: 2, blue: 413, white: 392, red: 372},
+            11: {par: 4, si: 18, blue: 326, white: 282, red: 259},
+            12: {par: 3, si: 12, blue: 189, white: 164, red: 139},
+            13: {par: 5, si: 16, blue: 566, white: 526, red: 484},
+            14: {par: 4, si: 4, blue: 413, white: 392, red: 367},
+            15: {par: 3, si: 8, blue: 173, white: 143, red: 115},
+            16: {par: 5, si: 14, blue: 536, white: 495, red: 452},
+            17: {par: 4, si: 10, blue: 444, white: 416, red: 370},
+            18: {par: 4, si: 6, blue: 375, white: 344, red: 326}
         }
     }
 ];
@@ -97,6 +180,26 @@ function getHoleImagePath(courseName, holeNumber) {
     const course = getCourseData(courseName);
     if (!course || !course.holeImagePath) return null;
     return course.holeImagePath.replace('{hole}', holeNumber);
+}
+
+/**
+ * Get the hole flyover video data for a given course and hole number.
+ * Returns { type: 'youtube'|'vimeo', id: '...' } or null if no flyover exists.
+ */
+function getHoleFlyover(courseName, holeNumber) {
+    const course = getCourseData(courseName);
+    if (!course || !course.holeFlyovers) return null;
+    return course.holeFlyovers[holeNumber] || null;
+}
+
+/**
+ * Get the hole page URL for a given course and hole number.
+ * Returns the URL string or null if not available.
+ */
+function getHolePageUrl(courseName, holeNumber) {
+    const course = getCourseData(courseName);
+    if (!course || !course.holePageUrl) return null;
+    return course.holePageUrl.replace('{hole}', holeNumber);
 }
 
 /**
