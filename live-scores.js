@@ -338,6 +338,19 @@ function updateScoreDisplay(score, hole) {
     }
 }
 
+// Toggle running totals expand/collapse
+function toggleRunningTotals() {
+    const content = document.getElementById('running-totals-content');
+    const chevron = document.getElementById('totals-chevron');
+    if (content.style.display === 'none') {
+        content.style.display = 'grid';
+        chevron.textContent = '▲';
+    } else {
+        content.style.display = 'none';
+        chevron.textContent = '▼';
+    }
+}
+
 // Adjust score
 function adjustScore(delta) {
     if (!currentRound) return;
