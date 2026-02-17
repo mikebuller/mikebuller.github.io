@@ -1232,9 +1232,16 @@ input[type="date"].setup-input {
     transition: all 0.3s ease;
 }
 
-.hole-nav-btn:hover {
+.hole-nav-btn:active {
     background: var(--masters-green);
     color: white;
+}
+
+@media (hover: hover) {
+    .hole-nav-btn:hover {
+        background: var(--masters-green);
+        color: white;
+    }
 }
 
 .hole-nav-btn:disabled {
@@ -1397,9 +1404,9 @@ input[type="date"].setup-input {
 }
 
 .stepper-btn {
-    width: 50px;
+    width: 65px;
     height: 50px;
-    border-radius: 50%;
+    border-radius: 25px;
     border: 2px solid var(--masters-green);
     background: white;
     color: var(--masters-green);
@@ -1411,9 +1418,17 @@ input[type="date"].setup-input {
     outline: none;
 }
 
-.stepper-btn:hover {
+.stepper-btn:active {
+    transform: scale(0.95);
     background: var(--masters-green);
     color: white;
+}
+
+@media (hover: hover) {
+    .stepper-btn:hover {
+        background: var(--masters-green);
+        color: white;
+    }
 }
 
 .stepper-btn:focus {
@@ -1425,18 +1440,18 @@ input[type="date"].setup-input {
     box-shadow: none;
 }
 
-.stepper-btn:active {
-    transform: scale(0.95);
-    background: var(--masters-green);
-    color: white;
-}
-
 .stepper-value {
     font-size: 2rem;
     font-weight: 700;
     color: var(--masters-dark-green);
-    min-width: 50px;
+    min-width: 80px;
     text-align: center;
+}
+
+.stepper-stableford {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--masters-brown, #6b5b3e);
 }
 
 /* Running Totals */
@@ -1551,14 +1566,14 @@ input[type="date"].setup-input {
     }
 
     .stepper-btn {
-        width: 45px;
+        width: 55px;
         height: 45px;
         font-size: 1.3rem;
     }
 
     .stepper-value {
         font-size: 1.6rem;
-        min-width: 40px;
+        min-width: 70px;
     }
 
     .running-totals {
@@ -1952,6 +1967,46 @@ input[type="date"].setup-input {
         height: 36px;
         font-size: 1.2rem;
     }
+}
+
+/* Hole Flyover Button (inside modal) */
+.hole-flyover-btn {
+    display: none;
+    margin-top: 12px;
+    background: var(--masters-dark-green);
+    color: var(--masters-cream);
+    border: 2px solid var(--masters-gold);
+    border-radius: 12px;
+    padding: 10px 22px;
+    font-size: 1rem;
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.hole-flyover-btn:hover,
+.hole-flyover-btn:active {
+    background: var(--masters-gold);
+    color: var(--masters-dark-green);
+    transform: scale(1.05);
+}
+
+/* Fullscreen video mode */
+.hole-image-modal-content.fullscreen-video {
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+    justify-content: center;
+}
+
+.hole-image-modal-content.fullscreen-video .hole-video-display {
+    width: 100vw !important;
+    height: 100vh !important;
+    padding-bottom: 0 !important;
+    border-radius: 0 !important;
 }
 
 /* Hole Image Modal */

@@ -247,7 +247,7 @@ function updateHoleDisplay() {
     // Update score and putts display
     const score = currentRound.scores[hole];
     const putts = currentRound.putts[hole];
-    document.getElementById('current-score').textContent = score !== undefined ? score : '-';
+    updateScoreDisplay(score, hole);
     document.getElementById('current-putts').textContent = putts !== undefined ? putts : '-';
 
     // Update FIR and GIR checkboxes
@@ -272,13 +272,12 @@ function updateHoleDisplay() {
 
 // Update hole prize indicator and input row
 function updateHolePrizeDisplay(hole) {
-    const indicator = document.getElementById('hole-prize-indicator');
     const prizeRow = document.getElementById('prize-input-row');
     const prizeLabel = document.getElementById('prize-input-label');
     const prizeDistance = document.getElementById('prize-distance');
     const prizeUnit = document.getElementById('prize-unit');
 
-    if (!indicator || !prizeRow || !currentRound) return;
+    if (!prizeRow || !currentRound) return;
 
     // Find prize for this hole
     const prizes = currentRound.holePrizes || [];
@@ -291,10 +290,6 @@ function updateHolePrizeDisplay(hole) {
         const emoji = isCtp ? '⛳' : '💪';
         const label = isCtp ? 'Closest to Pin' : 'Longest Drive';
 
-        // Show indicator
-        indicator.style.display = '';
-        document.getElementById('hole-prize-text').textContent = `${emoji} ${label}`;
-
         // Show divider and input row
         if (prizeDivider) prizeDivider.style.display = '';
         prizeRow.style.display = '';
@@ -305,7 +300,6 @@ function updateHolePrizeDisplay(hole) {
         const dataKey = isCtp ? 'ctp' : 'longestDrive';
         prizeDistance.value = currentRound[dataKey][hole] || '';
     } else {
-        indicator.style.display = 'none';
         if (prizeDivider) prizeDivider.style.display = 'none';
         prizeRow.style.display = 'none';
     }
@@ -328,6 +322,22 @@ function updatePrizeDistance() {
     saveActiveRoundToFirebase();
 }
 
+// Update the score display with stableford points when available
+function updateScoreDisplay(score, hole) {
+    const el = document.getElementById('current-score');
+    if (score === undefined || score === null) {
+        el.innerHTML = '-';
+        return;
+    }
+    const holeData = courseData ? courseData.holes[hole] : null;
+    if (holeData && currentRound) {
+        const pts = calcStablefordPoints(score, holeData.par, holeData.si, currentRound.handicap || 0);
+        el.innerHTML = `${score} <span class="stepper-stableford">(${pts}pts)</span>`;
+    } else {
+        el.innerHTML = `${score}`;
+    }
+}
+
 // Adjust score
 function adjustScore(delta) {
     if (!currentRound) return;
@@ -337,12 +347,18 @@ function adjustScore(delta) {
     let current = currentRound.scores[hole];
 
     if (current === undefined) {
-        current = holeData ? holeData.par : 4; // Start at par, default 4 if unknown
+        // First tap of +1 sets to par; first tap of -1 sets to par-1
+        const par = holeData ? holeData.par : 0;
+        if (delta > 0) {
+            current = par - delta; // +1: par - 1 + 1 = par
+        } else {
+            current = par; // -1: par + (-1) = par - 1
+        }
     }
 
-    const newScore = Math.max(1, current + delta);
+    const newScore = Math.max(0, current + delta);
     currentRound.scores[hole] = newScore;
-    document.getElementById('current-score').textContent = newScore;
+    updateScoreDisplay(newScore, hole);
 
     updateQuickNav();
     updateTotals();
@@ -593,20 +609,20 @@ function closeScorecardModal() {
     document.getElementById('scorecard-modal').style.display = 'none';
 }
 
-// Show hole image modal
+// Show hole image modal (image by default, fallback to video, then placeholder)
 function showHoleImage() {
     if (!currentRound) return;
+
     const hole = currentRound.currentHole;
     const holeData = courseData ? courseData.holes[hole] : null;
     const tees = currentRound.tees || 'tallwood';
     const imagePath = getHoleImagePath(currentRound.course, hole);
+    const flyover = getHoleFlyover(currentRound.course, hole);
     const modal = document.getElementById('hole-image-modal');
     const img = document.getElementById('hole-image-display');
+    const videoContainer = document.getElementById('hole-video-display');
     const caption = document.getElementById('hole-image-caption');
-
-    if (!imagePath) return; // No hole images for this course
-
-    img.src = imagePath;
+    const flyoverBtn = document.getElementById('hole-flyover-btn');
 
     // Build caption from available data
     const parts = [`Hole ${hole}`];
@@ -618,14 +634,81 @@ function showHoleImage() {
     }
     caption.textContent = parts.join(' - ');
 
+    // Reset state
+    videoContainer.style.display = 'none';
+    videoContainer.innerHTML = '';
+    flyoverBtn.style.display = 'none';
+
+    if (imagePath) {
+        // Show image (default)
+        img.style.display = 'block';
+        img.src = imagePath;
+        // If flyover also available, show the flyover button
+        if (flyover) {
+            flyoverBtn.style.display = 'inline-block';
+        }
+    } else if (flyover) {
+        // No image, show video flyover directly
+        img.style.display = 'none';
+        showFlyoverVideo(flyover);
+    } else {
+        // No image or video — show placeholder
+        img.style.display = 'block';
+        img.src = `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500"><rect fill="%23002D1A" width="800" height="500"/><text x="400" y="240" text-anchor="middle" fill="%23C9A227" font-family="serif" font-size="32" font-weight="600">No Image Available</text><text x="400" y="290" text-anchor="middle" fill="%2399875A" font-family="serif" font-size="20">Hole ' + hole + '</text></svg>')}`;
+    }
+
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
 
-// Close hole image modal
+// Switch from image to flyover video within the modal
+function switchToFlyover() {
+    if (!currentRound) return;
+
+    const flyover = getHoleFlyover(currentRound.course, currentRound.currentHole);
+    if (!flyover) return;
+
+    const img = document.getElementById('hole-image-display');
+    const flyoverBtn = document.getElementById('hole-flyover-btn');
+    const caption = document.getElementById('hole-image-caption');
+    const modalContent = document.getElementById('hole-image-modal').querySelector('.hole-image-modal-content');
+
+    img.style.display = 'none';
+    flyoverBtn.style.display = 'none';
+    caption.style.display = 'none';
+    modalContent.classList.add('fullscreen-video');
+    showFlyoverVideo(flyover);
+}
+
+// Render a flyover video iframe into the video container
+function showFlyoverVideo(flyover) {
+    const videoContainer = document.getElementById('hole-video-display');
+    videoContainer.style.display = 'block';
+    let iframeSrc = '';
+    if (flyover.type === 'vimeo') {
+        iframeSrc = `https://player.vimeo.com/video/${flyover.id}?autoplay=1&title=0&byline=0&portrait=0&badge=0&autopause=0`;
+    } else if (flyover.type === 'youtube') {
+        iframeSrc = `https://www.youtube.com/embed/${flyover.id}?autoplay=1&rel=0`;
+    }
+    videoContainer.innerHTML = `<iframe src="${iframeSrc}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;"></iframe>`;
+}
+
+// Close hole image/video modal
 function closeHoleImage() {
-    document.getElementById('hole-image-modal').style.display = 'none';
+    const modal = document.getElementById('hole-image-modal');
+    const videoContainer = document.getElementById('hole-video-display');
+    const caption = document.getElementById('hole-image-caption');
+    const modalContent = modal.querySelector('.hole-image-modal-content');
+    modal.style.display = 'none';
     document.body.style.overflow = '';
+    // Reset fullscreen video state
+    if (caption) caption.style.display = '';
+    if (modalContent) modalContent.classList.remove('fullscreen-video');
+    // Stop any playing video by clearing the iframe
+    if (videoContainer) {
+        videoContainer.innerHTML = '';
+        videoContainer.style.display = 'none';
+    }
 }
 
 // ========================================
