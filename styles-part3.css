@@ -1454,13 +1454,33 @@ input[type="date"].setup-input {
     color: var(--masters-brown, #6b5b3e);
 }
 
+/* Running Totals Toggle */
+.totals-section {
+    border-left: 2px solid var(--masters-gold);
+    border-right: 2px solid var(--masters-gold);
+}
+
+.totals-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 10px 20px;
+    background: var(--masters-cream);
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    color: var(--masters-dark-green);
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-family: 'Playfair Display', serif;
+    cursor: pointer;
+}
+
 /* Running Totals */
 .running-totals {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     background: var(--masters-white);
-    border-left: 2px solid var(--masters-gold);
-    border-right: 2px solid var(--masters-gold);
 }
 
 .total-item {

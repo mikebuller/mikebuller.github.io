@@ -109,39 +109,44 @@
                     </div>
                 </div>
 
-                <!-- Running Totals -->
-                <div class="running-totals">
-                    <div class="total-item total-stableford">
-                        <span class="total-label">Stableford</span>
-                        <span id="stableford-total" class="total-value">-</span>
-                    </div>
-                    <div class="total-item total-putts">
-                        <span class="total-label">Putts</span>
-                        <span id="putts-total" class="total-value">-</span>
-                    </div>
-                    <div class="total-item total-fir">
-                        <span class="total-label">FIR</span>
-                        <span id="fir-total" class="total-value">-</span>
-                    </div>
-                    <div class="total-item total-gir">
-                        <span class="total-label">GIR</span>
-                        <span id="gir-total" class="total-value">-</span>
-                    </div>
-                    <div class="total-item">
-                        <span class="total-label">Front 9</span>
-                        <span id="front-9-total" class="total-value">-</span>
-                    </div>
-                    <div class="total-item">
-                        <span class="total-label">Back 9</span>
-                        <span id="back-9-total" class="total-value">-</span>
-                    </div>
-                    <div class="total-item total-gross">
-                        <span class="total-label">Gross</span>
-                        <span id="gross-total" class="total-value">-</span>
-                    </div>
-                    <div class="total-item total-net">
-                        <span class="total-label">Net</span>
-                        <span id="net-total" class="total-value">-</span>
+                <!-- Running Totals (expandable) -->
+                <div class="totals-section">
+                    <button type="button" class="totals-toggle" onclick="toggleRunningTotals()">
+                        Running Totals <span id="totals-chevron">▼</span>
+                    </button>
+                    <div id="running-totals-content" class="running-totals" style="display: none;">
+                        <div class="total-item total-stableford">
+                            <span class="total-label">Stableford</span>
+                            <span id="stableford-total" class="total-value">-</span>
+                        </div>
+                        <div class="total-item total-putts">
+                            <span class="total-label">Putts</span>
+                            <span id="putts-total" class="total-value">-</span>
+                        </div>
+                        <div class="total-item total-fir">
+                            <span class="total-label">FIR</span>
+                            <span id="fir-total" class="total-value">-</span>
+                        </div>
+                        <div class="total-item total-gir">
+                            <span class="total-label">GIR</span>
+                            <span id="gir-total" class="total-value">-</span>
+                        </div>
+                        <div class="total-item">
+                            <span class="total-label">Front 9</span>
+                            <span id="front-9-total" class="total-value">-</span>
+                        </div>
+                        <div class="total-item">
+                            <span class="total-label">Back 9</span>
+                            <span id="back-9-total" class="total-value">-</span>
+                        </div>
+                        <div class="total-item total-gross">
+                            <span class="total-label">Gross</span>
+                            <span id="gross-total" class="total-value">-</span>
+                        </div>
+                        <div class="total-item total-net">
+                            <span class="total-label">Net</span>
+                            <span id="net-total" class="total-value">-</span>
+                        </div>
                     </div>
                 </div>
 
