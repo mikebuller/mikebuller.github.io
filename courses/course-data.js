@@ -183,6 +183,23 @@ function getHoleImagePath(courseName, holeNumber) {
 }
 
 /**
+ * Format a date string as "Wednesday, 18th February, 2026"
+ */
+function formatLongDate(dateStr) {
+    if (!dateStr) return '';
+    const d = new Date(dateStr);
+    if (isNaN(d)) return dateStr;
+    const weekday = d.toLocaleDateString('en-AU', { weekday: 'long' });
+    const month = d.toLocaleDateString('en-AU', { month: 'long' });
+    const year = d.getFullYear();
+    const day = d.getDate();
+    const suffix = (day === 1 || day === 21 || day === 31) ? 'st'
+                 : (day === 2 || day === 22) ? 'nd'
+                 : (day === 3 || day === 23) ? 'rd' : 'th';
+    return `${weekday}, ${day}${suffix} ${month}, ${year}`;
+}
+
+/**
  * Get the hole flyover video data for a given course and hole number.
  * Returns { type: 'youtube'|'vimeo', id: '...' } or null if no flyover exists.
  */

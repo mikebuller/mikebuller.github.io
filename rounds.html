@@ -383,11 +383,12 @@
     <!-- Scorecard Modal -->
     <div id="scorecard-modal" class="scorecard-modal" style="display: none;">
         <div class="scorecard-modal-overlay" onclick="closeScorecardModal()"></div>
-        <button class="scorecard-modal-close" onclick="closeScorecardModal()">×</button>
         <div class="scorecard-modal-content">
             <div class="scorecard-modal-header">
-                <h3 id="scorecard-modal-title">Scorecard</h3>
-                <p id="scorecard-modal-subtitle"></p>
+                <button class="scorecard-modal-close" onclick="closeScorecardModal()">×</button>
+                <p id="scorecard-modal-course" class="scorecard-header-course"></p>
+                <p id="scorecard-modal-player" class="scorecard-header-player"></p>
+                <p id="scorecard-modal-date" class="scorecard-header-date"></p>
             </div>
             <div class="modal-scorecard-wrapper">
                 <div id="modal-scorecard-table"></div>
