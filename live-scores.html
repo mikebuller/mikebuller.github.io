@@ -181,15 +181,11 @@
     <div id="scorecard-modal" class="scorecard-modal" style="display: none;">
         <div class="scorecard-modal-overlay" onclick="closeScorecardModal()"></div>
         <div class="scorecard-modal-content">
-            <div class="score-player-bar">
-                <div class="modal-player-info">
-                    <span id="modal-player-name">Player Name</span>
-                    <span id="modal-course-info" class="modal-course-info"></span>
-                    <span id="modal-round-date" class="modal-course-info"></span>
-                </div>
-                <div class="modal-right-info">
-                    <button onclick="closeScorecardModal()" class="exit-round-btn">✕</button>
-                </div>
+            <div class="scorecard-modal-header">
+                <button onclick="closeScorecardModal()" class="scorecard-modal-close">✕</button>
+                <p id="modal-course-info" class="scorecard-header-course"></p>
+                <p id="modal-player-name" class="scorecard-header-player"></p>
+                <p id="modal-round-date" class="scorecard-header-date"></p>
             </div>
             <div class="modal-scorecard-wrapper">
                 <div id="modal-scorecard-table"></div>

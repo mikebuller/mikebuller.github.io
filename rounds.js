@@ -903,17 +903,18 @@ async function viewScorecard(roundId) {
         return;
     }
 
-    // Set modal title to course name
-    document.getElementById('scorecard-modal-title').textContent = round.course || 'Scorecard';
+    // Populate modal header
+    const courseName = round.course || 'Unknown Course';
+    const tees = round.tees || '';
+    const teeLabel = tees ? tees.charAt(0).toUpperCase() + tees.slice(1) + ' tees' : '';
+    const courseInfoParts = [courseName, teeLabel].filter(Boolean);
+    document.getElementById('scorecard-modal-course').textContent = courseInfoParts.join(' - ');
 
-    // Set modal subtitle to date
-    const dateStr = round.date ? new Date(round.date).toLocaleDateString('en-AU', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-    }) : '';
-    document.getElementById('scorecard-modal-subtitle').textContent = dateStr;
+    const handicapDisplay = round.handicap !== undefined ? ` (${round.handicap})` : '';
+    document.getElementById('scorecard-modal-player').textContent = (round.playerName || '') + handicapDisplay;
+
+    const dateStr = round.date ? formatLongDate(round.date) : '';
+    document.getElementById('scorecard-modal-date').textContent = dateStr;
 
     // Generate scorecard table
     generateScorecardTable(round);
@@ -975,7 +976,7 @@ async function loadArchivedRounds() {
             year: 'numeric'
         }) : 'No date');
 
-        const courseName = round.course || 'Bonville Golf Resort';
+        const courseName = round.course || 'Unknown Course';
         const totalScore = round.totalScore || '-';
         const stablefordPoints = round.stablefordPoints || '-';
 

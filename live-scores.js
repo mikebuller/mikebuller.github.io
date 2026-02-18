@@ -109,7 +109,7 @@ async function loadRoundFromParams(roundId, scoreId) {
             teamName: scoreData.teamName,
             handicap: scoreData.handicap || 18,
             tees: scoreData.tees || roundData.settings?.tees || 'tallwood',
-            course: roundData.settings?.course || 'Bonville Golf Resort',
+            course: roundData.settings?.course || 'Unknown Course',
             roundName: roundData.name || 'Round',
             holePrizes: roundData.settings?.holePrizes || [],
             date: roundData.date,
@@ -664,7 +664,7 @@ async function saveRound() {
             teamName: currentRound.teamName,
             handicap: currentRound.handicap,
             tees: currentRound.tees,
-            course: currentRound.course || 'Bonville Golf Resort',
+            course: currentRound.course || 'Unknown Course',
             date: currentRound.date,
             scores: currentRound.scores,
             putts: currentRound.putts,
@@ -1244,13 +1244,13 @@ async function openScorecardModal(playerId) {
 
         // Populate modal header
         const handicapDisplay = modalRoundData.playerHandicap !== undefined ? ` (${modalRoundData.playerHandicap})` : '';
-        document.getElementById('modal-player-name').textContent = modalRoundData.playerName + handicapDisplay;
         const courseName = modalRoundData.course || '';
         const tees = modalRoundData.tees || '';
         const teeLabel = tees ? tees.charAt(0).toUpperCase() + tees.slice(1) + ' tees' : '';
         const courseInfoParts = [courseName, teeLabel].filter(Boolean);
         document.getElementById('modal-course-info').textContent = courseInfoParts.length ? courseInfoParts.join(' - ') : '';
-        const roundDate = modalRoundData.date || '';
+        document.getElementById('modal-player-name').textContent = modalRoundData.playerName + handicapDisplay;
+        const roundDate = modalRoundData.date ? formatLongDate(modalRoundData.date) : '';
         document.getElementById('modal-round-date').textContent = roundDate;
 
         // Generate scorecard table

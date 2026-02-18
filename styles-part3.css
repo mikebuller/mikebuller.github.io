@@ -1921,24 +1921,37 @@ input[type="date"].setup-input {
     color: white;
     padding: 20px 25px;
     border-radius: 12px 12px 0 0;
-    text-align: center;
+    text-align: left;
+    position: relative;
 }
 
-.scorecard-modal-header h3 {
+.scorecard-modal-header .scorecard-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.scorecard-header-course {
     margin: 0;
     font-family: 'Playfair Display', serif;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: var(--masters-gold);
 }
 
-.scorecard-modal-header p {
-    margin: 8px 0 0 0;
-    font-size: 0.9rem;
-    opacity: 0.9;
+.scorecard-header-player {
+    margin: 6px 0 0 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+}
+
+.scorecard-header-date {
+    margin: 4px 0 0 0;
+    font-size: 0.85rem;
+    font-weight: 400;
+    opacity: 0.8;
     color: var(--masters-cream);
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .modal-scorecard-wrapper {
@@ -1952,12 +1965,16 @@ input[type="date"].setup-input {
         padding: 15px 20px;
     }
 
-    .scorecard-modal-header h3 {
-        font-size: 1.2rem;
+    .scorecard-header-course {
+        font-size: 1rem;
     }
 
-    .scorecard-modal-header p {
-        font-size: 0.8rem;
+    .scorecard-header-player {
+        font-size: 0.9rem;
+    }
+
+    .scorecard-header-date {
+        font-size: 0.75rem;
     }
 
     .modal-scorecard-wrapper {
@@ -3187,13 +3204,16 @@ body.header-lb-active {
         padding: 12px 15px;
     }
 
-    .scorecard-modal-header h3 {
-        font-size: 1.1rem;
+    .scorecard-header-course {
+        font-size: 1rem;
     }
 
-    .scorecard-modal-header p {
+    .scorecard-header-player {
+        font-size: 0.85rem;
+    }
+
+    .scorecard-header-date {
         font-size: 0.75rem;
-        padding-bottom: 10px;
         margin-top: 5px;
     }
 
