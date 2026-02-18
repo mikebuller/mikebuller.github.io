@@ -1,11 +1,10 @@
 // Rounds Management JavaScript
-
-// Player data (same as live-scores.js)
 const allPlayers = [
     { id: 1, name: "Mike Buller", handicap: 9.0 },
     { id: 2, name: "Adrian Platas", handicap: 3.2 },
     { id: 3, name: "Darren Shadlow", handicap: 5.5 },
-    { id: 4, name: "Nathan Pizzuto", handicap: 35.0 },
+    { id: 4, name: "Hayden Nancarrow", handicap: 13.8 },
+    { id: 5, name: "Nathan Pizzuto", handicap: 35.0 },
 ];
 
 // State
