@@ -248,7 +248,7 @@ function updateHoleDisplay() {
     const score = currentRound.scores[hole];
     const putts = currentRound.putts[hole];
     updateScoreDisplay(score, hole);
-    document.getElementById('current-putts').textContent = putts !== undefined ? putts : '-';
+    updatePuttsDisplay(score, putts);
 
     // Update FIR and GIR checkboxes
     const firCheckbox = document.getElementById('current-fir');
@@ -325,8 +325,22 @@ function updatePrizeDistance() {
 // Update the score display with stableford points when available
 function updateScoreDisplay(score, hole) {
     const el = document.getElementById('current-score');
+    const minusBtn = document.getElementById('score-minus-btn');
+    el.classList.remove('stepper-value-small');
+
+    // Update minus button label based on current score
+    if (minusBtn) {
+        if (score === 1) minusBtn.textContent = 'P';
+        else if (score === 'P') minusBtn.textContent = '−';
+        else minusBtn.textContent = '−';
+    }
     if (score === undefined || score === null) {
         el.innerHTML = '-';
+        return;
+    }
+    if (score === 'P') {
+        el.classList.add('stepper-value-small');
+        el.innerHTML = 'P <span class="stepper-stableford">(pickup)</span>';
         return;
     }
     const holeData = courseData ? courseData.holes[hole] : null;
@@ -335,6 +349,26 @@ function updateScoreDisplay(score, hole) {
         el.innerHTML = `${score} <span class="stepper-stableford">(${pts}pts)</span>`;
     } else {
         el.innerHTML = `${score}`;
+    }
+}
+
+// Update the putts display and enable/disable putts stepper based on pickup state
+function updatePuttsDisplay(score, putts) {
+    const puttsEl = document.getElementById('current-putts');
+    const minusBtn = document.getElementById('putts-minus-btn');
+    const plusBtn = document.getElementById('putts-plus-btn');
+    const isPickup = score === 'P';
+
+    if (isPickup) {
+        puttsEl.textContent = '-';
+        puttsEl.classList.remove('stepper-value-small');
+        if (minusBtn) minusBtn.disabled = true;
+        if (plusBtn) plusBtn.disabled = true;
+    } else {
+        puttsEl.textContent = putts !== undefined ? (putts === 0 ? 'Holed Out' : putts) : '-';
+        puttsEl.classList.toggle('stepper-value-small', putts === 0);
+        if (minusBtn) minusBtn.disabled = false;
+        if (plusBtn) plusBtn.disabled = false;
     }
 }
 
@@ -369,9 +403,44 @@ function adjustScore(delta) {
         }
     }
 
-    const newScore = Math.max(0, current + delta);
-    currentRound.scores[hole] = newScore;
-    updateScoreDisplay(newScore, hole);
+    // Handle pickup transitions
+    if (current === 'P' && delta > 0) {
+        // Going up from pickup → back to 1
+        currentRound.scores[hole] = 1;
+        updateScoreDisplay(1, hole);
+        updatePuttsDisplay(1, currentRound.putts[hole]);
+        updateQuickNav();
+        updateTotals();
+        saveActiveRoundToFirebase();
+        return;
+    }
+
+    if (current === 'P' && delta < 0) {
+        // Going down from pickup → clear the score entirely
+        delete currentRound.scores[hole];
+        updateScoreDisplay(undefined, hole);
+        updatePuttsDisplay(undefined, currentRound.putts[hole]);
+        updateQuickNav();
+        updateTotals();
+        saveActiveRoundToFirebase();
+        return;
+    }
+
+    const newScore = current + delta;
+
+    if (newScore <= 0) {
+        // Score goes to 0 or below → pickup
+        currentRound.scores[hole] = 'P';
+        updateScoreDisplay('P', hole);
+        // Clear putts on pickup and disable putts stepper
+        delete currentRound.putts[hole];
+        updatePuttsDisplay('P', undefined);
+    } else {
+        currentRound.scores[hole] = newScore;
+        updateScoreDisplay(newScore, hole);
+        // Re-enable putts stepper when coming back from pickup
+        updatePuttsDisplay(newScore, currentRound.putts[hole]);
+    }
 
     updateQuickNav();
     updateTotals();
@@ -385,15 +454,43 @@ function adjustPutts(delta) {
     if (!currentRound) return;
 
     const hole = currentRound.currentHole;
+
+    // Don't allow putts adjustment during pickup
+    if (currentRound.scores[hole] === 'P') return;
+
     let current = currentRound.putts[hole];
 
     if (current === undefined) {
-        current = 0; // Start at 0, so first click of +1 gives 1
+        if (delta > 0) {
+            current = 0; // Start at 0, so first click of +1 gives 1
+        } else {
+            // First click of -1 → Holed Out (0 putts)
+            currentRound.putts[hole] = 0;
+            const puttsEl = document.getElementById('current-putts');
+            puttsEl.textContent = 'Holed Out';
+            puttsEl.classList.add('stepper-value-small');
+            updateTotals();
+            saveActiveRoundToFirebase();
+            return;
+        }
+    }
+
+    // Going down from Holed Out (0) → clear putts entirely
+    if (current === 0 && delta < 0) {
+        delete currentRound.putts[hole];
+        const puttsEl = document.getElementById('current-putts');
+        puttsEl.textContent = '-';
+        puttsEl.classList.remove('stepper-value-small');
+        updateTotals();
+        saveActiveRoundToFirebase();
+        return;
     }
 
     const newPutts = Math.max(0, current + delta);
     currentRound.putts[hole] = newPutts;
-    document.getElementById('current-putts').textContent = newPutts;
+    const puttsEl = document.getElementById('current-putts');
+    puttsEl.textContent = newPutts === 0 ? 'Holed Out' : newPutts;
+    puttsEl.classList.toggle('stepper-value-small', newPutts === 0);
 
     // Track when a 3+ putt occurs (the snake!)
     // The snake goes to whoever MOST RECENTLY recorded a 3+ putt
@@ -464,15 +561,15 @@ function updateTotals() {
     const t = calcRoundTotals(currentRound.scores, currentRound.putts, courseData, handicap);
     const net = Math.round(t.totalScore - handicap);
 
-    // Format relative to par for holes actually played
+    // Format relative to par for holes actually played (excluding pickups)
     const formatRelativeToPar = (score, half) => {
         if (!half.count || !hasCourseData) return '-';
-        // Recalculate par for played holes only
+        // Recalculate par for played holes only (skip pickups)
         let parPlayed = 0;
         const start = half === t.front9 ? 1 : 10;
         const end = half === t.front9 ? 9 : 18;
         for (let i = start; i <= end; i++) {
-            if (currentRound.scores[i] !== undefined) parPlayed += courseData.holes[i].par;
+            if (currentRound.scores[i] !== undefined && currentRound.scores[i] !== 'P') parPlayed += courseData.holes[i].par;
         }
         const diff = score - parPlayed;
         return diff === 0 ? 'E' : (diff > 0 ? `+${diff}` : `${diff}`);
@@ -948,14 +1045,16 @@ function renderHeaderLeaderboard(activeRounds) {
         let stablefordPoints = 0;
         const handicap = round.playerHandicap || 0;
 
-        // Calculate scores from holes data
+        // Calculate scores from holes data (skip pickups)
         for (let i = 1; i <= 18; i++) {
-            if (round.holes && round.holes[i] && round.holes[i].score !== null) {
+            if (round.holes && round.holes[i] && round.holes[i].score !== null && round.holes[i].score !== undefined) {
                 holesPlayed = i;
-                totalScore += round.holes[i].score;
-                if (courseData) {
-                    totalPar += courseData.holes[i].par;
-                    stablefordPoints += calcStablefordPoints(round.holes[i].score, courseData.holes[i].par, courseData.holes[i].si, handicap);
+                if (round.holes[i].score !== 'P') {
+                    totalScore += round.holes[i].score;
+                    if (courseData) {
+                        totalPar += courseData.holes[i].par;
+                        stablefordPoints += calcStablefordPoints(round.holes[i].score, courseData.holes[i].par, courseData.holes[i].si, handicap);
+                    }
                 }
             }
         }
@@ -1171,8 +1270,8 @@ function generateModalScorecard() {
     const holes = modalRoundData.holes || {};
     const scores = {}, putts = {};
     for (let i = 1; i <= 18; i++) {
-        if (holes[i]?.score) scores[i] = holes[i].score;
-        if (holes[i]?.putts) putts[i] = holes[i].putts;
+        if (holes[i]?.score !== undefined && holes[i]?.score !== null) scores[i] = holes[i].score;
+        if (holes[i]?.putts !== undefined && holes[i]?.putts !== null) putts[i] = holes[i].putts;
     }
     document.getElementById('modal-scorecard-table').innerHTML =
         generateScorecardHTML(scores, putts, courseData, modalRoundData.playerHandicap || 0);
@@ -1202,7 +1301,7 @@ async function saveActiveRoundToFirebase() {
             if (currentRound.scores[i] !== undefined || currentRound.putts[i] !== undefined) {
                 holes[i] = {
                     score: currentRound.scores[i] !== undefined ? currentRound.scores[i] : null,
-                    putts: currentRound.putts[i] || 0,
+                    putts: currentRound.putts[i] !== undefined ? currentRound.putts[i] : null,
                     fir: !!currentRound.fir[i],
                     gir: !!currentRound.gir[i],
                     ctp: currentRound.ctp[i] || 0,
@@ -1238,13 +1337,8 @@ async function saveActiveRoundToFirebase() {
             updatedAt: new Date().toISOString()
         };
 
-        // Include lastThreePuttTime for snake tracking
-        if (currentRound.lastThreePuttTime) {
-            roundData.lastThreePuttTime = currentRound.lastThreePuttTime;
-        }
-        // Note: If lastThreePuttTime is null, we don't include it -
-        // but setDoc replaces the whole document, so we need to use updateDoc
-        // or merge option to properly handle the snake field
+        // Include lastThreePuttTime for snake tracking (null if no snake)
+        roundData.lastThreePuttTime = currentRound.lastThreePuttTime || null;
 
         // Use roundId_scoreId if available (from joined rounds), otherwise fallback to old format
         let activeRoundId;
@@ -1254,16 +1348,8 @@ async function saveActiveRoundToFirebase() {
             activeRoundId = `round_${currentRound.playerId || currentRound.playerName}_${currentRound.date}`;
         }
 
-        // Use setDoc with merge to update only specified fields,
-        // then use updateDoc with deleteField to remove lastThreePuttTime if needed
-        await setDoc(doc(window.db, 'activeRounds', activeRoundId), roundData, { merge: true });
-
-        // If no snake, explicitly delete the lastThreePuttTime field
-        if (!currentRound.lastThreePuttTime) {
-            await updateDoc(doc(window.db, 'activeRounds', activeRoundId), {
-                lastThreePuttTime: deleteField()
-            });
-        }
+        // Replace the entire document to ensure cleared scores/putts are removed
+        await setDoc(doc(window.db, 'activeRounds', activeRoundId), roundData);
 
     } catch (error) {
         console.error('Error saving active round:', error);

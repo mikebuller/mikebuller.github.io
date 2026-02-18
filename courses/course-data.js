@@ -233,14 +233,16 @@ function generateScorecardHTML(scores, putts, courseData, handicap) {
     const t = calcRoundTotals(scores, putts, courseData, handicap);
 
     // Per-hole helpers
-    const holeScore = (i) => scores[i] || '-';
-    const holePutts = (i) => putts[i] || '-';
+    const isPickup = (i) => scores[i] === 'P';
+    const holeScore = (i) => isPickup(i) ? 'P' : (scores[i] || '-');
+    const holePutts = (i) => putts[i] !== undefined ? putts[i] : '-';
     const holePar = (i) => hd(i)?.par ?? '-';
     const holePts = (i) => {
+        if (isPickup(i)) return '-';
         if (!scores[i] || !hd(i)) return '-';
         return calcStablefordPoints(scores[i], hd(i).par, hd(i).si, handicap);
     };
-    const holeScoreClass = (i) => scores[i] && hd(i) ? getScoreClass(scores[i], hd(i).par) : '';
+    const holeScoreClass = (i) => isPickup(i) ? 'pickup' : (scores[i] && hd(i) ? getScoreClass(scores[i], hd(i).par) : '');
     const holePtsClass = (i) => { const p = holePts(i); return typeof p === 'number' ? getStablefordClass(p) : ''; };
     const holePuttClass = (i) => (putts[i] >= 3 ? 'over-par' : '');
 
@@ -328,7 +330,7 @@ function generateScorecardHTML(scores, putts, courseData, handicap) {
  * Returns 0 if any required data is missing.
  */
 function calcStablefordPoints(score, par, si, handicap) {
-    if (!score || par === undefined || si === undefined) return 0;
+    if (!score || score === 'P' || typeof score !== 'number' || par === undefined || si === undefined) return 0;
     let strokes = 0;
     if (handicap >= si) strokes++;
     if (handicap >= 18 + si) strokes++;
@@ -351,7 +353,7 @@ function calcRoundTotals(scores, putts, courseData, handicap) {
         const half = i <= 9 ? result.front9 : result.back9;
         const hd = courseData ? courseData.holes[i] : null;
         if (hd) half.par += hd.par;
-        if (scores[i] !== undefined) {
+        if (scores[i] !== undefined && scores[i] !== 'P') {
             half.score += scores[i];
             half.count++;
             if (hd) half.stableford += calcStablefordPoints(scores[i], hd.par, hd.si, handicap);

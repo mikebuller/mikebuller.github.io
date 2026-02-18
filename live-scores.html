@@ -73,17 +73,17 @@
                     <div class="score-input-row">
                         <label>Score</label>
                         <div class="score-stepper">
-                            <button onclick="adjustScore(-1)" class="stepper-btn">−</button>
+                            <button onclick="adjustScore(-1)" class="stepper-btn" id="score-minus-btn">−</button>
                             <span id="current-score" class="stepper-value">-</span>
-                            <button onclick="adjustScore(1)" class="stepper-btn">+</button>
+                            <button onclick="adjustScore(1)" class="stepper-btn" id="score-plus-btn">+</button>
                         </div>
                     </div>
-                    <div class="score-input-row">
+                    <div class="score-input-row" id="putts-input-row">
                         <label>Putts</label>
                         <div class="score-stepper">
-                            <button onclick="adjustPutts(-1)" class="stepper-btn">−</button>
+                            <button onclick="adjustPutts(-1)" class="stepper-btn" id="putts-minus-btn">−</button>
                             <span id="current-putts" class="stepper-value">-</span>
-                            <button onclick="adjustPutts(1)" class="stepper-btn">+</button>
+                            <button onclick="adjustPutts(1)" class="stepper-btn" id="putts-plus-btn">+</button>
                         </div>
                     </div>
                     <div class="score-input-row fir-gir-row">
