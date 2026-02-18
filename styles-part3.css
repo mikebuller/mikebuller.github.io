@@ -1431,6 +1431,11 @@ input[type="date"].setup-input {
     }
 }
 
+.stepper-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
 .stepper-btn:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba(0, 103, 71, 0.3);
@@ -1444,8 +1449,14 @@ input[type="date"].setup-input {
     font-size: 2rem;
     font-weight: 700;
     color: var(--masters-dark-green);
-    min-width: 80px;
+    width: 120px;
     text-align: center;
+    flex-shrink: 0;
+}
+
+.stepper-value-small {
+    font-size: 1.2rem !important;
+    white-space: nowrap;
 }
 
 .stepper-stableford {
@@ -1593,7 +1604,7 @@ input[type="date"].setup-input {
 
     .stepper-value {
         font-size: 1.6rem;
-        min-width: 70px;
+        width: 100px;
     }
 
     .running-totals {
@@ -2188,6 +2199,11 @@ input[type="date"].setup-input {
 .modal-scorecard .over-par {
     color: #c00;
     font-weight: 700;
+}
+
+.modal-scorecard .pickup {
+    color: #999;
+    font-style: italic;
 }
 
 /* OUT / IN subtotal rows - grey background */
