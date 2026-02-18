@@ -2017,6 +2017,19 @@ input[type="date"].setup-input {
     }
 }
 
+/* QR Code Section */
+.qr-code-section {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.qr-code-img {
+    width: 200px;
+    height: 200px;
+}
+
 /* Hole Flyover Button (inside modal) */
 .hole-flyover-btn {
     display: none;
@@ -2889,11 +2902,12 @@ body.header-lb-active {
 .join-code-section,
 .share-link-section {
     margin-bottom: 1.5rem;
-    text-align: left;
+    text-align: center;
 }
 
 .join-code-section label,
-.share-link-section label {
+.share-link-section label,
+.qr-code-section label {
     display: block;
     color: #666;
     font-size: 0.9rem;
@@ -2994,7 +3008,7 @@ body.header-lb-active {
 .round-details-display .round-name {
     font-size: 1.25rem;
     font-weight: 600;
-    color: var(--masters-green);
+    color: var(--masters-gold);
     margin-bottom: 0.25rem;
 }
 

@@ -369,9 +369,6 @@ function createCompletedRoundCard(completedRound) {
         : `Score: ${totalScore}`;
 
     card.innerHTML = `
-        <button class="share-btn-corner" onclick="shareRound('${joinCode}')" title="Share round">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
-        </button>
         <div class="my-round-info">
             <h4>${completedRound.name || 'Completed Round'}</h4>
             <p class="my-round-course">${courseName}</p>
@@ -442,12 +439,21 @@ async function removeRound(roundId, scoreId) {
             } catch (e) {
             }
 
-            // Move score to archivedRounds
+            // Move score to archivedRounds, enriching with round data
             const scoreSnap = await getDoc(doc(window.db, 'scores', scoreId));
+            const roundSnap = await getDoc(doc(window.db, 'rounds', roundId));
             if (scoreSnap.exists()) {
                 const scoreData = scoreSnap.data();
                 scoreData.status = 'archived';
                 scoreData.archivedAt = new Date().toISOString();
+                // Ensure course name is included from round settings
+                if (!scoreData.course && roundSnap.exists()) {
+                    const roundSettings = roundSnap.data().settings || {};
+                    scoreData.course = roundSettings.course || 'Unknown Course';
+                    scoreData.tees = scoreData.tees || roundSettings.tees;
+                    scoreData.date = scoreData.date || roundSnap.data().date;
+                    scoreData.name = scoreData.name || roundSnap.data().name;
+                }
                 await setDoc(doc(window.db, 'archivedRounds', scoreId), scoreData);
                 await deleteDoc(doc(window.db, 'scores', scoreId));
             }
@@ -555,10 +561,12 @@ async function createRound() {
         currentRoundData = roundData;
 
         // Show success screen
-        document.getElementById('created-round-name').textContent = name;
-
         const shareLink = `${window.location.origin}${window.location.pathname}?join=${joinCode}`;
         document.getElementById('created-share-link').value = shareLink;
+
+        // Generate QR code
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(shareLink)}`;
+        document.getElementById('created-qr-code').src = qrUrl;
 
         document.getElementById('create-round-form').style.display = 'none';
         document.getElementById('round-created-success').style.display = 'block';
@@ -620,8 +628,10 @@ function joinCreatedRound() {
             month: 'long',
             year: 'numeric'
         });
-        document.getElementById('join-round-info').textContent =
-            `${dateStr} • ${currentRoundData.settings.holes} holes • ${formatTeeName(currentRoundData.settings.tees)}`;
+        const courseName = currentRoundData.settings?.course || 'Unknown Course';
+        const teeLabel = formatTeeName(currentRoundData.settings.tees);
+        document.getElementById('join-round-course-info').textContent = `${courseName} - ${teeLabel}`;
+        document.getElementById('join-round-date-info').textContent = dateStr;
 
         showJoinDetails();
     }
@@ -668,8 +678,10 @@ async function lookupRound() {
             month: 'long',
             year: 'numeric'
         });
-        document.getElementById('join-round-info').textContent =
-            `${dateStr} • ${currentRoundData.settings.holes} holes • ${formatTeeName(currentRoundData.settings.tees)}`;
+        const courseName = currentRoundData.settings?.course || 'Unknown Course';
+        const teeLabel = formatTeeName(currentRoundData.settings.tees);
+        document.getElementById('join-round-course-info').textContent = `${courseName} - ${teeLabel}`;
+        document.getElementById('join-round-date-info').textContent = dateStr;
 
         showJoinDetails();
 
