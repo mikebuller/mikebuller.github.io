@@ -285,13 +285,17 @@
                 <div class="setup-card success-card">
                     <div class="success-icon">✓</div>
                     <h3>Round Created!</h3>
-                    <p class="round-name-display" id="created-round-name"></p>
 
                     <div class="share-link-section">
                         <label>Share this link with others:</label>
                         <div class="share-link-display">
                             <input type="text" id="created-share-link" readonly class="share-link-input clickable-link" onclick="copyShareLink()" title="Click to copy">
                         </div>
+                    </div>
+
+                    <div class="qr-code-section">
+                        <label>Or scan QR code</label>
+                        <img id="created-qr-code" class="qr-code-img" src="" alt="QR Code to join round">
                     </div>
 
                     <div class="success-actions">
@@ -323,7 +327,8 @@
 
                     <div class="round-details-display">
                         <p class="round-name" id="join-round-name"></p>
-                        <p class="round-info" id="join-round-info"></p>
+                        <p class="round-info" id="join-round-course-info"></p>
+                        <p class="round-info" id="join-round-date-info"></p>
                     </div>
 
                     <div class="setup-field">

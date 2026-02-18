@@ -250,6 +250,12 @@ function updateHoleDisplay() {
     updateScoreDisplay(score, hole);
     updatePuttsDisplay(score, putts);
 
+    // Ensure score minus button label is correct on hole change
+    const scoreMinusBtn = document.getElementById('score-minus-btn');
+    if (scoreMinusBtn && (score === undefined || score === null)) {
+        scoreMinusBtn.textContent = 'P';
+    }
+
     // Update FIR and GIR checkboxes
     const firCheckbox = document.getElementById('current-fir');
     const girCheckbox = document.getElementById('current-gir');
@@ -330,9 +336,13 @@ function updateScoreDisplay(score, hole) {
 
     // Update minus button label based on current score
     if (minusBtn) {
-        if (score === 1) minusBtn.textContent = 'P';
-        else if (score === 'P') minusBtn.textContent = '−';
-        else minusBtn.textContent = '−';
+        if (score === undefined || score === null) {
+            minusBtn.textContent = 'P';
+        } else if (score === 1) {
+            minusBtn.textContent = 'P';
+        } else {
+            minusBtn.textContent = '−';
+        }
     }
     if (score === undefined || score === null) {
         el.innerHTML = '-';
@@ -394,12 +404,35 @@ function adjustScore(delta) {
     let current = currentRound.scores[hole];
 
     if (current === undefined) {
-        // First tap of +1 sets to par; first tap of -1 sets to par-1
-        const par = holeData ? holeData.par : 0;
-        if (delta > 0) {
-            current = par - delta; // +1: par - 1 + 1 = par
+        if (holeData) {
+            if (delta > 0) {
+                // First tap of +1 sets to par
+                current = holeData.par - delta; // +1: par - 1 + 1 = par
+            } else {
+                // First tap of -1 (P button) sets to pickup
+                currentRound.scores[hole] = 'P';
+                updateScoreDisplay('P', hole);
+                delete currentRound.putts[hole];
+                updatePuttsDisplay('P', undefined);
+                updateQuickNav();
+                updateTotals();
+                saveActiveRoundToFirebase();
+                return;
+            }
         } else {
-            current = par; // -1: par + (-1) = par - 1
+            // No course data: first tap of +1 starts at 1; first tap of -1 sets to pickup
+            if (delta > 0) {
+                current = 0; // 0 + 1 = 1
+            } else {
+                currentRound.scores[hole] = 'P';
+                updateScoreDisplay('P', hole);
+                delete currentRound.putts[hole];
+                updatePuttsDisplay('P', undefined);
+                updateQuickNav();
+                updateTotals();
+                saveActiveRoundToFirebase();
+                return;
+            }
         }
     }
 
@@ -583,14 +616,16 @@ function updateTotals() {
     document.getElementById('gross-total').textContent = t.holesPlayed > 0 ? t.totalScore : '-';
     document.getElementById('net-total').textContent = t.holesPlayed > 0 ? net : '-';
 
-    // Calculate FIR and GIR totals
+    // Calculate FIR and GIR totals (count even for pickup holes)
     let firCount = 0, girCount = 0;
+    let anyHoleStarted = t.holesPlayed > 0;
     for (let i = 1; i <= 18; i++) {
         if (currentRound.fir[i]) firCount++;
         if (currentRound.gir[i]) girCount++;
+        if (currentRound.scores[i] !== undefined) anyHoleStarted = true;
     }
-    document.getElementById('fir-total').textContent = t.holesPlayed > 0 ? firCount : '-';
-    document.getElementById('gir-total').textContent = t.holesPlayed > 0 ? girCount : '-';
+    document.getElementById('fir-total').textContent = anyHoleStarted ? firCount : '-';
+    document.getElementById('gir-total').textContent = anyHoleStarted ? girCount : '-';
 }
 
 // Fire confetti celebration
