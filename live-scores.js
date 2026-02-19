@@ -13,26 +13,80 @@ let cachedActiveRounds = [];
 let cachedCompletedRounds = [];
 let modalRoundData = null;
 
-// Pre-load the snake hiss sound effect for 3-putt events
+// Snake hiss sound effect for 3-putt events
 const snakeHissSoundSrc = 'sounds/snake-hiss-laugh.mp3';
 
-// Play the snake hiss sound effect without blocking any UI actions.
-// Each call creates a fresh Audio instance so that:
+// Shared AudioContext for Web Audio API playback (created on first user gesture)
+let snakeAudioContext = null;
+let snakeAudioBuffer = null;
+
+// Initialize the AudioContext and pre-load the sound buffer.
+// Must be called from a user gesture (tap/click) to satisfy iOS autoplay policy.
+async function initSnakeAudio() {
+    if (snakeAudioContext) return; // Already initialised
+
+    try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        snakeAudioContext = new AudioCtx();
+
+        // Fetch and decode the audio file into a buffer for instant playback
+        const response = await fetch(snakeHissSoundSrc);
+        const arrayBuffer = await response.arrayBuffer();
+        snakeAudioBuffer = await snakeAudioContext.decodeAudioData(arrayBuffer);
+    } catch (e) {
+        console.warn('Failed to init snake audio:', e);
+    }
+}
+
+// Play the snake hiss sound effect at maximum volume without blocking UI.
+// Uses the Web Audio API with a GainNode set to maximum so the output is as
+// loud as the device media volume allows.
+// Each call creates a new BufferSource so:
 //   - the full sound always plays to completion even if the user keeps tapping
 //   - overlapping plays don't cut each other off
 //   - playback never blocks or delays any player action
-// Volume is set to maximum and unmuted to ensure it's audible on mobile devices.
-// Note: on iOS Safari the volume property is read-only and controlled by
-// the hardware buttons, but setting it still works on Android and desktop.
 function playSnakeHissSound() {
+    // Quick vibration pattern like a snake bite 🐍
+    // Two short sharp bursts: buzz-pause-buzz
+    if (navigator.vibrate) {
+        navigator.vibrate([100, 50, 200]);
+    }
+
+    // Lazy-init on first call (always inside a user gesture / tap handler)
+    if (!snakeAudioContext) {
+        initSnakeAudio().then(() => _playBuffer());
+        return;
+    }
+    _playBuffer();
+}
+
+function _playBuffer() {
     try {
-        const audio = new Audio(snakeHissSoundSrc);
-        audio.volume = 1.0;
-        audio.muted = false;
-        audio.play().catch(err => {
-            // Silently ignore autoplay restrictions — sound is non-critical
-            console.warn('Snake sound could not play:', err);
-        });
+        if (!snakeAudioContext || !snakeAudioBuffer) {
+            // Fallback to basic Audio if Web Audio API failed to init
+            const audio = new Audio(snakeHissSoundSrc);
+            audio.volume = 1.0;
+            audio.muted = false;
+            audio.play().catch(() => {});
+            return;
+        }
+
+        // Resume context if it was suspended (iOS requires this per user gesture)
+        if (snakeAudioContext.state === 'suspended') {
+            snakeAudioContext.resume();
+        }
+
+        // Create a new source node (one-shot, cannot be reused)
+        const source = snakeAudioContext.createBufferSource();
+        source.buffer = snakeAudioBuffer;
+
+        // GainNode at maximum volume (1.0 = 0 dB, no attenuation)
+        const gainNode = snakeAudioContext.createGain();
+        gainNode.gain.value = 1.0;
+
+        source.connect(gainNode);
+        gainNode.connect(snakeAudioContext.destination);
+        source.start(0);
     } catch (e) {
         console.warn('Snake sound error:', e);
     }
