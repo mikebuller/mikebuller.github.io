@@ -3354,3 +3354,98 @@ body.header-lb-active {
         padding: 20px;
     }
 }
+
+/* ========================================
+   LEADERBOARD VIEW BUTTON & MODAL
+   ======================================== */
+
+.leaderboard-view-btn {
+    background: var(--masters-dark-green) !important;
+    color: #fff !important;
+}
+
+.leaderboard-view-btn:hover {
+    background: #1a3d1a !important;
+}
+
+.leaderboard-modal-content {
+    max-width: 500px;
+}
+
+.leaderboard-modal-content .leaderboard-modal-body {
+    padding: 0.5rem 1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.leaderboard-modal-content .header-lb-player {
+    display: grid;
+    grid-template-columns: 18px 20px 1fr 35px 85px;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 20px;
+    background: rgba(0, 45, 26, 0.05);
+    font-size: 0.85rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.leaderboard-modal-content .header-lb-player.leader {
+    background: rgba(201, 162, 39, 0.15);
+    border: 1px solid var(--masters-gold);
+}
+
+.leaderboard-modal-content .header-lb-player.finished {
+    opacity: 0.85;
+}
+
+.leaderboard-modal-content .header-lb-pos {
+    font-weight: 700;
+    color: var(--masters-green);
+    text-align: center;
+}
+
+.leaderboard-modal-content .header-lb-snake {
+    font-size: 1rem;
+    text-align: center;
+}
+
+.leaderboard-modal-content .header-lb-name {
+    font-weight: 600;
+    color: var(--masters-dark-green);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.leaderboard-modal-content .header-lb-hole {
+    font-size: 0.75rem;
+    color: #888;
+    text-align: center;
+    opacity: 1;
+}
+
+.leaderboard-modal-content .header-lb-score {
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(0, 45, 26, 0.1);
+    text-align: center;
+}
+
+.leaderboard-modal-content .header-lb-score.under-par {
+    color: #d32f2f;
+    background: rgba(211, 47, 47, 0.1);
+}
+
+.leaderboard-modal-content .header-lb-score.over-par {
+    color: #333;
+    background: rgba(0, 0, 0, 0.06);
+}
+
+.leaderboard-modal-content .header-lb-score.even-par {
+    color: #666;
+    background: rgba(0, 0, 0, 0.05);
+}

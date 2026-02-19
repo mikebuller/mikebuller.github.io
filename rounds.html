@@ -401,6 +401,21 @@
         </div>
     </div>
 
+    <!-- Leaderboard Modal -->
+    <div id="leaderboard-modal" class="scorecard-modal" style="display: none;">
+        <div class="scorecard-modal-overlay" onclick="closeLeaderboardModal()"></div>
+        <div class="scorecard-modal-content leaderboard-modal-content">
+            <div class="scorecard-modal-header">
+                <button class="scorecard-modal-close" onclick="closeLeaderboardModal()">×</button>
+                <p id="leaderboard-modal-title" class="scorecard-header-course">🏆 Final Leaderboard</p>
+                <p id="leaderboard-modal-course" class="scorecard-header-player"></p>
+                <p id="leaderboard-modal-date" class="scorecard-header-date"></p>
+            </div>
+            <div class="leaderboard-modal-body" id="leaderboard-modal-body">
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer">
     </footer>
