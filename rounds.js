@@ -375,7 +375,8 @@ function createCompletedRoundCard(completedRound) {
             <p class="round-score-summary">${scoreSummary}</p>
         </div>
         <div class="my-round-actions">
-            <button class="continue-btn" onclick="viewScorecard('${completedRound.id}')">View Scorecard</button>
+            <button class="continue-btn" onclick="viewScorecard('${completedRound.id}')">Scorecard</button>
+            <button class="continue-btn leaderboard-view-btn" onclick="viewLeaderboard('${completedRound.id}')">Leaderboard</button>
             <button class="remove-btn" onclick="removeCompletedRound('${completedRound.id}')" title="Remove round">✕</button>
         </div>
     `;
@@ -884,6 +885,8 @@ window.removeCompletedRound = removeCompletedRound;
 window.permanentlyDeleteRound = permanentlyDeleteRound;
 window.deleteAllArchivedRounds = deleteAllArchivedRounds;
 window.closeScorecardModal = closeScorecardModal;
+window.viewLeaderboard = viewLeaderboard;
+window.closeLeaderboardModal = closeLeaderboardModal;
 window.initializeRoundsPage = initializeRoundsPage;
 
 // Course data is loaded from course-data.js (shared with live-scores.js)
@@ -937,6 +940,222 @@ async function viewScorecard(roundId) {
 // Close scorecard modal
 function closeScorecardModal() {
     document.getElementById('scorecard-modal').style.display = 'none';
+}
+
+// View leaderboard for a completed round (shows all players in that round)
+async function viewLeaderboard(roundId) {
+    if (!window.db || !window.firestoreHelpers) {
+        alert('Database not initialized. Please refresh the page.');
+        return;
+    }
+
+    try {
+        const { doc, getDoc, collection, query, where, getDocs } = window.firestoreHelpers;
+
+        // First, get the clicked round to find its parent roundId and course info
+        let clickedRound = null;
+        let docSnap = await getDoc(doc(window.db, 'completedRounds', roundId));
+        if (!docSnap.exists()) {
+            docSnap = await getDoc(doc(window.db, 'archivedRounds', roundId));
+        }
+        if (docSnap.exists()) {
+            clickedRound = { id: docSnap.id, ...docSnap.data() };
+        }
+
+        if (!clickedRound || !clickedRound.roundId) {
+            alert('Round data not found');
+            return;
+        }
+
+        const parentRoundId = clickedRound.roundId;
+        const courseName = clickedRound.course || 'Unknown Course';
+        const courseInfo = getCourseData(courseName);
+
+        // Fetch all completed rounds with the same parent roundId
+        const completedQuery = query(
+            collection(window.db, 'completedRounds'),
+            where('roundId', '==', parentRoundId)
+        );
+        const completedSnap = await getDocs(completedQuery);
+
+        const allPlayers = [];
+        completedSnap.forEach(d => {
+            allPlayers.push({ id: d.id, ...d.data() });
+        });
+
+        // Also check activeRounds for players still playing
+        const activeQuery = query(
+            collection(window.db, 'activeRounds'),
+            where('roundId', '==', parentRoundId)
+        );
+        const activeSnap = await getDocs(activeQuery);
+        activeSnap.forEach(d => {
+            allPlayers.push({ id: d.id, ...d.data() });
+        });
+
+        if (allPlayers.length === 0) {
+            alert('No player data found for this round');
+            return;
+        }
+
+        // Build leaderboard data
+        const leaderboardData = allPlayers.map(round => {
+            let holesPlayed = 0;
+            let totalScore = 0;
+            let totalPar = 0;
+            let stablefordPoints = 0;
+            const handicap = round.playerHandicap || round.handicap || 0;
+
+            // Calculate from holes data if available
+            if (round.holes) {
+                for (let i = 1; i <= 18; i++) {
+                    if (round.holes[i] && round.holes[i].score !== null && round.holes[i].score !== undefined) {
+                        holesPlayed = i;
+                        if (round.holes[i].score !== 'P') {
+                            totalScore += round.holes[i].score;
+                            if (courseInfo) {
+                                totalPar += courseInfo.holes[i].par;
+                                stablefordPoints += calcStablefordPoints(round.holes[i].score, courseInfo.holes[i].par, courseInfo.holes[i].si, handicap);
+                            }
+                        }
+                    }
+                }
+            } else if (round.scores) {
+                // Fallback to flat scores/putts format
+                for (let i = 1; i <= 18; i++) {
+                    if (round.scores[i] !== undefined && round.scores[i] !== null) {
+                        holesPlayed = i;
+                        if (round.scores[i] !== 'P') {
+                            totalScore += round.scores[i];
+                            if (courseInfo) {
+                                totalPar += courseInfo.holes[i].par;
+                                stablefordPoints += calcStablefordPoints(round.scores[i], courseInfo.holes[i].par, courseInfo.holes[i].si, handicap);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Find the highest hole number where a 3+ putt occurred
+            let lastThreePuttHole = 0;
+            if (round.holes) {
+                for (let i = 1; i <= 18; i++) {
+                    if (round.holes[i] && round.holes[i].putts >= 3) {
+                        lastThreePuttHole = i;
+                    }
+                }
+            } else if (round.putts) {
+                for (let i = 1; i <= 18; i++) {
+                    if (round.putts[i] >= 3) {
+                        lastThreePuttHole = i;
+                    }
+                }
+            }
+
+            return {
+                name: round.playerName || 'Unknown',
+                handicap: handicap,
+                holesPlayed: holesPlayed,
+                currentHole: round.currentHole || holesPlayed,
+                totalScore: totalScore,
+                totalPar: totalPar,
+                scoreToPar: totalScore - totalPar,
+                stablefordPoints: stablefordPoints,
+                isFinished: round.status === 'finished',
+                hasSnake: lastThreePuttHole > 0,
+                lastThreePuttHole: lastThreePuttHole
+            };
+        });
+
+        // Determine who has the snake — the player who 3-putted on the
+        // highest (latest) hole number gets the snake. If multiple players
+        // 3-putted on the same highest hole, they all share it.
+        let snakePlayerName = null;
+        let highestSnakeHole = 0;
+        leaderboardData.forEach(player => {
+            if (player.lastThreePuttHole > highestSnakeHole) {
+                highestSnakeHole = player.lastThreePuttHole;
+                snakePlayerName = player.name;
+            }
+        });
+        // Check for ties on the highest snake hole — all players who
+        // 3-putted on that hole share the snake
+        const snakePlayerNames = new Set();
+        if (highestSnakeHole > 0) {
+            leaderboardData.forEach(player => {
+                if (player.lastThreePuttHole === highestSnakeHole) {
+                    snakePlayerNames.add(player.name);
+                }
+            });
+        }
+
+        // Sort by stableford points (highest first)
+        leaderboardData.sort((a, b) => {
+            if (a.stablefordPoints !== b.stablefordPoints) return b.stablefordPoints - a.stablefordPoints;
+            return b.holesPlayed - a.holesPlayed;
+        });
+
+        // Populate modal header
+        document.getElementById('leaderboard-modal-title').textContent = '🏆 Final Leaderboard';
+        document.getElementById('leaderboard-modal-course').textContent = courseName;
+        const dateStr = clickedRound.date ? formatLongDate(clickedRound.date) : '';
+        document.getElementById('leaderboard-modal-date').textContent = dateStr;
+
+        // Render leaderboard rows
+        const body = document.getElementById('leaderboard-modal-body');
+        body.innerHTML = leaderboardData.map((player, index) => {
+            const pos = index + 1;
+            let scoreClass = 'even-par';
+            let scoreDisplay = '-';
+
+            if (player.holesPlayed > 0) {
+                if (courseInfo) {
+                    let parDisplay = 'E';
+                    if (player.scoreToPar < 0) {
+                        scoreClass = 'under-par';
+                        parDisplay = player.scoreToPar.toString();
+                    } else if (player.scoreToPar > 0) {
+                        scoreClass = 'over-par';
+                        parDisplay = '+' + player.scoreToPar;
+                    }
+                    scoreDisplay = `${parDisplay} (${player.stablefordPoints})`;
+                } else {
+                    scoreDisplay = `${player.totalScore}`;
+                }
+            }
+
+            const holeDisplay = player.isFinished ? 'F' : `H${player.currentHole}`;
+            const isSnakeHolder = snakePlayerNames.has(player.name);
+            const snakeIcon = isSnakeHolder ? '🐍' : '';
+
+            let playerClass = 'header-lb-player';
+            if (pos === 1 && player.holesPlayed > 0) playerClass += ' leader';
+            if (player.isFinished) playerClass += ' finished';
+            if (!player.isFinished) playerClass += ' live';
+
+            return `
+                <div class="${playerClass}">
+                    <span class="header-lb-pos">${pos}</span>
+                    <span class="header-lb-snake">${snakeIcon}</span>
+                    <span class="header-lb-name">${player.name}</span>
+                    <span class="header-lb-hole">${holeDisplay}</span>
+                    <span class="header-lb-score ${scoreClass}">${scoreDisplay}</span>
+                </div>
+            `;
+        }).join('');
+
+        // Show modal
+        document.getElementById('leaderboard-modal').style.display = 'flex';
+
+    } catch (error) {
+        console.error('Error loading leaderboard:', error);
+        alert('Failed to load leaderboard. Please try again.');
+    }
+}
+
+// Close leaderboard modal
+function closeLeaderboardModal() {
+    document.getElementById('leaderboard-modal').style.display = 'none';
 }
 
 // Load and display archived rounds
