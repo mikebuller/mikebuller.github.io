@@ -1015,7 +1015,7 @@ async function viewLeaderboard(roundId) {
 
         const allPlayers = [];
         completedSnap.forEach(d => {
-            allPlayers.push({ id: d.id, ...d.data() });
+            allPlayers.push({ id: d.id, ...d.data(), _isCompleted: true });
         });
 
         // Also check activeRounds for players still playing
@@ -1025,7 +1025,7 @@ async function viewLeaderboard(roundId) {
         );
         const activeSnap = await getDocs(activeQuery);
         activeSnap.forEach(d => {
-            allPlayers.push({ id: d.id, ...d.data() });
+            allPlayers.push({ id: d.id, ...d.data(), _isCompleted: false });
         });
 
         if (allPlayers.length === 0) {
@@ -1096,7 +1096,7 @@ async function viewLeaderboard(roundId) {
                 totalPar: totalPar,
                 scoreToPar: totalScore - totalPar,
                 stablefordPoints: stablefordPoints,
-                isFinished: round.status === 'finished',
+                isFinished: round._isCompleted || round.status === 'finished',
                 hasSnake: lastThreePuttHole > 0,
                 lastThreePuttHole: lastThreePuttHole
             };
