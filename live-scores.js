@@ -6,6 +6,11 @@ let courseData = null;
 // Current round state
 let currentRound = null;
 let activeRoundsUnsubscribe = null;
+let completedRoundsUnsubscribe = null;
+
+// Cached data from both listeners for merging into the leaderboard
+let cachedActiveRounds = [];
+let cachedCompletedRounds = [];
 let modalRoundData = null;
 
 // Pre-load the snake hiss sound effect for 3-putt events
@@ -708,13 +713,28 @@ async function saveRound() {
     }
 
     try {
-        const { doc, setDoc, updateDoc, deleteDoc } = window.firestoreHelpers;
+        const { doc, setDoc, deleteDoc } = window.firestoreHelpers;
 
         // Calculate totals for the completed round
         const handicap = currentRound.handicap || 0;
         const t = calcRoundTotals(currentRound.scores, currentRound.putts || {}, courseData, handicap);
         const totalScore = t.totalScore;
         const totalStableford = t.totalStableford;
+
+        // Build holes format for leaderboard compatibility (same format as activeRounds)
+        const holes = {};
+        for (let i = 1; i <= 18; i++) {
+            if (currentRound.scores[i] !== undefined || currentRound.putts[i] !== undefined) {
+                holes[i] = {
+                    score: currentRound.scores[i] !== undefined ? currentRound.scores[i] : null,
+                    putts: currentRound.putts[i] !== undefined ? currentRound.putts[i] : null,
+                    fir: !!currentRound.fir[i],
+                    gir: !!currentRound.gir[i],
+                    ctp: currentRound.ctp[i] || 0,
+                    longestDrive: currentRound.longestDrive[i] || 0
+                };
+            }
+        }
 
         // Use existing scoreId if we have one (from joining a round), otherwise create new
         const scoreId = currentRound.scoreId || `score_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -728,6 +748,7 @@ async function saveRound() {
             entryType: currentRound.entryType,
             teamName: currentRound.teamName,
             handicap: currentRound.handicap,
+            playerHandicap: currentRound.handicap,
             tees: currentRound.tees,
             course: currentRound.course || 'Unknown Course',
             date: currentRound.date,
@@ -737,9 +758,12 @@ async function saveRound() {
             gir: currentRound.gir,
             ctp: currentRound.ctp,
             longestDrive: currentRound.longestDrive,
+            holes: holes,
+            currentHole: currentRound.currentHole,
+            lastThreePuttTime: currentRound.lastThreePuttTime || null,
             totalScore: totalScore,
             stablefordPoints: totalStableford,
-            status: 'completed',
+            status: 'finished',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString()
         };
@@ -747,7 +771,8 @@ async function saveRound() {
         // Save to completedRounds collection
         await setDoc(doc(window.db, 'completedRounds', scoreId), scoreData);
 
-        // Delete from activeRounds collection
+        // Delete from activeRounds — the completedRounds listener will show
+        // this player as "F" (finished) on other players' leaderboards
         if (currentRound.roundId && currentRound.scoreId) {
             const activeRoundId = `${currentRound.roundId}_${currentRound.scoreId}`;
             try {
@@ -967,14 +992,14 @@ function hideHeaderLeaderboard() {
     stopActiveRoundsListener();
 }
 
-// Start real-time listener for active rounds
+// Start real-time listeners for active rounds AND completed rounds
 function startActiveRoundsListener() {
     if (!window.db || !window.firestoreHelpers) {
         setTimeout(startActiveRoundsListener, 500);
         return;
     }
 
-    // Stop any existing listener first
+    // Stop any existing listeners first
     stopActiveRoundsListener();
 
     try {
@@ -983,44 +1008,72 @@ function startActiveRoundsListener() {
         // Get the current round ID to filter by
         const currentRoundId = currentRound?.roundId || null;
 
-        let roundsQuery;
+        // --- Listener 1: Active rounds (players still playing) ---
+        let activeQuery;
         if (currentRoundId) {
-            // Filter by the current round
-            roundsQuery = query(
+            activeQuery = query(
                 collection(window.db, 'activeRounds'),
                 where('roundId', '==', currentRoundId)
             );
         } else {
-            // Fallback to all active rounds (for backwards compatibility)
-            roundsQuery = collection(window.db, 'activeRounds');
+            activeQuery = collection(window.db, 'activeRounds');
         }
 
         activeRoundsUnsubscribe = onSnapshot(
-            roundsQuery,
+            activeQuery,
             (snapshot) => {
-                const activeRounds = [];
+                cachedActiveRounds = [];
                 snapshot.forEach(doc => {
-                    activeRounds.push({ id: doc.id, ...doc.data() });
+                    cachedActiveRounds.push({ id: doc.id, ...doc.data() });
                 });
-                // Update the leaderboard with new data
-                renderHeaderLeaderboard(activeRounds);
+                // Merge both sources and render
+                renderHeaderLeaderboard([...cachedActiveRounds, ...cachedCompletedRounds]);
             },
             (error) => {
                 console.error('Error listening to active rounds:', error);
             }
         );
 
+        // --- Listener 2: Completed rounds (finished players, shown as "F") ---
+        if (currentRoundId) {
+            const completedQuery = query(
+                collection(window.db, 'completedRounds'),
+                where('roundId', '==', currentRoundId)
+            );
+
+            completedRoundsUnsubscribe = onSnapshot(
+                completedQuery,
+                (snapshot) => {
+                    cachedCompletedRounds = [];
+                    snapshot.forEach(doc => {
+                        cachedCompletedRounds.push({ id: doc.id, ...doc.data() });
+                    });
+                    // Merge both sources and render
+                    renderHeaderLeaderboard([...cachedActiveRounds, ...cachedCompletedRounds]);
+                },
+                (error) => {
+                    console.error('Error listening to completed rounds:', error);
+                }
+            );
+        }
+
     } catch (error) {
         console.error('Error starting listener:', error);
     }
 }
 
-// Stop real-time listener
+// Stop real-time listeners
 function stopActiveRoundsListener() {
     if (activeRoundsUnsubscribe) {
         activeRoundsUnsubscribe();
         activeRoundsUnsubscribe = null;
     }
+    if (completedRoundsUnsubscribe) {
+        completedRoundsUnsubscribe();
+        completedRoundsUnsubscribe = null;
+    }
+    cachedActiveRounds = [];
+    cachedCompletedRounds = [];
 }
 
 // Toggle header leaderboard collapse/expand
