@@ -798,7 +798,7 @@ async function saveRound() {
             roundId: currentRound.roundId || null,
             playerId: currentRound.playerId,
             playerName: currentRound.playerName,
-            name: currentRound.playerName + ' - ' + currentRound.roundName,
+            name: currentRound.roundName,
             entryType: currentRound.entryType,
             teamName: currentRound.teamName,
             handicap: currentRound.handicap,
@@ -969,31 +969,13 @@ function closeHoleImage() {
 // HEADER LEADERBOARD FUNCTIONS
 // ========================================
 
-// Position the header leaderboard below navbar
+// Position the header leaderboard - no longer needed with normal document flow
 function positionHeaderLeaderboard() {
-    const headerLb = document.getElementById('header-leaderboard');
-    const navbar = document.querySelector('.navbar');
-
-    if (headerLb && navbar) {
-        const navbarHeight = navbar.offsetHeight;
-        headerLb.style.top = navbarHeight + 'px';
-    }
-
-    updateSectionPadding();
+    // No-op: leaderboard is in normal document flow
 }
 
 function updateSectionPadding() {
-    const headerLb = document.getElementById('header-leaderboard');
-    const navbar = document.querySelector('.navbar');
-    const section = document.getElementById('live-scores');
-
-    if (!section || !navbar) return;
-
-    if (headerLb && headerLb.style.display !== 'none') {
-        const navbarHeight = navbar.offsetHeight;
-        const lbHeight = headerLb.offsetHeight;
-        section.style.paddingTop = (navbarHeight + lbHeight - 55) + 'px';
-    }
+    // No-op: no padding calculations needed with normal document flow
 }
 
 // Recalculate padding after leaderboard collapse/expand transition ends
@@ -1131,21 +1113,39 @@ function stopActiveRoundsListener() {
 }
 
 // Toggle header leaderboard collapse/expand
+// Store the expanded leaderboard height so we can set targets instantly
+let expandedLeaderboardHeight = 0;
+
 function toggleHeaderLeaderboard() {
     const content = document.getElementById('header-leaderboard-content');
     const chevron = document.getElementById('header-leaderboard-chevron');
 
     if (!content) return;
 
-    if (content.classList.contains('collapsed')) {
-        content.classList.remove('collapsed');
-        if (chevron) chevron.textContent = '▲';
-    } else {
-        content.classList.add('collapsed');
-        if (chevron) chevron.textContent = '▼';
-    }
+    const isCollapsing = !content.classList.contains('collapsed');
 
-    updateSectionPadding();
+    if (isCollapsing) {
+        // Lock current height, force reflow, then animate to 0
+        content.style.height = content.scrollHeight + 'px';
+        content.offsetHeight;
+        content.classList.add('collapsed');
+        content.style.height = '0px';
+        if (chevron) chevron.textContent = '▼';
+    } else {
+        // Remove collapsed, start from 0, animate to natural height
+        content.classList.remove('collapsed');
+        content.style.height = '0px';
+        content.offsetHeight;
+        const targetHeight = content.scrollHeight;
+        content.style.height = targetHeight + 'px';
+        if (chevron) chevron.textContent = '▲';
+
+        // After transition, remove explicit height so content adapts naturally
+        content.addEventListener('transitionend', function handler() {
+            content.style.height = '';
+            content.removeEventListener('transitionend', handler);
+        });
+    }
 }
 
 // Update header leaderboard with current scores from Firebase (manual fetch)

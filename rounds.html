@@ -385,33 +385,28 @@
         </div>
     </section>
 
-    <!-- Scorecard Modal -->
-    <div id="scorecard-modal" class="scorecard-modal" style="display: none;">
-        <div class="scorecard-modal-overlay" onclick="closeScorecardModal()"></div>
+    <!-- Round Modal (Scorecard + Leaderboard) -->
+    <div id="round-modal" class="scorecard-modal" style="display: none;">
+        <div class="scorecard-modal-overlay" onclick="closeRoundModal()"></div>
         <div class="scorecard-modal-content">
             <div class="scorecard-modal-header">
-                <button class="scorecard-modal-close" onclick="closeScorecardModal()">×</button>
-                <p id="scorecard-modal-course" class="scorecard-header-course"></p>
-                <p id="scorecard-modal-player" class="scorecard-header-player"></p>
-                <p id="scorecard-modal-date" class="scorecard-header-date"></p>
+                <button class="scorecard-modal-close" onclick="closeRoundModal()">×</button>
+                <p id="round-modal-course" class="scorecard-header-course"></p>
+                <p id="round-modal-player" class="scorecard-header-player"></p>
+                <p id="round-modal-date" class="scorecard-header-date"></p>
+                <div class="round-modal-tabs">
+                    <button class="round-modal-tab active" onclick="switchRoundModalTab('scorecard')">Scorecard</button>
+                    <button class="round-modal-tab" onclick="switchRoundModalTab('leaderboard')">Leaderboard</button>
+                </div>
             </div>
-            <div class="modal-scorecard-wrapper">
-                <div id="modal-scorecard-table"></div>
+            <div id="round-modal-scorecard" class="round-modal-panel">
+                <div class="modal-scorecard-wrapper">
+                    <div id="modal-scorecard-table"></div>
+                </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Leaderboard Modal -->
-    <div id="leaderboard-modal" class="scorecard-modal" style="display: none;">
-        <div class="scorecard-modal-overlay" onclick="closeLeaderboardModal()"></div>
-        <div class="scorecard-modal-content leaderboard-modal-content">
-            <div class="scorecard-modal-header">
-                <button class="scorecard-modal-close" onclick="closeLeaderboardModal()">×</button>
-                <p id="leaderboard-modal-title" class="scorecard-header-course">🏆 Final Leaderboard</p>
-                <p id="leaderboard-modal-course" class="scorecard-header-player"></p>
-                <p id="leaderboard-modal-date" class="scorecard-header-date"></p>
-            </div>
-            <div class="leaderboard-modal-body" id="leaderboard-modal-body">
+            <div id="round-modal-leaderboard" class="round-modal-panel" style="display: none;">
+                <div class="leaderboard-modal-body" id="leaderboard-modal-body">
+                </div>
             </div>
         </div>
     </div>
