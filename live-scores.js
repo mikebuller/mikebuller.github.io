@@ -16,25 +16,40 @@ let modalRoundData = null;
 // Snake hiss sound effect for 3-putt events
 const snakeHissSoundSrc = 'sounds/snake-hiss-laugh.mp3';
 
+// Pickup sound effect for when players pick up
+const pickupSoundSrc = 'sounds/you-suck-jackass.mp3';
+
 // Shared AudioContext for Web Audio API playback (created on first user gesture)
 let snakeAudioContext = null;
 let snakeAudioBuffer = null;
+let pickupAudioBuffer = null;
 
-// Initialize the AudioContext and pre-load the sound buffer.
+// Initialize the AudioContext and pre-load sound buffers.
 // Must be called from a user gesture (tap/click) to satisfy iOS autoplay policy.
-async function initSnakeAudio() {
+async function initAudio() {
     if (snakeAudioContext) return; // Already initialised
 
     try {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         snakeAudioContext = new AudioCtx();
 
-        // Fetch and decode the audio file into a buffer for instant playback
-        const response = await fetch(snakeHissSoundSrc);
-        const arrayBuffer = await response.arrayBuffer();
-        snakeAudioBuffer = await snakeAudioContext.decodeAudioData(arrayBuffer);
+        // Fetch and decode both audio files into buffers for instant playback
+        const [snakeResponse, pickupResponse] = await Promise.all([
+            fetch(snakeHissSoundSrc),
+            fetch(pickupSoundSrc)
+        ]);
+        
+        const [snakeArrayBuffer, pickupArrayBuffer] = await Promise.all([
+            snakeResponse.arrayBuffer(),
+            pickupResponse.arrayBuffer()
+        ]);
+        
+        [snakeAudioBuffer, pickupAudioBuffer] = await Promise.all([
+            snakeAudioContext.decodeAudioData(snakeArrayBuffer),
+            snakeAudioContext.decodeAudioData(pickupArrayBuffer)
+        ]);
     } catch (e) {
-        console.warn('Failed to init snake audio:', e);
+        console.warn('Failed to init audio:', e);
     }
 }
 
@@ -54,17 +69,34 @@ function playSnakeHissSound() {
 
     // Lazy-init on first call (always inside a user gesture / tap handler)
     if (!snakeAudioContext) {
-        initSnakeAudio().then(() => _playBuffer());
+        initAudio().then(() => _playBuffer('snake'));
         return;
     }
-    _playBuffer();
+    _playBuffer('snake');
 }
 
-function _playBuffer() {
+function playPickupSound() {
+    // Single longer vibration for pickup
+    if (navigator.vibrate) {
+        navigator.vibrate([300]);
+    }
+
+    // Lazy-init on first call (always inside a user gesture / tap handler)
+    if (!snakeAudioContext) {
+        initAudio().then(() => _playBuffer('pickup'));
+        return;
+    }
+    _playBuffer('pickup');
+}
+
+function _playBuffer(soundType) {
     try {
-        if (!snakeAudioContext || !snakeAudioBuffer) {
+        const audioBuffer = soundType === 'snake' ? snakeAudioBuffer : pickupAudioBuffer;
+        const fallbackSrc = soundType === 'snake' ? snakeHissSoundSrc : pickupSoundSrc;
+        
+        if (!snakeAudioContext || !audioBuffer) {
             // Fallback to basic Audio if Web Audio API failed to init
-            const audio = new Audio(snakeHissSoundSrc);
+            const audio = new Audio(fallbackSrc);
             audio.volume = 1.0;
             audio.muted = false;
             audio.play().catch(() => {});
@@ -78,7 +110,7 @@ function _playBuffer() {
 
         // Create a new source node (one-shot, cannot be reused)
         const source = snakeAudioContext.createBufferSource();
-        source.buffer = snakeAudioBuffer;
+        source.buffer = audioBuffer;
 
         // GainNode at maximum volume (1.0 = 0 dB, no attenuation)
         const gainNode = snakeAudioContext.createGain();
@@ -88,7 +120,7 @@ function _playBuffer() {
         gainNode.connect(snakeAudioContext.destination);
         source.start(0);
     } catch (e) {
-        console.warn('Snake sound error:', e);
+        console.warn(`${soundType} sound error:`, e);
     }
 }
 
@@ -276,10 +308,8 @@ function initializeQuickNav() {
 
 // Exit current round
 function exitRound() {
-    if (confirm('Do you want to exit this round? You can continue the round after exiting.')) {
-        currentRound = null;
-        window.location.href = 'rounds.html';
-    }
+    currentRound = null;
+    window.location.href = 'rounds.html';
 }
 
 // Navigate to previous hole
@@ -495,6 +525,7 @@ function adjustScore(delta) {
             } else {
                 // First tap of -1 (P button) sets to pickup
                 currentRound.scores[hole] = 'P';
+                playPickupSound();
                 updateScoreDisplay('P', hole);
                 delete currentRound.putts[hole];
                 updatePuttsDisplay('P', undefined);
@@ -509,6 +540,7 @@ function adjustScore(delta) {
                 current = 0; // 0 + 1 = 1
             } else {
                 currentRound.scores[hole] = 'P';
+                playPickupSound();
                 updateScoreDisplay('P', hole);
                 delete currentRound.putts[hole];
                 updatePuttsDisplay('P', undefined);
@@ -548,6 +580,7 @@ function adjustScore(delta) {
     if (newScore <= 0) {
         // Score goes to 0 or below → pickup
         currentRound.scores[hole] = 'P';
+        playPickupSound();
         updateScoreDisplay('P', hole);
         // Clear putts on pickup and disable putts stepper
         delete currentRound.putts[hole];
@@ -798,7 +831,7 @@ async function saveRound() {
             roundId: currentRound.roundId || null,
             playerId: currentRound.playerId,
             playerName: currentRound.playerName,
-            name: currentRound.playerName + ' - ' + currentRound.roundName,
+            name: currentRound.roundName,
             entryType: currentRound.entryType,
             teamName: currentRound.teamName,
             handicap: currentRound.handicap,
@@ -969,31 +1002,13 @@ function closeHoleImage() {
 // HEADER LEADERBOARD FUNCTIONS
 // ========================================
 
-// Position the header leaderboard below navbar
+// Position the header leaderboard - no longer needed with normal document flow
 function positionHeaderLeaderboard() {
-    const headerLb = document.getElementById('header-leaderboard');
-    const navbar = document.querySelector('.navbar');
-
-    if (headerLb && navbar) {
-        const navbarHeight = navbar.offsetHeight;
-        headerLb.style.top = navbarHeight + 'px';
-    }
-
-    updateSectionPadding();
+    // No-op: leaderboard is in normal document flow
 }
 
 function updateSectionPadding() {
-    const headerLb = document.getElementById('header-leaderboard');
-    const navbar = document.querySelector('.navbar');
-    const section = document.getElementById('live-scores');
-
-    if (!section || !navbar) return;
-
-    if (headerLb && headerLb.style.display !== 'none') {
-        const navbarHeight = navbar.offsetHeight;
-        const lbHeight = headerLb.offsetHeight;
-        section.style.paddingTop = (navbarHeight + lbHeight - 55) + 'px';
-    }
+    // No-op: no padding calculations needed with normal document flow
 }
 
 // Recalculate padding after leaderboard collapse/expand transition ends
@@ -1131,21 +1146,39 @@ function stopActiveRoundsListener() {
 }
 
 // Toggle header leaderboard collapse/expand
+// Store the expanded leaderboard height so we can set targets instantly
+let expandedLeaderboardHeight = 0;
+
 function toggleHeaderLeaderboard() {
     const content = document.getElementById('header-leaderboard-content');
     const chevron = document.getElementById('header-leaderboard-chevron');
 
     if (!content) return;
 
-    if (content.classList.contains('collapsed')) {
-        content.classList.remove('collapsed');
-        if (chevron) chevron.textContent = '▲';
-    } else {
-        content.classList.add('collapsed');
-        if (chevron) chevron.textContent = '▼';
-    }
+    const isCollapsing = !content.classList.contains('collapsed');
 
-    updateSectionPadding();
+    if (isCollapsing) {
+        // Lock current height, force reflow, then animate to 0
+        content.style.height = content.scrollHeight + 'px';
+        content.offsetHeight;
+        content.classList.add('collapsed');
+        content.style.height = '0px';
+        if (chevron) chevron.textContent = '▼';
+    } else {
+        // Remove collapsed, start from 0, animate to natural height
+        content.classList.remove('collapsed');
+        content.style.height = '0px';
+        content.offsetHeight;
+        const targetHeight = content.scrollHeight;
+        content.style.height = targetHeight + 'px';
+        if (chevron) chevron.textContent = '▲';
+
+        // After transition, remove explicit height so content adapts naturally
+        content.addEventListener('transitionend', function handler() {
+            content.style.height = '';
+            content.removeEventListener('transitionend', handler);
+        });
+    }
 }
 
 // Update header leaderboard with current scores from Firebase (manual fetch)

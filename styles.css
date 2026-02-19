@@ -30,7 +30,7 @@ html {
 
 body {
     font-family: 'Georgia', 'Times New Roman', serif;
-    background-color: var(--masters-cream);
+    background-color: var(--masters-dark-green);
     color: var(--text-dark);
     line-height: 1.6;
 }
@@ -261,11 +261,11 @@ body {
     width: 80%;
     max-width: 1200px;
     height: 1px;
-    background: linear-gradient(90deg, 
-        transparent 0%, 
-        var(--masters-gold) 20%, 
-        var(--masters-brown) 50%, 
-        var(--masters-gold) 80%, 
+    background: linear-gradient(90deg,
+        transparent 0%,
+        var(--masters-gold) 20%,
+        var(--masters-brown) 50%,
+        var(--masters-gold) 80%,
         transparent 100%
     );
     opacity: 0.5;

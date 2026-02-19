@@ -359,6 +359,9 @@ function createCompletedRoundCard(completedRound) {
     }) : 'No date';
 
     const courseName = completedRound.course || 'Unknown Course';
+    const tees = completedRound.tees || '';
+    const teeLabel = tees ? tees.charAt(0).toUpperCase() + tees.slice(1) + ' tees' : '';
+    const courseLine = [courseName, teeLabel].filter(Boolean).join(' • ');
     const totalScore = completedRound.totalScore || '-';
     const stablefordPoints = completedRound.stablefordPoints || '-';
     const joinCode = completedRound.joinCode || '';
@@ -368,18 +371,17 @@ function createCompletedRoundCard(completedRound) {
         : `Score: ${totalScore}`;
 
     card.innerHTML = `
+        <button class="remove-btn corner-remove-btn" onclick="event.stopPropagation(); removeCompletedRound('${completedRound.id}')" title="Remove round">✕</button>
         <div class="my-round-info">
-            <h4>${completedRound.name || 'Completed Round'}</h4>
-            <p class="my-round-course">${courseName}</p>
-            <p>${dateStr}</p>
+            <h4>${(completedRound.name || 'Completed Round').replace(/^.+ - /, '')}</h4>
+            <p class="my-round-course">${courseLine}</p>
+            <p class="my-round-date">${dateStr}</p>
             <p class="round-score-summary">${scoreSummary}</p>
         </div>
-        <div class="my-round-actions">
-            <button class="continue-btn" onclick="viewScorecard('${completedRound.id}')">Scorecard</button>
-            <button class="continue-btn leaderboard-view-btn" onclick="viewLeaderboard('${completedRound.id}')">Leaderboard</button>
-            <button class="remove-btn" onclick="removeCompletedRound('${completedRound.id}')" title="Remove round">✕</button>
-        </div>
     `;
+
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', () => openRoundModal(completedRound.id));
 
     return card;
 }
@@ -387,31 +389,35 @@ function createCompletedRoundCard(completedRound) {
 // Create a card for "My Active Rounds"
 function createMyRoundCard(roundId, roundData, scoreId) {
     const card = document.createElement('div');
-    card.className = 'my-round-card';
+    card.className = 'my-round-card active';
 
     const dateStr = roundData.date ? new Date(roundData.date).toLocaleDateString('en-AU', {
         weekday: 'short',
         day: 'numeric',
-        month: 'short'
+        month: 'short',
+        year: 'numeric'
     }) : 'No date';
 
     const courseName = roundData.settings?.course || 'Unknown Course';
+    const tees = roundData.settings?.tees || '';
+    const teeLabel = tees ? tees.charAt(0).toUpperCase() + tees.slice(1) + ' tees' : '';
+    const courseLine = [courseName, teeLabel].filter(Boolean).join(' • ');
     const joinCode = roundData.joinCode || '';
 
     card.innerHTML = `
-        <button class="share-btn-corner" onclick="shareRound('${joinCode}')" title="Share round">
+        <button class="remove-btn corner-remove-btn" onclick="event.stopPropagation(); removeRound('${roundId}', '${scoreId}')" title="Remove round">✕</button>
+        <button class="share-btn-corner" onclick="event.stopPropagation(); shareRound('${joinCode}')" title="Share round">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
         </button>
         <div class="my-round-info">
             <h4>${roundData.name || 'Unnamed Round'}</h4>
-            <p class="my-round-course">${courseName}</p>
-            <p>${dateStr} • ${(roundData.settings?.tees || 'tallwood').replace(/\b\w/g, c => c.toUpperCase())} tees</p>
-        </div>
-        <div class="my-round-actions">
-            <button class="continue-btn" onclick="continueRound('${roundId}', '${scoreId}')">Continue →</button>
-            <button class="remove-btn" onclick="removeRound('${roundId}', '${scoreId}')" title="Remove round">✕</button>
+            <p class="my-round-course">${courseLine}</p>
+            <p class="my-round-date">${dateStr}</p>
         </div>
     `;
+
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', () => continueRound(roundId, scoreId));
 
     return card;
 }
@@ -884,9 +890,10 @@ window.viewScorecard = viewScorecard;
 window.removeCompletedRound = removeCompletedRound;
 window.permanentlyDeleteRound = permanentlyDeleteRound;
 window.deleteAllArchivedRounds = deleteAllArchivedRounds;
-window.closeScorecardModal = closeScorecardModal;
+window.openRoundModal = openRoundModal;
+window.closeRoundModal = closeRoundModal;
+window.switchRoundModalTab = switchRoundModalTab;
 window.viewLeaderboard = viewLeaderboard;
-window.closeLeaderboardModal = closeLeaderboardModal;
 window.initializeRoundsPage = initializeRoundsPage;
 
 // Course data is loaded from course-data.js (shared with live-scores.js)
@@ -922,24 +929,52 @@ async function viewScorecard(roundId) {
     const tees = round.tees || '';
     const teeLabel = tees ? tees.charAt(0).toUpperCase() + tees.slice(1) + ' tees' : '';
     const courseInfoParts = [courseName, teeLabel].filter(Boolean);
-    document.getElementById('scorecard-modal-course').textContent = courseInfoParts.join(' - ');
+    document.getElementById('round-modal-course').textContent = courseInfoParts.join(' - ');
 
     const handicapDisplay = round.handicap !== undefined ? ` (${round.handicap})` : '';
-    document.getElementById('scorecard-modal-player').textContent = (round.playerName || '') + handicapDisplay;
+    document.getElementById('round-modal-player').textContent = (round.playerName || '') + handicapDisplay;
 
     const dateStr = round.date ? formatLongDate(round.date) : '';
-    document.getElementById('scorecard-modal-date').textContent = dateStr;
+    document.getElementById('round-modal-date').textContent = dateStr;
 
     // Generate scorecard table
     generateScorecardTable(round);
 
-    // Show modal
-    document.getElementById('scorecard-modal').style.display = 'flex';
+    // Reset to scorecard tab and show modal
+    switchRoundModalTab('scorecard');
+    document.getElementById('round-modal').style.display = 'flex';
 }
 
-// Close scorecard modal
-function closeScorecardModal() {
-    document.getElementById('scorecard-modal').style.display = 'none';
+// Open the combined round modal (defaults to scorecard tab)
+async function openRoundModal(scoreId) {
+    // Load scorecard data
+    await viewScorecard(scoreId);
+    // Pre-load leaderboard data in background
+    viewLeaderboard(scoreId);
+}
+
+// Close round modal
+function closeRoundModal() {
+    document.getElementById('round-modal').style.display = 'none';
+}
+
+// Switch between scorecard and leaderboard tabs
+function switchRoundModalTab(tab) {
+    const tabs = document.querySelectorAll('.round-modal-tab');
+    tabs.forEach(t => t.classList.remove('active'));
+
+    const scorecardPanel = document.getElementById('round-modal-scorecard');
+    const leaderboardPanel = document.getElementById('round-modal-leaderboard');
+
+    if (tab === 'scorecard') {
+        tabs[0].classList.add('active');
+        scorecardPanel.style.display = '';
+        leaderboardPanel.style.display = 'none';
+    } else {
+        tabs[1].classList.add('active');
+        scorecardPanel.style.display = 'none';
+        leaderboardPanel.style.display = '';
+    }
 }
 
 // View leaderboard for a completed round (shows all players in that round)
@@ -980,7 +1015,7 @@ async function viewLeaderboard(roundId) {
 
         const allPlayers = [];
         completedSnap.forEach(d => {
-            allPlayers.push({ id: d.id, ...d.data() });
+            allPlayers.push({ id: d.id, ...d.data(), _isCompleted: true });
         });
 
         // Also check activeRounds for players still playing
@@ -990,7 +1025,7 @@ async function viewLeaderboard(roundId) {
         );
         const activeSnap = await getDocs(activeQuery);
         activeSnap.forEach(d => {
-            allPlayers.push({ id: d.id, ...d.data() });
+            allPlayers.push({ id: d.id, ...d.data(), _isCompleted: false });
         });
 
         if (allPlayers.length === 0) {
@@ -1061,7 +1096,7 @@ async function viewLeaderboard(roundId) {
                 totalPar: totalPar,
                 scoreToPar: totalScore - totalPar,
                 stablefordPoints: stablefordPoints,
-                isFinished: round.status === 'finished',
+                isFinished: round._isCompleted || round.status === 'finished',
                 hasSnake: lastThreePuttHole > 0,
                 lastThreePuttHole: lastThreePuttHole
             };
@@ -1094,12 +1129,6 @@ async function viewLeaderboard(roundId) {
             if (a.stablefordPoints !== b.stablefordPoints) return b.stablefordPoints - a.stablefordPoints;
             return b.holesPlayed - a.holesPlayed;
         });
-
-        // Populate modal header
-        document.getElementById('leaderboard-modal-title').textContent = '🏆 Final Leaderboard';
-        document.getElementById('leaderboard-modal-course').textContent = courseName;
-        const dateStr = clickedRound.date ? formatLongDate(clickedRound.date) : '';
-        document.getElementById('leaderboard-modal-date').textContent = dateStr;
 
         // Render leaderboard rows
         const body = document.getElementById('leaderboard-modal-body');
@@ -1144,18 +1173,9 @@ async function viewLeaderboard(roundId) {
             `;
         }).join('');
 
-        // Show modal
-        document.getElementById('leaderboard-modal').style.display = 'flex';
-
     } catch (error) {
         console.error('Error loading leaderboard:', error);
-        alert('Failed to load leaderboard. Please try again.');
     }
-}
-
-// Close leaderboard modal
-function closeLeaderboardModal() {
-    document.getElementById('leaderboard-modal').style.display = 'none';
 }
 
 // Load and display archived rounds
@@ -1214,7 +1234,7 @@ async function loadArchivedRounds() {
 
         html += `
             <div class="my-round-card archived">
-                <button class="remove-btn archived-remove-btn" onclick="permanentlyDeleteRound('${round.id}')" title="Delete permanently">✕</button>
+                <button class="remove-btn corner-remove-btn" onclick="permanentlyDeleteRound('${round.id}')" title="Delete permanently">✕</button>
                 <div class="my-round-info">
                     <h4>${roundName}</h4>
                     <p class="my-round-course">${courseName}</p>
