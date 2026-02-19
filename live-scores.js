@@ -8,6 +8,31 @@ let currentRound = null;
 let activeRoundsUnsubscribe = null;
 let modalRoundData = null;
 
+// Pre-load the snake hiss sound effect for 3-putt events
+const snakeHissSoundSrc = 'sounds/snake-hiss-laugh.mp3';
+
+// Play the snake hiss sound effect without blocking any UI actions.
+// Each call creates a fresh Audio instance so that:
+//   - the full sound always plays to completion even if the user keeps tapping
+//   - overlapping plays don't cut each other off
+//   - playback never blocks or delays any player action
+// Volume is set to maximum and unmuted to ensure it's audible on mobile devices.
+// Note: on iOS Safari the volume property is read-only and controlled by
+// the hardware buttons, but setting it still works on Android and desktop.
+function playSnakeHissSound() {
+    try {
+        const audio = new Audio(snakeHissSoundSrc);
+        audio.volume = 1.0;
+        audio.muted = false;
+        audio.play().catch(err => {
+            // Silently ignore autoplay restrictions — sound is non-critical
+            console.warn('Snake sound could not play:', err);
+        });
+    } catch (e) {
+        console.warn('Snake sound error:', e);
+    }
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     initializeQuickNav();
@@ -524,6 +549,11 @@ function adjustPutts(delta) {
     const puttsEl = document.getElementById('current-putts');
     puttsEl.textContent = newPutts === 0 ? 'Holed Out' : newPutts;
     puttsEl.classList.toggle('stepper-value-small', newPutts === 0);
+
+    // Play the snake hiss sound when putts first reach 3 on this hole
+    if (newPutts === 3 && current < 3) {
+        playSnakeHissSound();
+    }
 
     // Track when a 3+ putt occurs (the snake!)
     // The snake goes to whoever MOST RECENTLY recorded a 3+ putt
