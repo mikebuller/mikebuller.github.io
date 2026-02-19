@@ -763,12 +763,20 @@
     display: none;
 }
 
+/* Flexbox layout for live-scores page */
+.live-scores-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport height for mobile */
+}
+
 /* Live Scores Section */
 .live-scores-section {
     background: linear-gradient(180deg, var(--masters-cream) 0%, #e8e4d0 100%);
     padding-top: 15px;
-    padding-bottom: 80px;
-    min-height: 100vh;
+    padding-bottom: 15px;
+    flex: 1;
 }
 
 .rounds-page {
@@ -790,6 +798,11 @@
 @media (max-width: 600px) {
     .live-scores-section {
         padding-top: 15px;
+        flex: 1; /* Ensure flex behavior on mobile */
+    }
+    
+    .live-scores-page {
+        min-height: 100dvh; /* Prioritize dynamic viewport on mobile */
     }
 }
 

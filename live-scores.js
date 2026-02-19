@@ -16,25 +16,40 @@ let modalRoundData = null;
 // Snake hiss sound effect for 3-putt events
 const snakeHissSoundSrc = 'sounds/snake-hiss-laugh.mp3';
 
+// Pickup sound effect for when players pick up
+const pickupSoundSrc = 'sounds/you-suck-jackass.mp3';
+
 // Shared AudioContext for Web Audio API playback (created on first user gesture)
 let snakeAudioContext = null;
 let snakeAudioBuffer = null;
+let pickupAudioBuffer = null;
 
-// Initialize the AudioContext and pre-load the sound buffer.
+// Initialize the AudioContext and pre-load sound buffers.
 // Must be called from a user gesture (tap/click) to satisfy iOS autoplay policy.
-async function initSnakeAudio() {
+async function initAudio() {
     if (snakeAudioContext) return; // Already initialised
 
     try {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         snakeAudioContext = new AudioCtx();
 
-        // Fetch and decode the audio file into a buffer for instant playback
-        const response = await fetch(snakeHissSoundSrc);
-        const arrayBuffer = await response.arrayBuffer();
-        snakeAudioBuffer = await snakeAudioContext.decodeAudioData(arrayBuffer);
+        // Fetch and decode both audio files into buffers for instant playback
+        const [snakeResponse, pickupResponse] = await Promise.all([
+            fetch(snakeHissSoundSrc),
+            fetch(pickupSoundSrc)
+        ]);
+        
+        const [snakeArrayBuffer, pickupArrayBuffer] = await Promise.all([
+            snakeResponse.arrayBuffer(),
+            pickupResponse.arrayBuffer()
+        ]);
+        
+        [snakeAudioBuffer, pickupAudioBuffer] = await Promise.all([
+            snakeAudioContext.decodeAudioData(snakeArrayBuffer),
+            snakeAudioContext.decodeAudioData(pickupArrayBuffer)
+        ]);
     } catch (e) {
-        console.warn('Failed to init snake audio:', e);
+        console.warn('Failed to init audio:', e);
     }
 }
 
@@ -54,17 +69,34 @@ function playSnakeHissSound() {
 
     // Lazy-init on first call (always inside a user gesture / tap handler)
     if (!snakeAudioContext) {
-        initSnakeAudio().then(() => _playBuffer());
+        initAudio().then(() => _playBuffer('snake'));
         return;
     }
-    _playBuffer();
+    _playBuffer('snake');
 }
 
-function _playBuffer() {
+function playPickupSound() {
+    // Single longer vibration for pickup
+    if (navigator.vibrate) {
+        navigator.vibrate([300]);
+    }
+
+    // Lazy-init on first call (always inside a user gesture / tap handler)
+    if (!snakeAudioContext) {
+        initAudio().then(() => _playBuffer('pickup'));
+        return;
+    }
+    _playBuffer('pickup');
+}
+
+function _playBuffer(soundType) {
     try {
-        if (!snakeAudioContext || !snakeAudioBuffer) {
+        const audioBuffer = soundType === 'snake' ? snakeAudioBuffer : pickupAudioBuffer;
+        const fallbackSrc = soundType === 'snake' ? snakeHissSoundSrc : pickupSoundSrc;
+        
+        if (!snakeAudioContext || !audioBuffer) {
             // Fallback to basic Audio if Web Audio API failed to init
-            const audio = new Audio(snakeHissSoundSrc);
+            const audio = new Audio(fallbackSrc);
             audio.volume = 1.0;
             audio.muted = false;
             audio.play().catch(() => {});
@@ -78,7 +110,7 @@ function _playBuffer() {
 
         // Create a new source node (one-shot, cannot be reused)
         const source = snakeAudioContext.createBufferSource();
-        source.buffer = snakeAudioBuffer;
+        source.buffer = audioBuffer;
 
         // GainNode at maximum volume (1.0 = 0 dB, no attenuation)
         const gainNode = snakeAudioContext.createGain();
@@ -88,7 +120,7 @@ function _playBuffer() {
         gainNode.connect(snakeAudioContext.destination);
         source.start(0);
     } catch (e) {
-        console.warn('Snake sound error:', e);
+        console.warn(`${soundType} sound error:`, e);
     }
 }
 
@@ -276,10 +308,8 @@ function initializeQuickNav() {
 
 // Exit current round
 function exitRound() {
-    if (confirm('Do you want to exit this round? You can continue the round after exiting.')) {
-        currentRound = null;
-        window.location.href = 'rounds.html';
-    }
+    currentRound = null;
+    window.location.href = 'rounds.html';
 }
 
 // Navigate to previous hole
@@ -495,6 +525,7 @@ function adjustScore(delta) {
             } else {
                 // First tap of -1 (P button) sets to pickup
                 currentRound.scores[hole] = 'P';
+                playPickupSound();
                 updateScoreDisplay('P', hole);
                 delete currentRound.putts[hole];
                 updatePuttsDisplay('P', undefined);
@@ -509,6 +540,7 @@ function adjustScore(delta) {
                 current = 0; // 0 + 1 = 1
             } else {
                 currentRound.scores[hole] = 'P';
+                playPickupSound();
                 updateScoreDisplay('P', hole);
                 delete currentRound.putts[hole];
                 updatePuttsDisplay('P', undefined);
@@ -548,6 +580,7 @@ function adjustScore(delta) {
     if (newScore <= 0) {
         // Score goes to 0 or below → pickup
         currentRound.scores[hole] = 'P';
+        playPickupSound();
         updateScoreDisplay('P', hole);
         // Clear putts on pickup and disable putts stepper
         delete currentRound.putts[hole];
