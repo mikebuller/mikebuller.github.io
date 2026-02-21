@@ -1050,7 +1050,7 @@ async function viewLeaderboard(roundId) {
                             totalScore += round.holes[i].score;
                             if (courseInfo) {
                                 totalPar += courseInfo.holes[i].par;
-                                stablefordPoints += calcStablefordPoints(round.holes[i].score, courseInfo.holes[i].par, courseInfo.holes[i].si, handicap);
+                                stablefordPoints += calcStablefordPoints(round.holes[i].score, courseInfo.holes[i].par, getHoleSI(courseInfo.holes[i], round.tees), handicap);
                             }
                         }
                     }
@@ -1064,7 +1064,7 @@ async function viewLeaderboard(roundId) {
                             totalScore += round.scores[i];
                             if (courseInfo) {
                                 totalPar += courseInfo.holes[i].par;
-                                stablefordPoints += calcStablefordPoints(round.scores[i], courseInfo.holes[i].par, courseInfo.holes[i].si, handicap);
+                                stablefordPoints += calcStablefordPoints(round.scores[i], courseInfo.holes[i].par, getHoleSI(courseInfo.holes[i], round.tees), handicap);
                             }
                         }
                     }
@@ -1397,5 +1397,5 @@ async function removeCompletedRound(roundId) {
 // Generate scorecard table HTML
 function generateScorecardTable(round) {
     document.getElementById('modal-scorecard-table').innerHTML =
-        generateScorecardHTML(round.scores || {}, round.putts || {}, getCourseData(round.course), round.handicap || 0);
+        generateScorecardHTML(round.scores || {}, round.putts || {}, getCourseData(round.course), round.handicap || 0, round.tees);
 }

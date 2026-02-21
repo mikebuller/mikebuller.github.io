@@ -348,10 +348,11 @@ function updateHoleDisplay() {
 
     const holeDetailsEl = document.getElementById('current-hole-details');
     if (holeData) {
-        const distance = holeData[tees];
+        const distance = getHoleDistance(holeData, tees);
         const parts = [`Par ${holeData.par}`];
         if (distance) parts.push(`${distance}m`);
-        if (holeData.si !== undefined) parts.push(`Index ${holeData.si}`);
+        const si = getHoleSI(holeData, tees);
+        if (si !== undefined) parts.push(`Index ${si}`);
         holeDetailsEl.textContent = parts.join(' • ');
         holeDetailsEl.style.display = '';
     } else {
@@ -469,7 +470,7 @@ function updateScoreDisplay(score, hole) {
     }
     const holeData = courseData ? courseData.holes[hole] : null;
     if (holeData && currentRound) {
-        const pts = calcStablefordPoints(score, holeData.par, holeData.si, currentRound.handicap || 0);
+        const pts = calcStablefordPoints(score, holeData.par, getHoleSI(holeData, currentRound.tees), currentRound.handicap || 0);
         el.innerHTML = `${score} <span class="stepper-stableford">(${pts}pts)</span>`;
     } else {
         el.innerHTML = `${score}`;
@@ -713,7 +714,7 @@ function updateTotals() {
 
     const handicap = currentRound.handicap || 0;
     const hasCourseData = !!courseData;
-    const t = calcRoundTotals(currentRound.scores, currentRound.putts, courseData, handicap);
+    const t = calcRoundTotals(currentRound.scores, currentRound.putts, courseData, handicap, currentRound.tees);
     const net = Math.round(t.totalScore - handicap);
 
     // Format relative to par for holes actually played (excluding pickups)
@@ -804,7 +805,7 @@ async function saveRound() {
 
         // Calculate totals for the completed round
         const handicap = currentRound.handicap || 0;
-        const t = calcRoundTotals(currentRound.scores, currentRound.putts || {}, courseData, handicap);
+        const t = calcRoundTotals(currentRound.scores, currentRound.putts || {}, courseData, handicap, currentRound.tees);
         const totalScore = t.totalScore;
         const totalStableford = t.totalStableford;
 
@@ -915,8 +916,9 @@ function showHoleImage() {
     const parts = [`Hole ${hole}`];
     if (holeData) {
         parts.push(`Par ${holeData.par}`);
-        if (holeData.si !== undefined) parts.push(`SI ${holeData.si}`);
-        const distance = holeData[tees];
+        const si = getHoleSI(holeData, tees);
+        if (si !== undefined) parts.push(`SI ${si}`);
+        const distance = getHoleDistance(holeData, tees);
         if (distance) parts.push(`${distance}m`);
     }
     caption.textContent = parts.join(' - ');
@@ -1258,7 +1260,7 @@ function renderHeaderLeaderboard(activeRounds) {
                     totalScore += round.holes[i].score;
                     if (courseData) {
                         totalPar += courseData.holes[i].par;
-                        stablefordPoints += calcStablefordPoints(round.holes[i].score, courseData.holes[i].par, courseData.holes[i].si, handicap);
+                        stablefordPoints += calcStablefordPoints(round.holes[i].score, courseData.holes[i].par, getHoleSI(courseData.holes[i], round.tees), handicap);
                     }
                 }
             }
@@ -1479,7 +1481,7 @@ function generateModalScorecard() {
         if (holes[i]?.putts !== undefined && holes[i]?.putts !== null) putts[i] = holes[i].putts;
     }
     document.getElementById('modal-scorecard-table').innerHTML =
-        generateScorecardHTML(scores, putts, courseData, modalRoundData.playerHandicap || 0);
+        generateScorecardHTML(scores, putts, courseData, modalRoundData.playerHandicap || 0, modalRoundData.tees);
 }
 
 // Close scorecard modal
