@@ -56,7 +56,7 @@
                 <div class="divider"></div>
                 <p>Experience one of Australia's most stunning golf courses, nestled among towering pines and abundant wildlife</p>
             </div>
-            
+
             <!-- Course Scorecard -->
             <div class="course-card">
                 <h3>📋 Course Scorecard</h3>
@@ -204,7 +204,7 @@
                     <div style="display: flex; justify-content: center; margin-bottom: 25px; padding: 0 15px;">
                         <a href="https://vimeo.com/287184640" target="_blank" class="cta-button" style="font-size: 1rem; white-space: nowrap;">Watch Course Flyover</a>
                     </div>
-                    
+
                     <div class="hole-flyovers-grid">
                         <div class="hole-card">
                             <a href="https://www.bonvillegolf.com.au/hole/hole-1/" target="_blank" class="hole-info"><h4>Hole 1</h4><p class="par">Par 4 • SI 2</p><p class="distance">T: 380m • B: 353m</p></a>
@@ -346,7 +346,7 @@
                 <div class="divider"></div>
                 <p>Meet the eight competitors vying for glory at The Bonville G.C. Invitational</p>
             </div>
-            
+
             <div class="players-grid">
                 <!-- Player 1 -->
                 <div class="player-card">
@@ -578,13 +578,13 @@
             if (loopCheckInterval) {
                 clearInterval(loopCheckInterval);
             }
-            
+
             // Check every 500ms if we need to loop
             loopCheckInterval = setInterval(() => {
                 if (player && player.getDuration && player.getCurrentTime) {
                     const duration = player.getDuration();
                     const currentTime = player.getCurrentTime();
-                    
+
                     // Loop 15 seconds before the video ends
                     if (duration > 0 && currentTime >= duration - LOOP_BEFORE_END) {
                         player.seekTo(0);
@@ -611,7 +611,7 @@
         // Mobile menu toggle
         const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
         const navLinks = document.querySelector('.nav-links');
-        
+
         mobileMenuToggle.addEventListener('click', () => {
             navLinks.classList.toggle('active');
             mobileMenuToggle.classList.toggle('active');
@@ -629,7 +629,7 @@
         window.addEventListener('scroll', () => {
             const sections = document.querySelectorAll('section');
             const navLinks = document.querySelectorAll('.nav-links a');
-            
+
             let current = '';
             sections.forEach(section => {
                 const sectionTop = section.offsetTop - 100;
@@ -650,7 +650,7 @@
         function playHoleVideo(container, videoId) {
             // Add playing class to hide thumbnail and play button
             container.classList.add('playing');
-            
+
             // Create and insert the YouTube iframe
             const iframe = document.createElement('iframe');
             iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
@@ -658,11 +658,28 @@
             iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
             iframe.allowFullscreen = true;
             container.appendChild(iframe);
-            
+
             // Remove onclick to prevent re-triggering
             container.onclick = null;
         }
 
     </script>
+
+    <!-- Admin Password Modal -->
+    <div id="admin-password-modal" class="admin-password-modal" style="display:none;">
+        <div class="admin-password-content">
+            <h3>🔐 God Mode</h3>
+            <input type="password" id="admin-password-input" class="admin-password-input" placeholder="Password" autocomplete="off">
+            <p id="admin-password-error" class="admin-password-error" style="display:none;">Incorrect password</p>
+            <div class="admin-password-buttons">
+                <button class="admin-password-btn cancel" onclick="closeAdminModal()">Cancel</button>
+                <button class="admin-password-btn submit" onclick="submitAdminPassword()">Enter</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shared crypto utilities + secret admin tap handler -->
+    <script src="crypto-utils.js"></script>
+    <script src="admin-tap.js"></script>
 </body>
 </html>

@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="styles-part3.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
+    <!-- Shared crypto utilities (must load before firebase-init.js) -->
+    <script src="crypto-utils.js"></script>
     <!-- Firebase SDK (shared initialization) -->
     <script type="module" src="firebase-init.js"></script>
     <script>
@@ -417,5 +419,21 @@
 
     <script src="courses/course-data.js"></script>
     <script src="rounds.js"></script>
+
+    <!-- Admin Password Modal -->
+    <div id="admin-password-modal" class="admin-password-modal" style="display:none;">
+        <div class="admin-password-content">
+            <h3>🔐 God Mode</h3>
+            <input type="password" id="admin-password-input" class="admin-password-input" placeholder="Password" autocomplete="off">
+            <p id="admin-password-error" class="admin-password-error" style="display:none;">Incorrect password</p>
+            <div class="admin-password-buttons">
+                <button class="admin-password-btn cancel" onclick="closeAdminModal()">Cancel</button>
+                <button class="admin-password-btn submit" onclick="submitAdminPassword()">Enter</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Secret admin tap handler -->
+    <script src="admin-tap.js"></script>
 </body>
 </html>
