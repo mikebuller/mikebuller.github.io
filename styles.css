@@ -14,6 +14,9 @@ html {
     --masters-brown: #8b4513;
     --masters-light-brown: #a0522d;
     --masters-dark-brown: #5c3317;
+    --masters-grey: #888888;
+    --masters-light-grey: #aaaaaa;
+    --masters-dark-grey: #555555;
     --text-dark: #1a1a1a;
     --text-light: #f0f0f0;
 }

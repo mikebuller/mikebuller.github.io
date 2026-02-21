@@ -8,6 +8,9 @@ let currentRound = null;
 let activeRoundsUnsubscribe = null;
 let completedRoundsUnsubscribe = null;
 
+// Admin mode state
+let isAdminMode = false;
+
 // Cached data from both listeners for merging into the leaderboard
 let cachedActiveRounds = [];
 let cachedCompletedRounds = [];
@@ -142,6 +145,12 @@ function checkUrlForRoundParams() {
     const urlParams = new URLSearchParams(window.location.search);
     const roundId = urlParams.get('round');
     const scoreId = urlParams.get('score');
+    const adminParam = urlParams.get('admin');
+
+    // Detect admin mode from URL param
+    if (adminParam === '1') {
+        isAdminMode = true;
+    }
 
     if (roundId && scoreId) {
         // Show loading state
@@ -188,6 +197,16 @@ async function loadRoundFromParams(roundId, scoreId) {
         return;
     }
 
+    // Verify admin access if in admin mode
+    if (isAdminMode) {
+        const hasAccess = await checkAdminAccess();
+        if (!hasAccess) {
+            alert('Admin access denied.');
+            window.location.href = 'rounds.html';
+            return;
+        }
+    }
+
     try {
         const { doc, getDoc } = window.firestoreHelpers;
 
@@ -203,9 +222,18 @@ async function loadRoundFromParams(roundId, scoreId) {
 
         const roundData = roundSnap.data();
 
-        // Fetch the score data
-        const scoreRef = doc(window.db, 'scores', scoreId);
-        const scoreSnap = await getDoc(scoreRef);
+        // Fetch the score data — in admin mode, also check completedRounds and archivedRounds
+        let scoreSnap = await getDoc(doc(window.db, 'scores', scoreId));
+        let scoreSource = 'scores'; // track where we found it
+
+        if (!scoreSnap.exists() && isAdminMode) {
+            scoreSnap = await getDoc(doc(window.db, 'completedRounds', scoreId));
+            scoreSource = 'completedRounds';
+        }
+        if (!scoreSnap.exists() && isAdminMode) {
+            scoreSnap = await getDoc(doc(window.db, 'archivedRounds', scoreId));
+            scoreSource = 'archivedRounds';
+        }
 
         if (!scoreSnap.exists()) {
             console.error('Score not found:', scoreId);
@@ -219,11 +247,12 @@ async function loadRoundFromParams(roundId, scoreId) {
         currentRound = {
             roundId: roundId,
             scoreId: scoreId,
+            scoreSource: isAdminMode ? scoreSource : 'scores',
             entryType: scoreData.entryType || 'player',
             playerId: scoreData.playerId,
             playerName: scoreData.playerName,
             teamName: scoreData.teamName,
-            handicap: scoreData.handicap || 18,
+            handicap: scoreData.handicap || scoreData.playerHandicap || 18,
             tees: scoreData.tees || roundData.settings?.tees || 'tallwood',
             course: roundData.settings?.course || 'Unknown Course',
             roundName: roundData.name || 'Round',
@@ -237,6 +266,22 @@ async function loadRoundFromParams(roundId, scoreId) {
             ctp: scoreData.ctp || {},
             longestDrive: scoreData.longestDrive || {}
         };
+
+        // For completed/archived rounds loaded in admin mode, extract scores from holes format
+        if (isAdminMode && !Object.keys(currentRound.scores).length && scoreData.holes) {
+            for (let i = 1; i <= 18; i++) {
+                if (scoreData.holes[i]) {
+                    if (scoreData.holes[i].score !== null && scoreData.holes[i].score !== undefined) {
+                        currentRound.scores[i] = scoreData.holes[i].score;
+                    }
+                    if (scoreData.holes[i].putts !== null && scoreData.holes[i].putts !== undefined) {
+                        currentRound.putts[i] = scoreData.holes[i].putts;
+                    }
+                    if (scoreData.holes[i].fir) currentRound.fir[i] = true;
+                    if (scoreData.holes[i].gir) currentRound.gir[i] = true;
+                }
+            }
+        }
 
         // Find the last hole with a score to resume from
         for (let i = 18; i >= 1; i--) {
@@ -260,6 +305,11 @@ async function loadRoundFromParams(roundId, scoreId) {
         if (!courseData) {
             const stablefordValue = document.querySelector('.total-stableford .total-value');
             if (stablefordValue) stablefordValue.textContent = '-';
+        }
+
+        // Show admin banner if in admin mode
+        if (isAdminMode) {
+            showAdminBanner();
         }
 
         // Show score entry
@@ -306,10 +356,27 @@ function initializeQuickNav() {
     }
 }
 
+// Show admin mode banner
+function showAdminBanner() {
+    // Create and insert admin banner if it doesn't already exist
+    if (document.getElementById('admin-banner')) return;
+
+    const banner = document.createElement('div');
+    banner.id = 'admin-banner';
+    banner.className = 'admin-banner';
+    banner.innerHTML = `<span>⚡ God Mode — Editing as <strong>${currentRound.playerName || 'Unknown'}</strong></span>`;
+
+    // Insert at top of score-entry section
+    const scoreEntry = document.getElementById('score-entry');
+    if (scoreEntry) {
+        scoreEntry.insertBefore(banner, scoreEntry.firstChild);
+    }
+}
+
 // Exit current round
 function exitRound() {
     currentRound = null;
-    window.location.href = 'rounds.html';
+    window.location.href = isAdminMode ? 'admin.html' : 'rounds.html';
 }
 
 // Navigate to previous hole
@@ -796,7 +863,10 @@ async function saveRound() {
         return;
     }
 
-    if (!confirm('You will not be able to update scores once a round is complete. Are you sure you want to submit?')) {
+    const confirmMsg = isAdminMode
+        ? 'Save admin changes to this round?'
+        : 'You will not be able to update scores once a round is complete. Are you sure you want to submit?';
+    if (!confirm(confirmMsg)) {
         return;
     }
 
@@ -856,24 +926,29 @@ async function saveRound() {
             updatedAt: new Date().toISOString()
         };
 
-        // Save to completedRounds collection
-        await setDoc(doc(window.db, 'completedRounds', scoreId), scoreData);
+        // In admin mode, save back to the original collection
+        if (isAdminMode && currentRound.scoreSource && currentRound.scoreSource !== 'scores') {
+            await setDoc(doc(window.db, currentRound.scoreSource, scoreId), scoreData);
+        } else {
+            // Save to completedRounds collection
+            await setDoc(doc(window.db, 'completedRounds', scoreId), scoreData);
 
-        // Delete from activeRounds — the completedRounds listener will show
-        // this player as "F" (finished) on other players' leaderboards
-        if (currentRound.roundId && currentRound.scoreId) {
-            const activeRoundId = `${currentRound.roundId}_${currentRound.scoreId}`;
-            try {
-                await deleteDoc(doc(window.db, 'activeRounds', activeRoundId));
-            } catch (e) {
+            // Delete from activeRounds — the completedRounds listener will show
+            // this player as "F" (finished) on other players' leaderboards
+            if (currentRound.roundId && currentRound.scoreId) {
+                const activeRoundId = `${currentRound.roundId}_${currentRound.scoreId}`;
+                try {
+                    await deleteDoc(doc(window.db, 'activeRounds', activeRoundId));
+                } catch (e) {
+                }
             }
-        }
 
-        // Remove from joinedRounds in localStorage
-        if (currentRound.roundId) {
-            let joinedRounds = JSON.parse(localStorage.getItem('joinedRounds') || '[]');
-            joinedRounds = joinedRounds.filter(r => r.roundId !== currentRound.roundId || r.scoreId !== currentRound.scoreId);
-            localStorage.setItem('joinedRounds', JSON.stringify(joinedRounds));
+            // Remove from joinedRounds in localStorage
+            if (currentRound.roundId) {
+                let joinedRounds = JSON.parse(localStorage.getItem('joinedRounds') || '[]');
+                joinedRounds = joinedRounds.filter(r => r.roundId !== currentRound.roundId || r.scoreId !== currentRound.scoreId);
+                localStorage.setItem('joinedRounds', JSON.stringify(joinedRounds));
+            }
         }
 
         fireConfetti();
@@ -881,9 +956,10 @@ async function saveRound() {
         // Reset
         currentRound = null;
 
-        // Redirect back to rounds page after a short delay to show confetti
+        // Redirect back appropriately
+        const redirectUrl = isAdminMode ? 'admin.html' : `rounds.html?completed=${scoreId}`;
         setTimeout(() => {
-            window.location.href = `rounds.html?completed=${scoreId}`;
+            window.location.href = redirectUrl;
         }, 2000);
 
     } catch (error) {

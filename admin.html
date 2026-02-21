@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>God Mode - The Bonville G.C. Invitational</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles-part2.css">
+    <link rel="stylesheet" href="styles-part3.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Shared crypto utilities (must load before firebase-init.js) -->
+    <script src="crypto-utils.js"></script>
+    <!-- Firebase SDK (shared initialization) -->
+    <script type="module" src="firebase-init.js"></script>
+    <script>
+        // Set up callback for when Firebase is ready
+        window.onFirebaseReady = function() {
+            if (typeof initializeAdminPage === 'function') {
+                initializeAdminPage();
+            }
+        };
+    </script>
+</head>
+<body class="rounds-page admin-page">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="option-icon">⚡</div>
+            <span class="admin-nav-title">God Mode</span>
+            <button class="mobile-menu-toggle" aria-label="Toggle navigation menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html#welcome">Welcome</a></li>
+                <li><a href="rounds.html">Rounds</a></li>
+                <li><a href="admin.html" class="active">God Mode</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <section id="live-scores" class="page-section live-scores-section" style="padding-top: 70px;">
+        <div class="container">
+
+            <!-- Auth check message (shown while verifying) -->
+            <div id="admin-auth-check" class="admin-auth-check">
+                <p>Verifying admin access...</p>
+            </div>
+
+            <!-- Admin content (hidden until auth verified) -->
+            <div id="admin-content" style="display: none;">
+
+                <!-- Live Activity Feed (collapsible) -->
+                <div class="admin-activity">
+                    <div class="admin-collapsible-header" onclick="toggleAdminSection('activity')">
+                        <span class="admin-collapsible-title"><span class="live-dot"></span> Live Activity</span>
+                        <span class="admin-collapsible-chevron" id="activity-chevron">▲</span>
+                    </div>
+                    <div class="admin-collapsible-content" id="activity-content">
+                        <div id="admin-activity-list" class="admin-activity-list">
+                            <p class="empty-rounds-message">Listening for score changes...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dashboard Summary (collapsible) -->
+                <div class="admin-dashboard">
+                    <div class="admin-collapsible-header" onclick="toggleAdminSection('dashboard')">
+                        <span class="admin-collapsible-title">Dashboard</span>
+                        <span class="admin-collapsible-chevron" id="dashboard-chevron">▲</span>
+                    </div>
+                    <div class="admin-collapsible-content" id="dashboard-content">
+                        <div class="admin-stat-grid">
+                            <div class="admin-stat-card" data-stat="active-rounds" onclick="onStatCardClick('active-rounds')">
+                                <span class="admin-stat-value" id="stat-active-rounds">-</span>
+                                <span class="admin-stat-label">Active Rounds</span>
+                            </div>
+                            <div class="admin-stat-card" data-stat="completed-rounds" onclick="onStatCardClick('completed-rounds')">
+                                <span class="admin-stat-value" id="stat-completed-rounds">-</span>
+                                <span class="admin-stat-label">Completed</span>
+                            </div>
+                            <div class="admin-stat-card" data-stat="archived-rounds" onclick="onStatCardClick('archived-rounds')">
+                                <span class="admin-stat-value" id="stat-archived-rounds">-</span>
+                                <span class="admin-stat-label">Archived</span>
+                            </div>
+                            <div class="admin-stat-card" data-stat="players" onclick="onStatCardClick('players')">
+                                <span class="admin-stat-value" id="stat-players">-</span>
+                                <span class="admin-stat-label">Players</span>
+                            </div>
+                            <div class="admin-stat-card" data-stat="courses" onclick="onStatCardClick('courses')">
+                                <span class="admin-stat-value" id="stat-courses">-</span>
+                                <span class="admin-stat-label">Courses</span>
+                            </div>
+                            <div class="admin-stat-card" data-stat="best-gross" onclick="onStatCardClick('best-gross')">
+                                <span class="admin-stat-value" id="stat-best-gross">-</span>
+                                <span class="admin-stat-label">Best Gross</span>
+                            </div>
+                            <div class="admin-stat-card" data-stat="worst-gross" onclick="onStatCardClick('worst-gross')">
+                                <span class="admin-stat-value" id="stat-worst-gross">-</span>
+                                <span class="admin-stat-label">Worst Gross</span>
+                            </div>
+                            <div class="admin-stat-card" data-stat="best-stableford" onclick="onStatCardClick('best-stableford')">
+                                <span class="admin-stat-value" id="stat-best-stableford">-</span>
+                                <span class="admin-stat-label">Best Stableford</span>
+                            </div>
+                            <div class="admin-stat-card" data-stat="avg-score" onclick="onStatCardClick('avg-score')">
+                                <span class="admin-stat-value" id="stat-avg-score">-</span>
+                                <span class="admin-stat-label">Avg Score</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounds-divider"></div>
+
+                <!-- All Rounds Section with Tabs + Filters -->
+                <div id="admin-rounds-section" class="my-rounds-section">
+                    <div class="admin-filters">
+                        <div class="admin-filter-row">
+                            <select id="filter-player" class="admin-filter-select" onchange="applyAdminFilters()">
+                                <option value="">All Players</option>
+                            </select>
+                            <select id="filter-course" class="admin-filter-select" onchange="applyAdminFilters()">
+                                <option value="">All Courses</option>
+                            </select>
+                            <button class="admin-filter-clear" onclick="clearAdminFilters()">Clear</button>
+                        </div>
+                    </div>
+                    <div class="my-rounds-tabs">
+                        <button class="my-rounds-tab active" onclick="switchAdminTab('active')" id="tab-active">Active</button>
+                        <button class="my-rounds-tab" onclick="switchAdminTab('completed')" id="tab-completed">Completed</button>
+                        <button class="my-rounds-tab" onclick="switchAdminTab('archived')" id="tab-archived">Archived</button>
+                    </div>
+                    <div id="active-rounds-list" class="my-rounds-list">
+                        <p class="empty-rounds-message">Loading...</p>
+                    </div>
+                    <div id="completed-rounds-list" class="my-rounds-list" style="display: none;">
+                        <p class="empty-rounds-message">Loading...</p>
+                    </div>
+                    <div id="archived-rounds-list" class="my-rounds-list" style="display: none;">
+                        <p class="empty-rounds-message">Loading...</p>
+                    </div>
+                    <div id="delete-all-archived-container" style="display: none; text-align: center; padding: 10px 0;">
+                        <button class="delete-all-btn" onclick="adminDeleteAllArchivedRounds()">Delete All Archived Rounds</button>
+                    </div>
+                </div>
+
+                <!-- Players Section (shown when Players stat card clicked) -->
+                <div id="admin-players-section" class="admin-detail-section" style="display: none;">
+                    <div class="admin-section-header">
+                        <h3>All Players</h3>
+                    </div>
+                    <div id="admin-players-list" class="admin-detail-list">
+                        <p class="empty-rounds-message">Loading...</p>
+                    </div>
+                </div>
+
+                <!-- Courses Section (shown when Courses stat card clicked) -->
+                <div id="admin-courses-section" class="admin-detail-section" style="display: none;">
+                    <div class="admin-section-header">
+                        <h3>All Courses</h3>
+                    </div>
+                    <div id="admin-courses-list" class="admin-detail-list">
+                        <p class="empty-rounds-message">Loading...</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Round Modal (Scorecard + Leaderboard) -->
+    <div id="round-modal" class="scorecard-modal" style="display: none;">
+        <div class="scorecard-modal-overlay" onclick="closeRoundModal()"></div>
+        <div class="scorecard-modal-content">
+            <div class="scorecard-modal-header">
+                <button class="scorecard-modal-close" onclick="closeRoundModal()">×</button>
+                <p id="round-modal-course" class="scorecard-header-course"></p>
+                <p id="round-modal-player" class="scorecard-header-player"></p>
+                <p id="round-modal-date" class="scorecard-header-date"></p>
+                <div class="round-modal-tabs">
+                    <button class="round-modal-tab active" onclick="switchRoundModalTab('scorecard')">Scorecard</button>
+                    <button class="round-modal-tab" onclick="switchRoundModalTab('leaderboard')">Leaderboard</button>
+                </div>
+            </div>
+            <div id="round-modal-scorecard" class="round-modal-panel">
+                <div class="modal-scorecard-wrapper">
+                    <div id="modal-scorecard-table"></div>
+                </div>
+            </div>
+            <div id="round-modal-leaderboard" class="round-modal-panel" style="display: none;">
+                <div class="leaderboard-modal-body" id="leaderboard-modal-body">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+    </footer>
+
+    <script src="courses/course-data.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
