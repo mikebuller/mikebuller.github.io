@@ -3,6 +3,10 @@ html {
     touch-action: manipulation;
 }
 
+* {
+    touch-action: manipulation;
+}
+
 /* Masters-themed Golf Event Website Styles */
 :root {
     --masters-green: #006747;

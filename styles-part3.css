@@ -1770,7 +1770,7 @@ input[type="date"].setup-input {
 
 .header-lb-player {
     display: grid;
-    grid-template-columns: 15px 10px 1fr 25px auto 70px;
+    grid-template-columns: 15px 15px 1fr 25px auto 60px;
     align-items: center;
     gap: 8px;
     background: rgba(255, 255, 255, 0.1);
@@ -1841,12 +1841,32 @@ input[type="date"].setup-input {
     min-width: 0;
 }
 
+.prize-emoji {
+    cursor: pointer;
+    position: relative;
+}
+
+.prize-popup {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    white-space: nowrap;
+    z-index: 100;
+    pointer-events: none;
+}
+
 .header-lb-name {
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 0;
+    text-overflow: clip;
+    min-width: 5ch;
 }
 
 .header-lb-hole {
@@ -1857,7 +1877,7 @@ input[type="date"].setup-input {
 
 .header-lb-score {
     font-weight: 700;
-    padding: 2px 8px;
+    padding: 2px 2px;
     border-radius: 10px;
     background: rgba(0, 0, 0, 0.2);
     text-align: center;
