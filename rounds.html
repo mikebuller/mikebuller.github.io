@@ -27,6 +27,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="option-icon">⛳️</div>
+            <span class="rounds-nav-title">Rounds</span>
             <button class="mobile-menu-toggle" aria-label="Toggle navigation menu">
                 <span class="hamburger-line"></span>
                 <span class="hamburger-line"></span>
@@ -45,13 +46,8 @@
     </nav>
 
     <!-- Main Content -->
-    <section id="live-scores" class="page-section live-scores-section" style="padding-top: 80px;">
+    <section id="live-scores" class="page-section live-scores-section">
         <div class="container">
-            <div class="section-header">
-                <h2>Rounds</h2>
-                <div class="divider"></div>
-            </div>
-
             <!-- Main Options: CREATE or JOIN -->
             <div id="rounds-hub" class="rounds-hub">
                 <div class="rounds-options">
@@ -90,7 +86,6 @@
 
             <!-- Create Round Form (Hidden initially) -->
             <div id="create-round-form" class="round-setup-container" style="display: none;">
-                <button class="back-btn" onclick="showRoundsHub()">← Back</button>
                 <div class="setup-card">
                     <div class="setup-field">
                         <label for="round-name">Round Name</label>
@@ -308,7 +303,6 @@
 
             <!-- Join Round Form (Hidden initially) -->
             <div id="join-round-form" class="round-setup-container" style="display: none;">
-                <button class="back-btn" onclick="showRoundsHub()">← Back</button>
                 <div class="setup-card">
                     <h3>Join a Round</h3>
 
@@ -323,7 +317,6 @@
 
             <!-- Round Found - Player Selection (Hidden initially) -->
             <div id="join-round-details" class="round-setup-container" style="display: none;">
-                <button class="back-btn" onclick="showRoundsHub()">← Back</button>
                 <div class="setup-card">
                     <h3>Join Round</h3>
 

@@ -779,10 +779,31 @@
     flex: 1;
 }
 
+/* Home page: navbar hidden until scroll past hero */
+.home-page .navbar {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.home-page .navbar.navbar-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
 .rounds-page {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+}
+
+.rounds-page .navbar {
+    position: relative;
+    top: auto;
+}
+
+.rounds-page .page-section {
+    padding-top: 30px;
 }
 
 .rounds-page .page-section,
@@ -1705,7 +1726,7 @@ input[type="date"].setup-input {
     opacity: 1;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    padding: 0px 5px 10px;
+    padding: 0px 15px 10px;
 }
 
 .header-leaderboard-content::-webkit-scrollbar {
@@ -1749,7 +1770,7 @@ input[type="date"].setup-input {
 
 .header-lb-player {
     display: grid;
-    grid-template-columns: 18px 20px 140px 35px 75px;
+    grid-template-columns: 15px 10px 1fr 25px auto 70px;
     align-items: center;
     gap: 8px;
     background: rgba(255, 255, 255, 0.1);
@@ -1814,11 +1835,18 @@ input[type="date"].setup-input {
     font-size: 0.9rem;
 }
 
+.header-lb-prizes {
+    font-size: 0.75rem;
+    white-space: nowrap;
+    min-width: 0;
+}
+
 .header-lb-name {
     font-weight: 600;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    min-width: 0;
 }
 
 .header-lb-hole {
@@ -2352,7 +2380,6 @@ body.header-lb-active {
 
 /* Footer */
 .footer {
-    background: linear-gradient(135deg, var(--masters-dark-green) 0%, var(--masters-green) 100%);
     color: var(--masters-white);
     padding: 10px 20px;
     text-align: center;
@@ -2775,6 +2802,38 @@ body.header-lb-active {
     max-height: none;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
+}
+
+/* Swipe navigation hint */
+.swipe-hint {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0, 103, 71, 0.8);
+    color: white;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.swipe-hint.visible {
+    opacity: 1;
+}
+
+.swipe-hint-back {
+    left: 12px;
+}
+
+.swipe-hint-forward {
+    right: 12px;
 }
 
 .admin-page .footer {
@@ -3754,7 +3813,8 @@ body.header-lb-active {
    ADMIN DASHBOARD
    ======================================== */
 
-.admin-nav-title {
+.admin-nav-title,
+.rounds-nav-title {
     font-family: 'Playfair Display', serif;
     font-size: 1.15rem;
     font-weight: 700;
@@ -4069,10 +4129,10 @@ body.header-lb-active {
     border-radius: 50%;
     background: #e53e3e;
     box-shadow: 0 0 4px rgba(229, 62, 62, 0.6);
-    animation: livePulse 2s ease-in-out infinite;
+    animation: liveDotPulse 2s ease-in-out infinite;
 }
 
-@keyframes livePulse {
+@keyframes liveDotPulse {
     0%, 100% { opacity: 1; box-shadow: 0 0 4px rgba(229, 62, 62, 0.6); }
     50% { opacity: 0.4; box-shadow: 0 0 8px rgba(229, 62, 62, 0.3); }
 }

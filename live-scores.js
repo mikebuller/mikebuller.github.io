@@ -1353,7 +1353,7 @@ function renderHeaderLeaderboard(activeRounds) {
         const roundKey = round.id || round.scoreId || round.playerName;
 
         return {
-            id: round.playerId,
+            id: round.playerId || round.playerName,
             uniqueKey: roundKey,
             name: round.playerName,
             handicap: handicap,
@@ -1365,7 +1365,9 @@ function renderHeaderLeaderboard(activeRounds) {
             stablefordPoints: stablefordPoints,
             isCurrentPlayer: currentRound && (currentRound.playerId == round.playerId || currentRound.playerName == round.playerName),
             isFinished: round.status === 'finished',
-            hasSnake: roundKey === snakePlayerKey
+            hasSnake: roundKey === snakePlayerKey,
+            ctp: round.ctp || {},
+            longestDrive: round.longestDrive || {}
         };
     });
 
@@ -1382,6 +1384,39 @@ function renderHeaderLeaderboard(activeRounds) {
         // If tied, more holes played is better
         return b.holesPlayed - a.holesPlayed;
     });
+
+    // Determine prize winners across all players
+    const holePrizes = currentRound?.holePrizes || [];
+    const prizeWinners = new Map(); // key: "type-hole", value: player id
+
+    for (const p of holePrizes) {
+        const h = parseInt(p.hole);
+        let bestPlayerId = null;
+        let bestValue = null;
+
+        for (const pl of leaderboardData) {
+            let val = null;
+            if (p.type === 'ctp' && pl.ctp[h] && pl.ctp[h] !== '-') {
+                val = parseFloat(pl.ctp[h]);
+            } else if (p.type === 'ld' && pl.longestDrive[h] && pl.longestDrive[h] !== '-') {
+                val = parseFloat(pl.longestDrive[h]);
+            }
+
+            if (val !== null && !isNaN(val)) {
+                if (p.type === 'ctp' && (bestValue === null || val < bestValue)) {
+                    bestValue = val;
+                    bestPlayerId = pl.id;
+                } else if (p.type === 'ld' && (bestValue === null || val > bestValue)) {
+                    bestValue = val;
+                    bestPlayerId = pl.id;
+                }
+            }
+        }
+
+        if (bestPlayerId) {
+            prizeWinners.set(`${p.type}-${h}`, bestPlayerId);
+        }
+    }
 
     // Render leaderboard
     container.innerHTML = leaderboardData.map((player, index) => {
@@ -1418,12 +1453,24 @@ function renderHeaderLeaderboard(activeRounds) {
         const holeDisplay = player.isFinished ? 'F' : (player.currentHole > 0 ? `H${player.currentHole}` : 'Tee');
         const snakeIcon = player.hasSnake ? '🐍' : '';
 
+        // Build prize emojis — only show if this player is the current winner
+        const prizeEmojis = [];
+        for (const p of holePrizes) {
+            const h = parseInt(p.hole);
+            const winnerId = prizeWinners.get(`${p.type}-${h}`);
+            if (winnerId === player.id) {
+                prizeEmojis.push(p.type === 'ctp' ? '🎯' : '💪');
+            }
+        }
+        const prizesDisplay = prizeEmojis.join(' ');
+
         return `
             <div class="${playerClass}" onclick="openScorecardModal('${player.id}')">
                 <span class="header-lb-pos">${pos}</span>
                 <span class="header-lb-snake">${snakeIcon}</span>
                 <span class="header-lb-name">${player.name}</span>
                 <span class="header-lb-hole">${holeDisplay}</span>
+                <span class="header-lb-prizes">${prizesDisplay}</span>
                 <span class="header-lb-score ${scoreClass}">${scoreDisplay}</span>
             </div>
         `;
@@ -1501,30 +1548,12 @@ function stopLeaderboardAutoScroll() {
 
 // Open scorecard modal for a player
 async function openScorecardModal(playerId) {
-    // Fetch player's round data from Firebase
-    if (!window.db || !window.firestoreHelpers) {
-        return;
-    }
-
     try {
-        const { collection, query, where, getDocs } = window.firestoreHelpers;
-
-        // First try to find by the activeRounds document ID pattern
-        const currentRoundId = currentRound?.roundId || null;
-        let roundData = null;
-
-        // Query activeRounds for this player in the current round
-        const activeRoundsRef = collection(window.db, 'activeRounds');
-        const snapshot = await getDocs(activeRoundsRef);
-
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            // Match by playerId or playerName, and optionally by roundId
-            if ((data.playerId == playerId || data.playerName == playerId) &&
-                (!currentRoundId || data.roundId == currentRoundId)) {
-                roundData = data;
-            }
-        });
+        // Search cached data (both active and completed rounds) instead of re-fetching
+        const allCached = [...(cachedActiveRounds || []), ...(cachedCompletedRounds || [])];
+        let roundData = allCached.find(r =>
+            (r.playerId == playerId || r.playerName == playerId)
+        );
 
         if (!roundData) {
             return;
@@ -1563,8 +1592,44 @@ function generateModalScorecard() {
         if (holes[i]?.score !== undefined && holes[i]?.score !== null) scores[i] = holes[i].score;
         if (holes[i]?.putts !== undefined && holes[i]?.putts !== null) putts[i] = holes[i].putts;
     }
+    // Determine which prizes this player won by comparing across all players
+    const wonPrizes = {};
+    const modalHolePrizes = currentRound?.holePrizes || [];
+    for (const p of modalHolePrizes) {
+        const h = parseInt(p.hole);
+        let bestPlayerId = null;
+        let bestValue = null;
+
+        // Check all players in the round
+        const allRounds = [...(cachedActiveRounds || []), ...(cachedCompletedRounds || [])];
+        for (const r of allRounds) {
+            let val = null;
+            if (p.type === 'ctp' && r.ctp && r.ctp[h] && r.ctp[h] !== '-') {
+                val = parseFloat(r.ctp[h]);
+            } else if (p.type === 'ld' && r.longestDrive && r.longestDrive[h] && r.longestDrive[h] !== '-') {
+                val = parseFloat(r.longestDrive[h]);
+            }
+            if (val !== null && !isNaN(val)) {
+                if (p.type === 'ctp' && (bestValue === null || val < bestValue)) {
+                    bestValue = val;
+                    bestPlayerId = r.playerId || r.playerName;
+                } else if (p.type === 'ld' && (bestValue === null || val > bestValue)) {
+                    bestValue = val;
+                    bestPlayerId = r.playerId || r.playerName;
+                }
+            }
+        }
+
+        const currentPlayerId = modalRoundData.playerId || modalRoundData.playerName;
+        if (bestPlayerId === currentPlayerId) {
+            if (!wonPrizes[h]) wonPrizes[h] = [];
+            wonPrizes[h].push(p.type === 'ctp' ? '🎯' : '💪');
+        }
+    }
+
+    const prizes = { wonPrizes };
     document.getElementById('modal-scorecard-table').innerHTML =
-        generateScorecardHTML(scores, putts, courseData, modalRoundData.playerHandicap || 0, modalRoundData.tees);
+        generateScorecardHTML(scores, putts, courseData, modalRoundData.playerHandicap || 0, modalRoundData.tees, prizes);
 }
 
 // Close scorecard modal
@@ -1622,6 +1687,8 @@ async function saveActiveRoundToFirebase() {
             date: currentRound.date,
             currentHole: currentRound.currentHole,
             holes: holes,
+            ctp: currentRound.ctp || {},
+            longestDrive: currentRound.longestDrive || {},
             status: 'active',
             roundId: currentRound.roundId || null,
             updatedAt: new Date().toISOString()
