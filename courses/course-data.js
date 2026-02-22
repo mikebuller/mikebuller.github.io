@@ -365,15 +365,18 @@ function generateScorecardHTML(scores, putts, courseData, handicap, tees, prizes
     const hd = (i) => hasCourse ? courseData.holes[i] : null;
     const t = calcRoundTotals(scores, putts, courseData, handicap, tees);
     const prizeData = prizes || {};
-    const wonPrizes = prizeData.wonPrizes || {}; // {hole: [emoji, ...]}
+    const wonPrizes = prizeData.wonPrizes || {}; // {hole: [{emoji, value}, ...]}
 
     // Per-hole helpers
     const isPickup = (i) => scores[i] === 'P';
-    const holePrizeEmojis = (i) => {
-        const emojis = wonPrizes[i];
-        return (emojis && emojis.length) ? ' ' + emojis.join(' ') : '';
+    const holePrizeHtml = (i) => {
+        const prizes = wonPrizes[i];
+        if (!prizes || !prizes.length) return '';
+        return ' ' + prizes.map(p =>
+            `<span class="prize-emoji" onclick="event.stopPropagation(); showPrizeDistance(this, '${p.value}')">${p.emoji}</span>`
+        ).join(' ');
     };
-    const holeScore = (i) => (isPickup(i) ? 'P' : (scores[i] || '-')) + holePrizeEmojis(i);
+    const holeScore = (i) => (isPickup(i) ? 'P' : (scores[i] || '-')) + holePrizeHtml(i);
     const holePutts = (i) => putts[i] !== undefined ? putts[i] : '-';
     const holePar = (i) => getHolePar(hd(i), tees) ?? '-';
     const holeSI = (i) => getHoleSI(hd(i), tees);

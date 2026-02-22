@@ -219,14 +219,19 @@ async function loadMyActiveRounds() {
         ? allJoinedRounds.filter(r => r.playerName === currentPlayerName)
         : allJoinedRounds;
 
-    // Check if we have any active rounds or if Firebase has completed/archived rounds
-    const hasActiveRounds = joinedRounds.length > 0;
+    // Check Firebase for active, completed, and archived rounds
     let hasCompletedRounds = false;
     let hasArchivedRounds = false;
 
     if (window.db && window.firestoreHelpers && currentPlayerName) {
         try {
             const { collection, query, where, getDocs } = window.firestoreHelpers;
+
+            // Also check Firebase for active scores (admin may have created rounds)
+            const scoresQ = query(
+                collection(window.db, 'scores'),
+                where('playerName', '==', currentPlayerName)
+            );
             const completedQ = query(
                 collection(window.db, 'completedRounds'),
                 where('playerName', '==', currentPlayerName)
@@ -235,13 +240,35 @@ async function loadMyActiveRounds() {
                 collection(window.db, 'archivedRounds'),
                 where('playerName', '==', currentPlayerName)
             );
-            const [completedSnap, archivedSnap] = await Promise.all([getDocs(completedQ), getDocs(archivedQ)]);
+            const [scoresSnap, completedSnap, archivedSnap] = await Promise.all([
+                getDocs(scoresQ), getDocs(completedQ), getDocs(archivedQ)
+            ]);
+
+            // Merge Firebase active scores into joinedRounds (avoid duplicates and completed/archived)
+            const existingScoreIds = new Set(joinedRounds.map(r => r.scoreId));
+            const completedIds = new Set();
+            completedSnap.forEach(d => completedIds.add(d.id));
+            archivedSnap.forEach(d => completedIds.add(d.id));
+
+            scoresSnap.forEach(d => {
+                if (!existingScoreIds.has(d.id) && !completedIds.has(d.id)) {
+                    const data = d.data();
+                    joinedRounds.push({
+                        roundId: data.roundId,
+                        scoreId: d.id,
+                        playerName: data.playerName
+                    });
+                }
+            });
+
             hasCompletedRounds = !completedSnap.empty;
             hasArchivedRounds = !archivedSnap.empty;
         } catch (error) {
             console.error('Error checking rounds:', error);
         }
     }
+
+    const hasActiveRounds = joinedRounds.length > 0;
 
     if (!hasActiveRounds && !hasCompletedRounds && !hasArchivedRounds) {
         document.getElementById('my-rounds-section').style.display = 'none';
@@ -262,14 +289,22 @@ async function loadActiveRounds(joinedRounds) {
     const activeListContainer = document.getElementById('active-rounds-list');
     activeListContainer.innerHTML = '';
 
+    const staleEntries = [];
+
     for (const roundInfo of joinedRounds) {
         try {
             if (!window.db || !window.firestoreHelpers) continue;
 
             const { doc, getDoc } = window.firestoreHelpers;
-            const roundRef = doc(window.db, 'rounds', roundInfo.roundId);
-            const roundSnap = await getDoc(roundRef);
 
+            // Check score still exists (may have been archived/completed by admin)
+            const scoreSnap = await getDoc(doc(window.db, 'scores', roundInfo.scoreId));
+            if (!scoreSnap.exists()) {
+                staleEntries.push(roundInfo);
+                continue;
+            }
+
+            const roundSnap = await getDoc(doc(window.db, 'rounds', roundInfo.roundId));
             if (roundSnap.exists()) {
                 const roundData = roundSnap.data();
                 const roundCard = createMyRoundCard(roundInfo.roundId, roundData, roundInfo.scoreId);
@@ -280,7 +315,16 @@ async function loadActiveRounds(joinedRounds) {
         }
     }
 
-    if (joinedRounds.length === 0) {
+    // Clean up stale entries from localStorage
+    if (staleEntries.length > 0) {
+        const allJoined = JSON.parse(localStorage.getItem('joinedRounds') || '[]');
+        const staleIds = new Set(staleEntries.map(e => e.scoreId));
+        const cleaned = allJoined.filter(r => !staleIds.has(r.scoreId));
+        localStorage.setItem('joinedRounds', JSON.stringify(cleaned));
+    }
+
+    const activeCount = activeListContainer.children.length;
+    if (activeCount === 0) {
         activeListContainer.innerHTML = '<p class="empty-rounds-message">No active rounds</p>';
     }
 }

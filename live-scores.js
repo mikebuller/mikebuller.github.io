@@ -1468,7 +1468,7 @@ function renderHeaderLeaderboard(activeRounds) {
             <div class="${playerClass}" onclick="openScorecardModal('${player.id}')">
                 <span class="header-lb-pos">${pos}</span>
                 <span class="header-lb-snake">${snakeIcon}</span>
-                <span class="header-lb-name">${player.name}</span>
+                <span class="header-lb-name" title="${player.name}">${player.name.trim()}</span>
                 <span class="header-lb-hole">${holeDisplay}</span>
                 <span class="header-lb-prizes">${prizesDisplay}</span>
                 <span class="header-lb-score ${scoreClass}">${scoreDisplay}</span>
@@ -1476,11 +1476,26 @@ function renderHeaderLeaderboard(activeRounds) {
         `;
     }).join('');
 
+    // Truncate overflowing names (trim trailing spaces before "...")
+    requestAnimationFrame(truncateLeaderboardNames);
+
     // Recalculate section padding now that leaderboard content has changed
     updateSectionPadding();
 
     // Start auto-scroll if needed (desktop only)
     setTimeout(() => startLeaderboardAutoScroll(), 500);
+}
+
+function truncateLeaderboardNames() {
+    document.querySelectorAll('.header-lb-name').forEach(el => {
+        if (el.scrollWidth > el.clientWidth) {
+            const fullName = el.title || el.textContent;
+            for (let i = fullName.length; i > 0; i--) {
+                el.textContent = fullName.slice(0, i).trimEnd() + '...';
+                if (el.scrollWidth <= el.clientWidth) break;
+            }
+        }
+    });
 }
 
 // Auto-scroll variables
@@ -1623,7 +1638,10 @@ function generateModalScorecard() {
         const currentPlayerId = modalRoundData.playerId || modalRoundData.playerName;
         if (bestPlayerId === currentPlayerId) {
             if (!wonPrizes[h]) wonPrizes[h] = [];
-            wonPrizes[h].push(p.type === 'ctp' ? '🎯' : '💪');
+            const emoji = p.type === 'ctp' ? '🎯' : '💪';
+            const dataKey = p.type === 'ctp' ? 'ctp' : 'longestDrive';
+            const value = modalRoundData[dataKey]?.[h] || '';
+            wonPrizes[h].push({ emoji, value: value + 'm' });
         }
     }
 
@@ -1631,6 +1649,29 @@ function generateModalScorecard() {
     document.getElementById('modal-scorecard-table').innerHTML =
         generateScorecardHTML(scores, putts, courseData, modalRoundData.playerHandicap || 0, modalRoundData.tees, prizes);
 }
+
+// Show prize distance popup
+function showPrizeDistance(el, value) {
+    // Remove any existing popup
+    const existing = document.querySelector('.prize-popup');
+    if (existing) existing.remove();
+
+    const popup = document.createElement('span');
+    popup.className = 'prize-popup';
+    popup.textContent = value;
+    el.style.position = 'relative';
+    el.appendChild(popup);
+
+    // Close on click anywhere
+    const close = (e) => {
+        if (!el.contains(e.target)) {
+            popup.remove();
+            document.removeEventListener('click', close);
+        }
+    };
+    setTimeout(() => document.addEventListener('click', close), 0);
+}
+window.showPrizeDistance = showPrizeDistance;
 
 // Close scorecard modal
 function closeScorecardModal() {
