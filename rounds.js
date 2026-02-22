@@ -51,6 +51,9 @@ async function initializeRoundsPage() {
 
     // Initialize mobile menu
     initializeMobileMenu();
+
+    // Initialize swipe gesture navigation
+    initSwipeNavigation();
 }
 
 // Populate the player selection dropdown
@@ -496,19 +499,85 @@ function shareRound(joinCode) {
 
 // Show/hide different views
 const viewIds = ['rounds-hub', 'create-round-form', 'round-created-success', 'join-round-form', 'join-round-details'];
+const viewHistory = ['rounds-hub'];
 
-function showView(activeId) {
+function showView(activeId, addToHistory = true) {
     viewIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = id === activeId ? 'block' : 'none';
     });
+    if (addToHistory && viewHistory[viewHistory.length - 1] !== activeId) {
+        viewHistory.push(activeId);
+    }
     if (activeId === 'rounds-hub') loadMyActiveRounds();
+}
+
+function navigateBack() {
+    if (viewHistory.length > 1) {
+        viewHistory.pop();
+        const previousView = viewHistory[viewHistory.length - 1];
+        showView(previousView, false);
+        showSwipeHint('back');
+    }
 }
 
 function showRoundsHub()  { showView('rounds-hub'); }
 function showCreateRound() { showView('create-round-form'); }
 function showJoinRound()  { showView('join-round-form'); }
 function showJoinDetails() { showView('join-round-details'); }
+
+// Swipe gesture navigation
+let touchStartX = 0;
+let touchStartY = 0;
+let touchStartTime = 0;
+const SWIPE_THRESHOLD = 80;  // minimum distance in px
+const SWIPE_MAX_Y = 100;     // max vertical drift
+const SWIPE_MAX_TIME = 500;  // max duration in ms
+
+function initSwipeNavigation() {
+    const container = document.querySelector('.container');
+    if (!container) return;
+
+    container.addEventListener('touchstart', (e) => {
+        // Don't capture swipes on inputs, selects, or scrollable elements
+        if (e.target.closest('input, select, textarea, .my-rounds-list')) return;
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+        touchStartTime = Date.now();
+    }, { passive: true });
+
+    container.addEventListener('touchend', (e) => {
+        if (!touchStartTime) return;
+        const deltaX = e.changedTouches[0].screenX - touchStartX;
+        const deltaY = Math.abs(e.changedTouches[0].screenY - touchStartY);
+        const elapsed = Date.now() - touchStartTime;
+        touchStartTime = 0;
+
+        if (elapsed > SWIPE_MAX_TIME || deltaY > SWIPE_MAX_Y) return;
+
+        // Swipe right = go back
+        if (deltaX > SWIPE_THRESHOLD) {
+            navigateBack();
+        }
+    }, { passive: true });
+}
+
+function showSwipeHint(direction) {
+    // Remove any existing hint
+    const existing = document.querySelector('.swipe-hint');
+    if (existing) existing.remove();
+
+    const hint = document.createElement('div');
+    hint.className = `swipe-hint swipe-hint-${direction}`;
+    hint.innerHTML = direction === 'back' ? '‹' : '›';
+    document.body.appendChild(hint);
+
+    requestAnimationFrame(() => hint.classList.add('visible'));
+    setTimeout(() => {
+        hint.classList.remove('visible');
+        setTimeout(() => hint.remove(), 300);
+    }, 400);
+}
 
 // Create a new round
 async function createRound() {
