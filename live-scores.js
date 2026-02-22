@@ -1173,13 +1173,52 @@ function startActiveRoundsListener() {
             activeQuery = collection(window.db, 'activeRounds');
         }
 
+        let previousActiveSnapshot = null;
+        let notificationDebounceTimer = null;
+        let pendingNewRounds = null;
+
+        // Request notification permission for score alerts
+        requestNotificationPermission();
+
         activeRoundsUnsubscribe = onSnapshot(
             activeQuery,
             (snapshot) => {
-                cachedActiveRounds = [];
+                const newRounds = [];
                 snapshot.forEach(doc => {
-                    cachedActiveRounds.push({ id: doc.id, ...doc.data() });
+                    newRounds.push({ id: doc.id, ...doc.data() });
                 });
+
+                // Detect notable scores (debounced to wait for stepper to settle)
+                if (previousActiveSnapshot && currentRound) {
+                    clearTimeout(notificationDebounceTimer);
+                    pendingNewRounds = newRounds;
+                    notificationDebounceTimer = setTimeout(() => {
+                        checkForNotableScores(previousActiveSnapshot, pendingNewRounds);
+                        // Update previous snapshot after debounce
+                        previousActiveSnapshot = pendingNewRounds.map(r => {
+                            const holesCopy = {};
+                            if (r.holes) {
+                                for (const [k, v] of Object.entries(r.holes)) {
+                                    holesCopy[k] = v && typeof v === 'object' ? { ...v } : v;
+                                }
+                            }
+                            return { ...r, holes: holesCopy };
+                        });
+                    }, 3000);
+                } else {
+                    // First snapshot — just store it
+                    previousActiveSnapshot = newRounds.map(r => {
+                        const holesCopy = {};
+                        if (r.holes) {
+                            for (const [k, v] of Object.entries(r.holes)) {
+                                holesCopy[k] = v && typeof v === 'object' ? { ...v } : v;
+                            }
+                        }
+                        return { ...r, holes: holesCopy };
+                    });
+                }
+
+                cachedActiveRounds = newRounds;
                 // Merge both sources and render
                 renderHeaderLeaderboard([...cachedActiveRounds, ...cachedCompletedRounds]);
             },
@@ -1484,6 +1523,162 @@ function renderHeaderLeaderboard(activeRounds) {
 
     // Start auto-scroll if needed (desktop only)
     setTimeout(() => startLeaderboardAutoScroll(), 500);
+}
+
+// --- Live Score Notifications ---
+const MAX_VISIBLE_NOTIFICATIONS = 2;
+
+function checkForNotableScores(prevRounds, newRounds) {
+    const prevMap = new Map(prevRounds.map(r => [r.id, r]));
+    const myPlayerId = currentRound.playerId || currentRound.playerName;
+
+    for (const round of newRounds) {
+        const prev = prevMap.get(round.id);
+        const prevHolesData = prev ? (prev.holes || {}) : {}; // New player has no previous holes
+
+        // TODO: Re-enable after testing — skip own scores
+        // const roundPlayerId = round.playerId || round.playerName;
+        // if (roundPlayerId === myPlayerId) continue;
+
+        // Find which holes changed
+        const holes = round.holes || {};
+        const prevHoles = prevHolesData;
+
+        for (const [holeNum, holeData] of Object.entries(holes)) {
+            const prevHole = prevHoles[holeNum];
+            if (holeData.score === undefined || holeData.score === null) continue;
+            if (holeData.score === 'P') continue;
+            // Skip if score hasn't changed
+            if (prevHole && prevHole.score === holeData.score) continue;
+
+            const score = parseInt(holeData.score);
+            if (isNaN(score)) continue;
+
+            // Get par for this hole
+            const courseData = getCourseData(round.course);
+            const tees = round.tees;
+            const hd = courseData ? courseData.holes[parseInt(holeNum)] : null;
+            const par = hd ? getHolePar(hd, tees) : undefined;
+
+            const notification = getNotableScore(score, par, parseInt(holeNum), round.playerName);
+            console.log(`[Notification] ${round.playerName} scored ${score} (par ${par}) on Hole ${holeNum}`, notification ? '→ TRIGGERED' : '→ not notable');
+            if (notification) {
+                showScoreNotification(notification);
+            }
+        }
+    }
+}
+
+function getNotableScore(score, par, holeNum, playerName) {
+    // Hole in 1 (always notable regardless of par)
+    if (score === 1) {
+        return { emoji: '🔥', label: 'HOLE IN ONE', playerName, holeNum };
+    }
+
+    if (par === undefined) return null;
+
+    const diff = score - par;
+
+    // Albatross: 3 under par (but not a hole-in-one)
+    if (diff === -3) {
+        return { emoji: '🦅🦅', label: 'Albatross', playerName, holeNum };
+    }
+    // Eagle: 2 under par
+    if (diff === -2) {
+        return { emoji: '🦅', label: 'Eagle', playerName, holeNum };
+    }
+    // Birdie: 1 under par
+    if (diff === -1) {
+        return { emoji: '🐥', label: 'Birdie', playerName, holeNum };
+    }
+    // Emu: 10 or more shots
+    if (score >= 10) {
+        return { emoji: '💩', label: `${score} shots`, playerName, holeNum };
+    }
+
+    return null;
+}
+
+// Request notification permission early
+function requestNotificationPermission() {
+    if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
+}
+
+function sendNativeNotification({ emoji, label, playerName, holeNum }) {
+    if ('Notification' in window && Notification.permission === 'granted') {
+        try {
+            new Notification(`${emoji} ${playerName}`, {
+                body: `${label} on Hole ${holeNum}!`,
+                icon: 'images/bonville-logo.jpg',
+                tag: `score-${playerName}-${holeNum}`,
+                silent: false
+            });
+        } catch (e) {
+            // Notification constructor may fail on some mobile browsers
+        }
+    }
+}
+
+function showScoreNotification({ emoji, label, playerName, holeNum }) {
+    // Also send native notification
+    sendNativeNotification({ emoji, label, playerName, holeNum });
+
+    const container = document.getElementById('score-notifications');
+    if (!container) return;
+
+    // Limit visible notifications
+    while (container.children.length >= MAX_VISIBLE_NOTIFICATIONS) {
+        container.removeChild(container.firstChild);
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'score-notification';
+    toast.innerHTML = `
+        <span class="notif-emoji">${emoji}</span>
+        <span class="notif-text"><strong>${playerName}</strong> ${label} on Hole ${holeNum}!</span>
+    `;
+
+    // Track cleanup functions on the toast element
+    const cleanup = () => {
+        clearTimeout(toast._autoDismissTimer);
+        document.removeEventListener('click', toast._outsideHandler);
+    };
+
+    // Dismiss on tap
+    toast.addEventListener('click', () => dismissNotification(toast));
+
+    // Dismiss on tap outside
+    toast._outsideHandler = (e) => {
+        if (!toast.contains(e.target)) {
+            dismissNotification(toast);
+        }
+    };
+    setTimeout(() => document.addEventListener('click', toast._outsideHandler), 100);
+
+    container.appendChild(toast);
+
+    // Trigger slide-in animation
+    requestAnimationFrame(() => toast.classList.add('visible'));
+
+    // Auto-dismiss after 5 seconds
+    toast._autoDismissTimer = setTimeout(() => dismissNotification(toast), 5000);
+    toast._cleanup = cleanup;
+}
+
+function dismissNotification(toast) {
+    if (!toast || toast._dismissed) return;
+    toast._dismissed = true;
+
+    // Clean up listeners and timers
+    if (toast._cleanup) toast._cleanup();
+
+    toast.classList.remove('visible');
+    toast.classList.add('dismissing');
+    setTimeout(() => {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 300);
 }
 
 function truncateLeaderboardNames() {
