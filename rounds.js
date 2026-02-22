@@ -1049,8 +1049,8 @@ async function viewLeaderboard(roundId) {
                         if (round.holes[i].score !== 'P') {
                             totalScore += round.holes[i].score;
                             if (courseInfo) {
-                                totalPar += courseInfo.holes[i].par;
-                                stablefordPoints += calcStablefordPoints(round.holes[i].score, courseInfo.holes[i].par, getHoleSI(courseInfo.holes[i], round.tees), handicap);
+                                totalPar += getHolePar(courseInfo.holes[i], round.tees) || 0;
+                                stablefordPoints += calcStablefordPoints(round.holes[i].score, getHolePar(courseInfo.holes[i], round.tees), getHoleSI(courseInfo.holes[i], round.tees), handicap);
                             }
                         }
                     }
@@ -1063,8 +1063,8 @@ async function viewLeaderboard(roundId) {
                         if (round.scores[i] !== 'P') {
                             totalScore += round.scores[i];
                             if (courseInfo) {
-                                totalPar += courseInfo.holes[i].par;
-                                stablefordPoints += calcStablefordPoints(round.scores[i], courseInfo.holes[i].par, getHoleSI(courseInfo.holes[i], round.tees), handicap);
+                                totalPar += getHolePar(courseInfo.holes[i], round.tees) || 0;
+                                stablefordPoints += calcStablefordPoints(round.scores[i], getHolePar(courseInfo.holes[i], round.tees), getHoleSI(courseInfo.holes[i], round.tees), handicap);
                             }
                         }
                     }

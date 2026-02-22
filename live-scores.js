@@ -416,7 +416,7 @@ function updateHoleDisplay() {
     const holeDetailsEl = document.getElementById('current-hole-details');
     if (holeData) {
         const distance = getHoleDistance(holeData, tees);
-        const parts = [`Par ${holeData.par}`];
+        const parts = [`Par ${getHolePar(holeData, tees)}`];
         if (distance) parts.push(`${distance}m`);
         const si = getHoleSI(holeData, tees);
         if (si !== undefined) parts.push(`Index ${si}`);
@@ -537,7 +537,7 @@ function updateScoreDisplay(score, hole) {
     }
     const holeData = courseData ? courseData.holes[hole] : null;
     if (holeData && currentRound) {
-        const pts = calcStablefordPoints(score, holeData.par, getHoleSI(holeData, currentRound.tees), currentRound.handicap || 0);
+        const pts = calcStablefordPoints(score, getHolePar(holeData, currentRound.tees), getHoleSI(holeData, currentRound.tees), currentRound.handicap || 0);
         el.innerHTML = `${score} <span class="stepper-stableford">(${pts}pts)</span>`;
     } else {
         el.innerHTML = `${score}`;
@@ -589,7 +589,7 @@ function adjustScore(delta) {
         if (holeData) {
             if (delta > 0) {
                 // First tap of +1 sets to par
-                current = holeData.par - delta; // +1: par - 1 + 1 = par
+                current = getHolePar(holeData, currentRound.tees) - delta; // +1: par - 1 + 1 = par
             } else {
                 // First tap of -1 (P button) sets to pickup
                 currentRound.scores[hole] = 'P';
@@ -792,7 +792,7 @@ function updateTotals() {
         const start = half === t.front9 ? 1 : 10;
         const end = half === t.front9 ? 9 : 18;
         for (let i = start; i <= end; i++) {
-            if (currentRound.scores[i] !== undefined && currentRound.scores[i] !== 'P') parPlayed += courseData.holes[i].par;
+            if (currentRound.scores[i] !== undefined && currentRound.scores[i] !== 'P') parPlayed += getHolePar(courseData.holes[i], currentRound.tees) || 0;
         }
         const diff = score - parPlayed;
         return diff === 0 ? 'E' : (diff > 0 ? `+${diff}` : `${diff}`);
@@ -933,6 +933,13 @@ async function saveRound() {
             // Save to completedRounds collection
             await setDoc(doc(window.db, 'completedRounds', scoreId), scoreData);
 
+            // Delete from scores collection — data is now in completedRounds
+            try {
+                await deleteDoc(doc(window.db, 'scores', scoreId));
+            } catch (e) {
+                console.warn('Could not delete from scores:', e);
+            }
+
             // Delete from activeRounds — the completedRounds listener will show
             // this player as "F" (finished) on other players' leaderboards
             if (currentRound.roundId && currentRound.scoreId) {
@@ -991,7 +998,7 @@ function showHoleImage() {
     // Build caption from available data
     const parts = [`Hole ${hole}`];
     if (holeData) {
-        parts.push(`Par ${holeData.par}`);
+        parts.push(`Par ${getHolePar(holeData, tees)}`);
         const si = getHoleSI(holeData, tees);
         if (si !== undefined) parts.push(`SI ${si}`);
         const distance = getHoleDistance(holeData, tees);
@@ -1335,8 +1342,8 @@ function renderHeaderLeaderboard(activeRounds) {
                 if (round.holes[i].score !== 'P') {
                     totalScore += round.holes[i].score;
                     if (courseData) {
-                        totalPar += courseData.holes[i].par;
-                        stablefordPoints += calcStablefordPoints(round.holes[i].score, courseData.holes[i].par, getHoleSI(courseData.holes[i], round.tees), handicap);
+                        totalPar += getHolePar(courseData.holes[i], round.tees) || 0;
+                        stablefordPoints += calcStablefordPoints(round.holes[i].score, getHolePar(courseData.holes[i], round.tees), getHoleSI(courseData.holes[i], round.tees), handicap);
                     }
                 }
             }

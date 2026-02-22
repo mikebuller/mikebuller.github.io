@@ -36,24 +36,24 @@ const allCourseData = [
             {key: 'bloodwood', label: 'Bloodwood', totalDistance: 5664}
         ],
         holes: {
-            1: {par: 4, tallwood: {dist: 380, si: 2}, bloodwood: {dist: 353, si: 2}},
-            2: {par: 4, tallwood: {dist: 346, si: 12}, bloodwood: {dist: 308, si: 12}},
-            3: {par: 3, tallwood: {dist: 183, si: 8}, bloodwood: {dist: 170, si: 8}},
-            4: {par: 5, tallwood: {dist: 485, si: 14}, bloodwood: {dist: 465, si: 14}},
-            5: {par: 3, tallwood: {dist: 147, si: 16}, bloodwood: {dist: 139, si: 16}},
-            6: {par: 4, tallwood: {dist: 335, si: 6}, bloodwood: {dist: 328, si: 6}},
-            7: {par: 5, tallwood: {dist: 487, si: 18}, bloodwood: {dist: 453, si: 18}},
-            8: {par: 3, tallwood: {dist: 182, si: 4}, bloodwood: {dist: 158, si: 4}},
-            9: {par: 4, tallwood: {dist: 324, si: 10}, bloodwood: {dist: 304, si: 10}},
-            10: {par: 5, tallwood: {dist: 456, si: 13}, bloodwood: {dist: 419, si: 13}},
-            11: {par: 3, tallwood: {dist: 190, si: 9}, bloodwood: {dist: 150, si: 9}},
-            12: {par: 4, tallwood: {dist: 425, si: 1}, bloodwood: {dist: 372, si: 1}},
-            13: {par: 4, tallwood: {dist: 370, si: 3}, bloodwood: {dist: 346, si: 3}},
-            14: {par: 5, tallwood: {dist: 505, si: 15}, bloodwood: {dist: 466, si: 15}},
-            15: {par: 4, tallwood: {dist: 357, si: 7}, bloodwood: {dist: 326, si: 7}},
-            16: {par: 4, tallwood: {dist: 372, si: 5}, bloodwood: {dist: 340, si: 5}},
-            17: {par: 3, tallwood: {dist: 142, si: 11}, bloodwood: {dist: 131, si: 11}},
-            18: {par: 4, tallwood: {dist: 460, si: 17}, bloodwood: {dist: 436, si: 17}}
+            1: {tallwood: {par: 4, dist: 380, si: 2}, bloodwood: {par: 4, dist: 353, si: 2}},
+            2: {tallwood: {par: 4, dist: 346, si: 12}, bloodwood: {par: 4, dist: 308, si: 12}},
+            3: {tallwood: {par: 3, dist: 183, si: 8}, bloodwood: {par: 3, dist: 170, si: 8}},
+            4: {tallwood: {par: 5, dist: 485, si: 14}, bloodwood: {par: 5, dist: 465, si: 14}},
+            5: {tallwood: {par: 3, dist: 147, si: 16}, bloodwood: {par: 3, dist: 139, si: 16}},
+            6: {tallwood: {par: 4, dist: 335, si: 6}, bloodwood: {par: 4, dist: 328, si: 6}},
+            7: {tallwood: {par: 5, dist: 487, si: 18}, bloodwood: {par: 5, dist: 453, si: 18}},
+            8: {tallwood: {par: 3, dist: 182, si: 4}, bloodwood: {par: 3, dist: 158, si: 4}},
+            9: {tallwood: {par: 4, dist: 324, si: 10}, bloodwood: {par: 4, dist: 304, si: 10}},
+            10: {tallwood: {par: 5, dist: 456, si: 13}, bloodwood: {par: 5, dist: 419, si: 13}},
+            11: {tallwood: {par: 3, dist: 190, si: 9}, bloodwood: {par: 3, dist: 150, si: 9}},
+            12: {tallwood: {par: 4, dist: 425, si: 1}, bloodwood: {par: 4, dist: 372, si: 1}},
+            13: {tallwood: {par: 4, dist: 370, si: 3}, bloodwood: {par: 4, dist: 346, si: 3}},
+            14: {tallwood: {par: 5, dist: 505, si: 15}, bloodwood: {par: 5, dist: 466, si: 15}},
+            15: {tallwood: {par: 4, dist: 357, si: 7}, bloodwood: {par: 4, dist: 326, si: 7}},
+            16: {tallwood: {par: 4, dist: 372, si: 5}, bloodwood: {par: 4, dist: 340, si: 5}},
+            17: {tallwood: {par: 3, dist: 142, si: 11}, bloodwood: {par: 3, dist: 131, si: 11}},
+            18: {tallwood: {par: 4, dist: 460, si: 17}, bloodwood: {par: 4, dist: 436, si: 17}}
         }
     },
     {
@@ -91,24 +91,24 @@ const allCourseData = [
             {key: 'red', label: 'Red', totalDistance: 4998}
         ],
         holes: {
-            1: {par: 4, blue: {dist: 398, si: 2}, white: {dist: 378, si: 1}, red: {dist: 330, si: 3}},
-            2: {par: 3, blue: {dist: 137, si: 17}, white: {dist: 131, si: 18}, red: {dist: 125, si: 18}},
-            3: {par: 4, blue: {dist: 382, si: 4}, white: {dist: 333, si: 9}, red: {dist: 305, si: 11}},
-            4: {par: 5, blue: {dist: 550, si: 6}, white: {dist: 535, si: 5}, red: {dist: 451, si: 5}},
-            5: {par: 3, blue: {dist: 158, si: 18}, white: {dist: 155, si: 15}, red: {dist: 140, si: 17}},
-            6: {par: 5, blue: {dist: 480, si: 14}, white: {dist: 463, si: 13}, red: {dist: 407, si: 16}},
-            7: {par: 3, blue: {dist: 190, si: 15}, white: {dist: 171, si: 17}, red: {dist: 140, si: 9}},
-            8: {par: 4, blue: {dist: 363, si: 5}, white: {dist: 358, si: 4}, red: {dist: 323, si: 2}},
-            9: {par: 4, blue: {dist: 286, si: 11}, white: {dist: 280, si: 11}, red: {dist: 257, si: 10}},
-            10: {par: 3, blue: {dist: 156, si: 7}, white: {dist: 144, si: 6}, red: {dist: 123, si: 8}},
-            11: {par: 5, blue: {dist: 481, si: 10}, white: {dist: 476, si: 7}, red: {dist: 442, si: 7}},
-            12: {par: 4, blue: {dist: 310, si: 12}, white: {dist: 301, si: 12}, red: {dist: 295, si: 14}},
-            13: {par: 3, blue: {dist: 198, si: 3}, white: {dist: 192, si: 3}, red: {dist: 172, si: 4}},
-            14: {par: 4, blue: {dist: 360, si: 8}, white: {dist: 341, si: 8}, red: {dist: 315, si: 6}},
-            15: {par: 3, blue: {dist: 162, si: 16}, white: {dist: 152, si: 16}, red: {dist: 140, si: 12}},
-            16: {par: 5, blue: {dist: 442, si: 9}, white: {dist: 435, si: 10}, red: {dist: 400, si: 13}},
-            17: {par: 4, blue: {dist: 331, si: 13}, white: {dist: 319, si: 14}, red: {dist: 293, si: 15}},
-            18: {par: 4, blue: {dist: 407, si: 1}, white: {dist: 395, si: 1}, red: {dist: 340, si: 1}}
+            1: {blue: {par: 4, dist: 398, si: 2}, white: {par: 4, dist: 378, si: 1}, red: {par: 4, dist: 330, si: 3}},
+            2: {blue: {par: 3, dist: 137, si: 17}, white: {par: 3, dist: 131, si: 18}, red: {par: 3, dist: 125, si: 18}},
+            3: {blue: {par: 4, dist: 382, si: 4}, white: {par: 4, dist: 333, si: 9}, red: {par: 4, dist: 305, si: 11}},
+            4: {blue: {par: 5, dist: 550, si: 6}, white: {par: 5, dist: 535, si: 5}, red: {par: 5, dist: 451, si: 5}},
+            5: {blue: {par: 3, dist: 158, si: 18}, white: {par: 3, dist: 155, si: 15}, red: {par: 3, dist: 140, si: 17}},
+            6: {blue: {par: 5, dist: 480, si: 14}, white: {par: 5, dist: 463, si: 13}, red: {par: 5, dist: 407, si: 16}},
+            7: {blue: {par: 3, dist: 190, si: 15}, white: {par: 3, dist: 171, si: 17}, red: {par: 3, dist: 140, si: 9}},
+            8: {blue: {par: 4, dist: 363, si: 5}, white: {par: 4, dist: 358, si: 4}, red: {par: 4, dist: 323, si: 2}},
+            9: {blue: {par: 4, dist: 286, si: 11}, white: {par: 4, dist: 280, si: 11}, red: {par: 4, dist: 257, si: 10}},
+            10: {blue: {par: 3, dist: 156, si: 7}, white: {par: 3, dist: 144, si: 6}, red: {par: 3, dist: 123, si: 8}},
+            11: {blue: {par: 5, dist: 481, si: 10}, white: {par: 5, dist: 476, si: 7}, red: {par: 5, dist: 442, si: 7}},
+            12: {blue: {par: 4, dist: 310, si: 12}, white: {par: 4, dist: 301, si: 12}, red: {par: 4, dist: 295, si: 14}},
+            13: {blue: {par: 3, dist: 198, si: 3}, white: {par: 3, dist: 192, si: 3}, red: {par: 3, dist: 172, si: 4}},
+            14: {blue: {par: 4, dist: 360, si: 8}, white: {par: 4, dist: 341, si: 8}, red: {par: 4, dist: 315, si: 6}},
+            15: {blue: {par: 3, dist: 162, si: 16}, white: {par: 3, dist: 152, si: 16}, red: {par: 3, dist: 140, si: 12}},
+            16: {blue: {par: 5, dist: 442, si: 9}, white: {par: 5, dist: 435, si: 10}, red: {par: 5, dist: 400, si: 13}},
+            17: {blue: {par: 4, dist: 331, si: 13}, white: {par: 4, dist: 319, si: 14}, red: {par: 4, dist: 293, si: 15}},
+            18: {blue: {par: 4, dist: 407, si: 1}, white: {par: 4, dist: 395, si: 1}, red: {par: 4, dist: 340, si: 1}}
         }
     },
     {
@@ -136,24 +136,24 @@ const allCourseData = [
             {key: 'red', label: 'Red', totalDistance: 5777}
         ],
         holes: {
-            1: {par: 4, blue: {dist: 407, si: 7}, white: {dist: 385, si: 7}, red: {dist: 359, si: 7}},
-            2: {par: 5, blue: {dist: 519, si: 9}, white: {dist: 487, si: 9}, red: {dist: 460, si: 9}},
-            3: {par: 4, blue: {dist: 375, si: 15}, white: {dist: 353, si: 15}, red: {dist: 334, si: 15}},
-            4: {par: 5, blue: {dist: 540, si: 1}, white: {dist: 517, si: 1}, red: {dist: 480, si: 1}},
-            5: {par: 4, blue: {dist: 392, si: 5}, white: {dist: 370, si: 5}, red: {dist: 342, si: 5}},
-            6: {par: 3, blue: {dist: 155, si: 3}, white: {dist: 137, si: 3}, red: {dist: 115, si: 3}},
-            7: {par: 4, blue: {dist: 424, si: 17}, white: {dist: 370, si: 17}, red: {dist: 341, si: 17}},
-            8: {par: 4, blue: {dist: 385, si: 13}, white: {dist: 363, si: 13}, red: {dist: 334, si: 13}},
-            9: {par: 3, blue: {dist: 151, si: 11}, white: {dist: 139, si: 11}, red: {dist: 128, si: 11}},
-            10: {par: 4, blue: {dist: 413, si: 2}, white: {dist: 392, si: 2}, red: {dist: 372, si: 2}},
-            11: {par: 4, blue: {dist: 326, si: 18}, white: {dist: 282, si: 18}, red: {dist: 259, si: 18}},
-            12: {par: 3, blue: {dist: 189, si: 12}, white: {dist: 164, si: 12}, red: {dist: 139, si: 12}},
-            13: {par: 5, blue: {dist: 566, si: 16}, white: {dist: 526, si: 16}, red: {dist: 484, si: 16}},
-            14: {par: 4, blue: {dist: 413, si: 4}, white: {dist: 392, si: 4}, red: {dist: 367, si: 4}},
-            15: {par: 3, blue: {dist: 173, si: 8}, white: {dist: 143, si: 8}, red: {dist: 115, si: 8}},
-            16: {par: 5, blue: {dist: 536, si: 14}, white: {dist: 495, si: 14}, red: {dist: 452, si: 14}},
-            17: {par: 4, blue: {dist: 444, si: 10}, white: {dist: 416, si: 10}, red: {dist: 370, si: 10}},
-            18: {par: 4, blue: {dist: 375, si: 6}, white: {dist: 344, si: 6}, red: {dist: 326, si: 6}}
+            1: {blue: {par: 4, dist: 407, si: 7}, white: {par: 4, dist: 385, si: 7}, red: {par: 4, dist: 359, si: 7}},
+            2: {blue: {par: 5, dist: 519, si: 9}, white: {par: 5, dist: 487, si: 9}, red: {par: 5, dist: 460, si: 9}},
+            3: {blue: {par: 4, dist: 375, si: 15}, white: {par: 4, dist: 353, si: 15}, red: {par: 4, dist: 334, si: 15}},
+            4: {blue: {par: 5, dist: 540, si: 1}, white: {par: 5, dist: 517, si: 1}, red: {par: 5, dist: 480, si: 1}},
+            5: {blue: {par: 4, dist: 392, si: 5}, white: {par: 4, dist: 370, si: 5}, red: {par: 4, dist: 342, si: 5}},
+            6: {blue: {par: 3, dist: 155, si: 3}, white: {par: 3, dist: 137, si: 3}, red: {par: 3, dist: 115, si: 3}},
+            7: {blue: {par: 4, dist: 424, si: 17}, white: {par: 4, dist: 370, si: 17}, red: {par: 4, dist: 341, si: 17}},
+            8: {blue: {par: 4, dist: 385, si: 13}, white: {par: 4, dist: 363, si: 13}, red: {par: 4, dist: 334, si: 13}},
+            9: {blue: {par: 3, dist: 151, si: 11}, white: {par: 3, dist: 139, si: 11}, red: {par: 3, dist: 128, si: 11}},
+            10: {blue: {par: 4, dist: 413, si: 2}, white: {par: 4, dist: 392, si: 2}, red: {par: 4, dist: 372, si: 2}},
+            11: {blue: {par: 4, dist: 326, si: 18}, white: {par: 4, dist: 282, si: 18}, red: {par: 4, dist: 259, si: 18}},
+            12: {blue: {par: 3, dist: 189, si: 12}, white: {par: 3, dist: 164, si: 12}, red: {par: 3, dist: 139, si: 12}},
+            13: {blue: {par: 5, dist: 566, si: 16}, white: {par: 5, dist: 526, si: 16}, red: {par: 5, dist: 484, si: 16}},
+            14: {blue: {par: 4, dist: 413, si: 4}, white: {par: 4, dist: 392, si: 4}, red: {par: 4, dist: 367, si: 4}},
+            15: {blue: {par: 3, dist: 173, si: 8}, white: {par: 3, dist: 143, si: 8}, red: {par: 3, dist: 115, si: 8}},
+            16: {blue: {par: 5, dist: 536, si: 14}, white: {par: 5, dist: 495, si: 14}, red: {par: 5, dist: 452, si: 14}},
+            17: {blue: {par: 4, dist: 444, si: 10}, white: {par: 4, dist: 416, si: 10}, red: {par: 4, dist: 370, si: 10}},
+            18: {blue: {par: 4, dist: 375, si: 6}, white: {par: 4, dist: 344, si: 6}, red: {par: 4, dist: 326, si: 6}}
         }
     },
     {
@@ -174,24 +174,54 @@ const allCourseData = [
             {key: 'ladies', label: 'Ladies', totalDistance: 5391}
         ],
         holes: {
-            1: {par: 5, mens: {dist: 504, si: 12}, ladies: {dist: 429, si: 1}},
-            2: {par: 4, mens: {dist: 395, si: 1}, ladies: {dist: 386, si: 11}},
-            3: {par: 4, mens: {dist: 380, si: 6}, ladies: {dist: 335, si: 17}},
-            4: {par: 3, mens: {dist: 133, si: 15}, ladies: {dist: 127, si: 13}},
-            5: {par: 4, mens: {dist: 361, si: 9}, ladies: {dist: 330, si: 7}},
-            6: {par: 4, mens: {dist: 333, si: 11}, ladies: {dist: 301, si: 5}},
-            7: {par: 4, mens: {dist: 363, si: 4}, ladies: {dist: 320, si: 3}},
-            8: {par: 4, mens: {dist: 360, si: 7}, ladies: {dist: 309, si: 9}},
-            9: {par: 3, mens: {dist: 160, si: 14}, ladies: {dist: 136, si: 15}},
-            10: {par: 3, mens: {dist: 120, si: 17}, ladies: {dist: 110, si: 18}},
-            11: {par: 4, mens: {dist: 393, si: 3}, ladies: {dist: 379, si: 14}},
-            12: {par: 4, mens: {dist: 402, si: 2}, ladies: {dist: 300, si: 4}},
-            13: {par: 3, mens: {dist: 150, si: 8}, ladies: {dist: 145, si: 10}},
-            14: {par: 4, mens: {dist: 396, si: 5}, ladies: {dist: 370, si: 16}},
-            15: {par: 5, mens: {dist: 401, si: 18}, ladies: {dist: 390, si: 12}},
-            16: {par: 4, mens: {dist: 315, si: 13}, ladies: {dist: 295, si: 2}},
-            17: {par: 4, mens: {dist: 309, si: 16}, ladies: {dist: 305, si: 8}},
-            18: {par: 5, mens: {dist: 534, si: 10}, ladies: {dist: 424, si: 6}}
+            1: {mens: {par: 5, dist: 504, si: 12}, ladies: {par: 5, dist: 429, si: 1}},
+            2: {mens: {par: 4, dist: 395, si: 1}, ladies: {par: 4, dist: 386, si: 11}},
+            3: {mens: {par: 4, dist: 380, si: 6}, ladies: {par: 4, dist: 335, si: 17}},
+            4: {mens: {par: 3, dist: 133, si: 15}, ladies: {par: 3, dist: 127, si: 13}},
+            5: {mens: {par: 4, dist: 361, si: 9}, ladies: {par: 4, dist: 330, si: 7}},
+            6: {mens: {par: 4, dist: 333, si: 11}, ladies: {par: 4, dist: 301, si: 5}},
+            7: {mens: {par: 4, dist: 363, si: 4}, ladies: {par: 4, dist: 320, si: 3}},
+            8: {mens: {par: 4, dist: 360, si: 7}, ladies: {par: 4, dist: 309, si: 9}},
+            9: {mens: {par: 3, dist: 160, si: 14}, ladies: {par: 3, dist: 136, si: 15}},
+            10: {mens: {par: 3, dist: 120, si: 17}, ladies: {par: 3, dist: 110, si: 18}},
+            11: {mens: {par: 4, dist: 393, si: 3}, ladies: {par: 4, dist: 379, si: 14}},
+            12: {mens: {par: 4, dist: 402, si: 2}, ladies: {par: 4, dist: 300, si: 4}},
+            13: {mens: {par: 3, dist: 150, si: 8}, ladies: {par: 3, dist: 145, si: 10}},
+            14: {mens: {par: 4, dist: 396, si: 5}, ladies: {par: 4, dist: 370, si: 16}},
+            15: {mens: {par: 5, dist: 401, si: 18}, ladies: {par: 5, dist: 390, si: 12}},
+            16: {mens: {par: 4, dist: 315, si: 13}, ladies: {par: 4, dist: 295, si: 2}},
+            17: {mens: {par: 4, dist: 309, si: 16}, ladies: {par: 4, dist: 305, si: 8}},
+            18: {mens: {par: 5, dist: 534, si: 10}, ladies: {par: 5, dist: 424, si: 6}}
+        }
+    },
+    {
+        name: 'Strathfield Golf Club',
+        holePageUrl: 'https://www.strathfieldgolf.com.au/cms/course/{hole}/',
+        par: {blue: 70, white: 70, red: 71},
+        tees: [
+            {key: 'blue', label: 'Blue', totalDistance: 5922},
+            {key: 'white', label: 'White', totalDistance: 5650},
+            {key: 'red', label: 'Red', totalDistance: 5051}
+        ],
+        holes: {
+            1:  {blue: {par: 4, dist: 427, si: 1},  white: {par: 4, dist: 394, si: 1},  red: {par: 5, dist: 385, si: 1}},
+            2:  {blue: {par: 3, dist: 135, si: 14}, white: {par: 3, dist: 117, si: 14}, red: {par: 3, dist: 108, si: 14}},
+            3:  {blue: {par: 5, dist: 508, si: 3},  white: {par: 5, dist: 497, si: 3},  red: {par: 5, dist: 444, si: 3}},
+            4:  {blue: {par: 4, dist: 316, si: 11}, white: {par: 4, dist: 308, si: 11}, red: {par: 4, dist: 299, si: 11}},
+            5:  {blue: {par: 3, dist: 175, si: 15}, white: {par: 3, dist: 165, si: 15}, red: {par: 3, dist: 138, si: 15}},
+            6:  {blue: {par: 3, dist: 178, si: 17}, white: {par: 3, dist: 168, si: 17}, red: {par: 3, dist: 131, si: 17}},
+            7:  {blue: {par: 4, dist: 349, si: 7},  white: {par: 4, dist: 335, si: 7},  red: {par: 4, dist: 291, si: 7}},
+            8:  {blue: {par: 5, dist: 482, si: 5},  white: {par: 5, dist: 472, si: 5},  red: {par: 5, dist: 410, si: 5}},
+            9:  {blue: {par: 4, dist: 332, si: 9},  white: {par: 4, dist: 325, si: 9},  red: {par: 4, dist: 300, si: 9}},
+            10: {blue: {par: 3, dist: 199, si: 16}, white: {par: 3, dist: 185, si: 16}, red: {par: 3, dist: 154, si: 16}},
+            11: {blue: {par: 5, dist: 497, si: 4},  white: {par: 5, dist: 479, si: 4},  red: {par: 5, dist: 435, si: 4}},
+            12: {blue: {par: 4, dist: 377, si: 2},  white: {par: 4, dist: 362, si: 2},  red: {par: 4, dist: 320, si: 2}},
+            13: {blue: {par: 3, dist: 183, si: 18}, white: {par: 3, dist: 162, si: 18}, red: {par: 3, dist: 146, si: 18}},
+            14: {blue: {par: 4, dist: 333, si: 10}, white: {par: 4, dist: 314, si: 10}, red: {par: 4, dist: 293, si: 10}},
+            15: {blue: {par: 5, dist: 533, si: 6},  white: {par: 5, dist: 513, si: 6},  red: {par: 5, dist: 428, si: 6}},
+            16: {blue: {par: 3, dist: 146, si: 13}, white: {par: 3, dist: 135, si: 13}, red: {par: 3, dist: 119, si: 13}},
+            17: {blue: {par: 4, dist: 384, si: 8},  white: {par: 4, dist: 369, si: 8},  red: {par: 4, dist: 338, si: 8}},
+            18: {blue: {par: 4, dist: 368, si: 12}, white: {par: 4, dist: 350, si: 12}, red: {par: 4, dist: 312, si: 12}}
         }
     }
 ]
@@ -281,6 +311,18 @@ function getHoleSI(holeData, tees) {
 }
 
 /**
+ * Get the par for a hole, resolved by tee.
+ * holeData is courseData.holes[i], tees is the tee key string (e.g. 'blue').
+ * Returns the par number or undefined if not available.
+ */
+function getHolePar(holeData, tees) {
+    if (!holeData) return undefined;
+    const teeData = holeData[tees];
+    if (teeData && typeof teeData === 'object' && teeData.par !== undefined) return teeData.par;
+    return undefined;
+}
+
+/**
  * Get the distance for a hole, resolved by tee.
  * holeData is courseData.holes[i], tees is the tee key string (e.g. 'blue').
  * Returns the distance number or undefined if not available.
@@ -327,14 +369,20 @@ function generateScorecardHTML(scores, putts, courseData, handicap, tees) {
     const isPickup = (i) => scores[i] === 'P';
     const holeScore = (i) => isPickup(i) ? 'P' : (scores[i] || '-');
     const holePutts = (i) => putts[i] !== undefined ? putts[i] : '-';
-    const holePar = (i) => hd(i)?.par ?? '-';
+    const holePar = (i) => getHolePar(hd(i), tees) ?? '-';
     const holeSI = (i) => getHoleSI(hd(i), tees);
     const holePts = (i) => {
         if (isPickup(i)) return '-';
         if (!scores[i] || !hd(i)) return '-';
-        return calcStablefordPoints(scores[i], hd(i).par, holeSI(i), handicap);
+        const par = getHolePar(hd(i), tees);
+        if (par === undefined) return '-';
+        return calcStablefordPoints(scores[i], par, holeSI(i), handicap);
     };
-    const holeScoreClass = (i) => isPickup(i) ? 'pickup' : (scores[i] && hd(i) ? getScoreClass(scores[i], hd(i).par) : '');
+    const holeScoreClass = (i) => {
+        if (isPickup(i)) return 'pickup';
+        const par = getHolePar(hd(i), tees);
+        return (scores[i] && par !== undefined) ? getScoreClass(scores[i], par) : '';
+    };
     const holePtsClass = (i) => {
         const p = holePts(i);
         return typeof p === 'number' ? getStablefordClass(p) : '';
@@ -447,11 +495,12 @@ function calcRoundTotals(scores, putts, courseData, handicap, tees) {
     for (let i = 1; i <= 18; i++) {
         const half = i <= 9 ? result.front9 : result.back9;
         const hd = courseData ? courseData.holes[i] : null;
-        if (hd) half.par += hd.par;
+        const par = getHolePar(hd, tees);
+        if (par !== undefined) half.par += par;
         if (scores[i] !== undefined && scores[i] !== 'P') {
             half.score += scores[i];
             half.count++;
-            if (hd) half.stableford += calcStablefordPoints(scores[i], hd.par, getHoleSI(hd, tees), handicap);
+            if (par !== undefined) half.stableford += calcStablefordPoints(scores[i], par, getHoleSI(hd, tees), handicap);
         }
         if (putts[i] !== undefined) half.putts += putts[i];
     }
