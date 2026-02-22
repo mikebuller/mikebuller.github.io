@@ -96,8 +96,14 @@ async function loadDashboardStats() {
             getDocs(collection(window.db, 'rounds'))
         ]);
 
-        // Count rounds
-        document.getElementById('stat-active-rounds').textContent = scoresSnap.size;
+        // Build set of completed IDs to exclude stale scores
+        const completedIdsForStats = new Set();
+        completedSnap.forEach(d => completedIdsForStats.add(d.id));
+
+        // Count only truly active rounds (scores not in completedRounds)
+        let activeCount = 0;
+        scoresSnap.forEach(d => { if (!completedIdsForStats.has(d.id)) activeCount++; });
+        document.getElementById('stat-active-rounds').textContent = activeCount;
         document.getElementById('stat-completed-rounds').textContent = completedSnap.size;
         document.getElementById('stat-archived-rounds').textContent = archivedSnap.size;
 
@@ -234,6 +240,23 @@ async function loadAllActiveRounds() {
         const scores = [];
         scoresSnap.forEach(d => scores.push({ id: d.id, ...d.data() }));
 
+        // Get completed round IDs to filter out stale scores
+        const completedSnap = await getDocs(collection(window.db, 'completedRounds'));
+        const completedIds = new Set();
+        completedSnap.forEach(d => completedIds.add(d.id));
+
+        // Remove any scores that have already been completed
+        const activeScores = scores.filter(s => !completedIds.has(s.id));
+        scores.length = 0;
+        scores.push(...activeScores);
+
+        // Sort by most recently updated first
+        scores.sort((a, b) => {
+            const aTime = a.updatedAt ? new Date(a.updatedAt).getTime() : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+            const bTime = b.updatedAt ? new Date(b.updatedAt).getTime() : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
+            return bTime - aTime;
+        });
+
         if (scores.length === 0) {
             container.innerHTML = '<p class="empty-rounds-message">No active rounds</p>';
             return;
@@ -361,16 +384,23 @@ function createAdminRoundCard(roundId, roundData, scoreId, playerName, type) {
     card.innerHTML = `
         <button class="remove-btn corner-remove-btn" onclick="event.stopPropagation(); adminArchiveActiveRound('${roundId}', '${scoreId}')" title="Archive round">✕</button>
         <div class="my-round-info">
-            <div class="admin-player-badge">${playerName || 'Unknown'}</div>
+            <div class="admin-player-name-row">
+                <div class="admin-player-badge player-name-display">${playerName || 'Unknown'}</div>
+                <button class="player-edit-btn" onclick="event.stopPropagation(); startEditPlayerName(this)" title="Edit player name">✏️</button>
+            </div>
             <h4>${roundData.name || 'Unnamed Round'}</h4>
             <p class="my-round-course">${courseLine}</p>
             <p class="my-round-date">${dateStr}</p>
         </div>
     `;
 
+    // Store data for name update
+    card.dataset.scoreId = scoreId;
+    card.dataset.roundId = roundId;
+    card.dataset.cardType = 'active';
+
     card.style.cursor = 'pointer';
     card.addEventListener('click', () => {
-        // Navigate to live-scores in admin mode to edit this player's scores
         window.location.href = `live-scores.html?round=${roundId}&score=${scoreId}&admin=1`;
     });
 
@@ -416,13 +446,18 @@ function createAdminCompletedCard(completedRound, type = 'completed') {
         ${removeBtn}
         ${restoreBtn}
         <div class="my-round-info">
-            <div class="admin-player-badge">${completedRound.playerName || 'Unknown'}</div>
+            <div class="admin-player-name-row">
+                <div class="admin-player-badge player-name-display">${completedRound.playerName || 'Unknown'}</div>
+                <button class="player-edit-btn" onclick="event.stopPropagation(); startEditPlayerName(this)" title="Edit player name">✏️</button>
+            </div>
             <h4>${(completedRound.name || 'Completed Round').replace(/^.+ - /, '')}</h4>
             <p class="my-round-course">${courseLine}</p>
             <p class="my-round-date">${dateStr}</p>
             <p class="round-score-summary">${scoreSummary}</p>
         </div>
     `;
+
+    card.dataset.cardType = type;
 
     card.style.cursor = 'pointer';
     card.addEventListener('click', () => {
@@ -496,8 +531,8 @@ async function viewAdminLeaderboard(clickedRound) {
                         if (round.holes[i].score !== 'P') {
                             totalScore += round.holes[i].score;
                             if (courseInfo) {
-                                totalPar += courseInfo.holes[i].par;
-                                stablefordPoints += calcStablefordPoints(round.holes[i].score, courseInfo.holes[i].par, getHoleSI(courseInfo.holes[i], round.tees), handicap);
+                                totalPar += getHolePar(courseInfo.holes[i], round.tees) || 0;
+                                stablefordPoints += calcStablefordPoints(round.holes[i].score, getHolePar(courseInfo.holes[i], round.tees), getHoleSI(courseInfo.holes[i], round.tees), handicap);
                             }
                         }
                     }
@@ -509,8 +544,8 @@ async function viewAdminLeaderboard(clickedRound) {
                         if (round.scores[i] !== 'P') {
                             totalScore += round.scores[i];
                             if (courseInfo) {
-                                totalPar += courseInfo.holes[i].par;
-                                stablefordPoints += calcStablefordPoints(round.scores[i], courseInfo.holes[i].par, getHoleSI(courseInfo.holes[i], round.tees), handicap);
+                                totalPar += getHolePar(courseInfo.holes[i], round.tees) || 0;
+                                stablefordPoints += calcStablefordPoints(round.scores[i], getHolePar(courseInfo.holes[i], round.tees), getHoleSI(courseInfo.holes[i], round.tees), handicap);
                             }
                         }
                     }
@@ -774,11 +809,13 @@ function handleStatCardAction(statId) {
         case 'players':
             playersSection.style.display = '';
             renderPlayersSection();
+            requestAnimationFrame(updateRoundsListHeight);
             break;
 
         case 'courses':
             coursesSection.style.display = '';
             renderCoursesSection();
+            requestAnimationFrame(updateRoundsListHeight);
             break;
 
         case 'best-gross':
@@ -883,8 +920,11 @@ function renderPlayersSection() {
         return `
             <div class="admin-detail-card" onclick="onPlayerCardClick('${name.replace(/'/g, "\\'")}')">
                 <div class="admin-detail-card-header">
-                    <span class="admin-detail-card-name">${name}</span>
-                    <span class="admin-detail-card-badge">${ps.rounds} round${ps.rounds !== 1 ? 's' : ''}</span>
+                    <div class="admin-player-name-row">
+                        <span class="admin-detail-card-name player-name-display">${name}</span>
+                        <button class="player-edit-btn" onclick="event.stopPropagation(); startEditGlobalPlayerName(this, '${name.replace(/'/g, "\\'")}')" title="Rename player everywhere">✏️</button>
+                    </div>
+                    <span class="admin-detail-card-badge">${ps.rounds} round${ps.rounds !== 1 ? 's' : ''} completed</span>
                 </div>
                 <div class="admin-detail-card-stats">
                     <span>Best Gross: <strong>${bestGross}</strong></span>
@@ -935,7 +975,7 @@ function renderCoursesSection() {
             <div class="admin-detail-card" onclick="onCourseCardClick('${name.replace(/'/g, "\\'")}')">
                 <div class="admin-detail-card-header">
                     <span class="admin-detail-card-name">${name}</span>
-                    <span class="admin-detail-card-badge">${cs.rounds} round${cs.rounds !== 1 ? 's' : ''}</span>
+                    <span class="admin-detail-card-badge">${cs.rounds} round${cs.rounds !== 1 ? 's' : ''} completed</span>
                 </div>
                 <div class="admin-detail-card-stats">
                     <span>Players: <strong>${cs.players.size}</strong></span>
@@ -1059,6 +1099,31 @@ function updateRoundsListHeight() {
             list.style.maxHeight = listHeight + 'px';
         }
     });
+
+    // Also apply to players and courses detail lists when their sections are visible
+    const playersSection = document.getElementById('admin-players-section');
+    const coursesSection = document.getElementById('admin-courses-section');
+
+    [playersSection, coursesSection].forEach(section => {
+        if (!section || section.style.display === 'none') return;
+
+        // Recalculate for detail sections — they have a heading but no tabs/filters
+        const heading = section.querySelector('h3');
+        const headingHeight = heading ? heading.offsetHeight + 16 : 0; // 16px margin
+        const sectionPad = parseFloat(window.getComputedStyle(section).paddingTop) + parseFloat(window.getComputedStyle(section).paddingBottom);
+
+        const detailUsedHeight = [navbar, activity, dashboard, footer]
+            .reduce((sum, el) => el ? sum + el.offsetHeight : sum, 0);
+
+        const detailAvailable = viewportHeight - detailUsedHeight - sectionPad - pagePadding - headingHeight - 15;
+        const detailHeight = Math.max(minHeight, detailAvailable);
+
+        const list = section.querySelector('.admin-detail-list');
+        if (list) {
+            list.style.maxHeight = detailHeight + 'px';
+            list.style.overflowY = 'auto';
+        }
+    });
 }
 
 // ========================================
@@ -1135,12 +1200,24 @@ function startLiveActivityListener() {
                         timeAgo,
                         timestamp: updatedAt.getTime()
                     });
-                } else if (change.type === 'added' && previousActiveRoundsSnapshot.size > 0) {
+                } else if (change.type === 'added') {
+                    // Find the first score in the new document
+                    let scoreDesc = '';
+                    if (data.holes) {
+                        for (let i = 1; i <= 18; i++) {
+                            const hole = data.holes?.[i];
+                            if (hole && hole.score !== null && hole.score !== undefined) {
+                                const scoreText = hole.score === 'P' ? 'Pickup' : hole.score;
+                                scoreDesc = ` — Scored <strong>${scoreText}</strong> on Hole ${i}`;
+                                break;
+                            }
+                        }
+                    }
                     changes.push({
                         type: 'joined',
                         playerName,
                         course,
-                        description: `Joined round`,
+                        description: `Joined round${scoreDesc}`,
                         timeAgo,
                         timestamp: updatedAt.getTime()
                     });
@@ -1431,6 +1508,173 @@ window.initializeAdminPage = initializeAdminPage;
 window.switchAdminTab = switchAdminTab;
 window.closeRoundModal = closeRoundModal;
 window.switchRoundModalTab = switchRoundModalTab;
+// ========================================
+// INLINE PLAYER NAME EDITING
+// ========================================
+
+function startEditPlayerName(editBtn) {
+    const row = editBtn.closest('.admin-player-name-row');
+    const display = row.querySelector('.player-name-display');
+    const currentName = display.textContent.trim();
+
+    // Replace the display with an input
+    row.innerHTML = `
+        <input type="text" class="player-name-input" value="${currentName}" 
+            onclick="event.stopPropagation()" 
+            onkeydown="if(event.key==='Enter'){event.stopPropagation();savePlayerName(this)}else if(event.key==='Escape'){event.stopPropagation();cancelEditPlayerName(this,'${currentName.replace(/'/g, "\\'")}')}">
+        <button class="player-name-save-btn" onclick="event.stopPropagation(); savePlayerName(this.previousElementSibling)" title="Save">✓</button>
+        <button class="player-name-cancel-btn" onclick="event.stopPropagation(); cancelEditPlayerName(this.previousElementSibling.previousElementSibling, '${currentName.replace(/'/g, "\\'")}')" title="Cancel">✗</button>
+    `;
+
+    const input = row.querySelector('.player-name-input');
+    input.focus();
+    input.select();
+}
+
+function cancelEditPlayerName(input, originalName) {
+    const row = input.closest('.admin-player-name-row');
+    row.innerHTML = `
+        <div class="admin-player-badge player-name-display">${originalName}</div>
+        <button class="player-edit-btn" onclick="event.stopPropagation(); startEditPlayerName(this)" title="Edit player name">✏️</button>
+    `;
+}
+
+async function savePlayerName(input) {
+    const newName = input.value.trim();
+    if (!newName) return;
+
+    const card = input.closest('.my-round-card');
+    const row = input.closest('.admin-player-name-row');
+    const cardType = card.dataset.cardType;
+    const scoreId = card.dataset.scoreId;
+    const roundId = card.dataset.roundId;
+
+    if (!window.db || !window.firestoreHelpers) return;
+    const { doc, updateDoc, getDoc, collection, query, where, getDocs } = window.firestoreHelpers;
+
+    try {
+        // Show saving state
+        row.innerHTML = `<div class="admin-player-badge player-name-display">${newName}</div><span class="player-name-saving">Saving...</span>`;
+
+        const updates = [];
+
+        if (cardType === 'active') {
+            // Update scores collection
+            updates.push(updateDoc(doc(window.db, 'scores', scoreId), { playerName: newName }));
+            // Update activeRounds (uses composite key: roundId_scoreId)
+            const activeRoundId = `${roundId}_${scoreId}`;
+            const activeSnap = await getDoc(doc(window.db, 'activeRounds', activeRoundId));
+            if (activeSnap.exists()) {
+                updates.push(updateDoc(doc(window.db, 'activeRounds', activeRoundId), { playerName: newName }));
+            }
+        } else if (cardType === 'completed') {
+            updates.push(updateDoc(doc(window.db, 'completedRounds', scoreId), { playerName: newName }));
+        } else if (cardType === 'archived') {
+            updates.push(updateDoc(doc(window.db, 'archivedRounds', scoreId), { playerName: newName }));
+        }
+
+        await Promise.all(updates);
+
+        // Update the card's filter data attribute
+        card.dataset.player = newName.toLowerCase();
+
+        // Restore the display with the new name
+        row.innerHTML = `
+            <div class="admin-player-badge player-name-display">${newName}</div>
+            <button class="player-edit-btn" onclick="event.stopPropagation(); startEditPlayerName(this)" title="Edit player name">✏️</button>
+        `;
+
+        console.log(`Player name updated to "${newName}" in ${cardType}`);
+    } catch (error) {
+        console.error('Error updating player name:', error);
+        row.innerHTML = `
+            <div class="admin-player-badge player-name-display">${newName}</div>
+            <button class="player-edit-btn" onclick="event.stopPropagation(); startEditPlayerName(this)" title="Edit player name">✏️</button>
+        `;
+        alert('Error updating player name. Please try again.');
+    }
+}
+
+// Global player rename (from players section — renames across ALL collections)
+function startEditGlobalPlayerName(btn, oldName) {
+    const card = btn.closest('.admin-detail-card');
+    const row = btn.closest('.admin-player-name-row');
+
+    row.innerHTML = `
+        <input type="text" class="player-name-input" value="${oldName}" data-old-name="${oldName}" />
+        <button class="player-name-save-btn" onclick="event.stopPropagation(); saveGlobalPlayerName(this)">✓</button>
+        <button class="player-name-cancel-btn" onclick="event.stopPropagation(); cancelEditGlobalPlayerName(this, '${oldName.replace(/'/g, "\\'")}')">✗</button>
+    `;
+
+    const input = row.querySelector('.player-name-input');
+    input.focus();
+    input.select();
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); saveGlobalPlayerName(row.querySelector('.player-name-save-btn')); }
+        if (e.key === 'Escape') { e.preventDefault(); cancelEditGlobalPlayerName(row.querySelector('.player-name-cancel-btn'), oldName); }
+    });
+}
+
+async function saveGlobalPlayerName(btn) {
+    const row = btn.closest('.admin-player-name-row');
+    const input = row.querySelector('.player-name-input');
+    const oldName = input.dataset.oldName;
+    const newName = input.value.trim();
+
+    if (!newName || newName === oldName) {
+        cancelEditGlobalPlayerName(btn, oldName);
+        return;
+    }
+
+    row.innerHTML = `<span class="admin-detail-card-name player-name-display">Saving...</span>`;
+
+    try {
+        const { collection, getDocs, doc, updateDoc, query, where } = window.firestoreHelpers;
+        let updatedCount = 0;
+
+        // Update in all collections: scores, activeRounds, completedRounds, archivedRounds
+        const collections = ['scores', 'activeRounds', 'completedRounds', 'archivedRounds'];
+        for (const col of collections) {
+            const snap = await getDocs(collection(window.db, col));
+            for (const d of snap.docs) {
+                const data = d.data();
+                if (data.playerName === oldName) {
+                    await updateDoc(doc(window.db, col, d.id), { playerName: newName });
+                    updatedCount++;
+                }
+            }
+        }
+
+        console.log(`Renamed "${oldName}" to "${newName}" across ${updatedCount} documents`);
+
+        // Refresh the entire admin page to reflect changes everywhere
+        await loadDashboardStats();
+        await loadAllActiveRounds();
+        await loadAllCompletedRounds();
+        await loadAllArchivedRounds();
+        renderPlayersSection();
+
+    } catch (error) {
+        console.error('Error renaming player globally:', error);
+        alert('Error renaming player. Please try again.');
+        renderPlayersSection();
+    }
+}
+
+function cancelEditGlobalPlayerName(btn, oldName) {
+    const row = btn.closest('.admin-player-name-row');
+    row.innerHTML = `
+        <span class="admin-detail-card-name player-name-display">${oldName}</span>
+        <button class="player-edit-btn" onclick="event.stopPropagation(); startEditGlobalPlayerName(this, '${oldName.replace(/'/g, "\\'")}')" title="Rename player everywhere">✏️</button>
+    `;
+}
+
+window.startEditPlayerName = startEditPlayerName;
+window.savePlayerName = savePlayerName;
+window.cancelEditPlayerName = cancelEditPlayerName;
+window.startEditGlobalPlayerName = startEditGlobalPlayerName;
+window.saveGlobalPlayerName = saveGlobalPlayerName;
+window.cancelEditGlobalPlayerName = cancelEditGlobalPlayerName;
 window.onStatCardClick = onStatCardClick;
 window.applyAdminFilters = applyAdminFilters;
 window.clearAdminFilters = clearAdminFilters;

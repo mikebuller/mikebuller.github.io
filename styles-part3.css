@@ -2489,7 +2489,7 @@ body.header-lb-active {
 }
 
 .my-rounds-section {
-    padding: 1.5rem;
+    padding: 1.5rem 0;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     box-sizing: border-box;
@@ -2543,7 +2543,7 @@ body.header-lb-active {
 }
 
 .empty-rounds-message {
-    color: var(--masters-green);
+    color: var(--masters-light-brown);
     text-align: center;
     padding: 2rem;
     font-style: italic;
@@ -2614,6 +2614,79 @@ body.header-lb-active {
     color: #c53030;
 }
 
+/* Inline player name editing */
+.admin-player-name-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.player-edit-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.75rem;
+    padding: 2px 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.my-round-card:hover .player-edit-btn {
+    opacity: 0.6;
+}
+
+.player-edit-btn:hover {
+    opacity: 1 !important;
+}
+
+.player-name-input {
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border: 1px solid var(--masters-gold);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #1a1a2e;
+    outline: none;
+    width: 140px;
+}
+
+.player-name-input:focus {
+    box-shadow: 0 0 0 2px rgba(198, 163, 80, 0.3);
+}
+
+.player-name-save-btn,
+.player-name-cancel-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 2px 4px;
+    line-height: 1;
+}
+
+.player-name-save-btn {
+    color: #38a169;
+}
+
+.player-name-save-btn:hover {
+    color: #2f855a;
+}
+
+.player-name-cancel-btn {
+    color: #e53e3e;
+}
+
+.player-name-cancel-btn:hover {
+    color: #c53030;
+}
+
+.player-name-saving {
+    font-size: 0.75rem;
+    color: var(--masters-gold);
+    font-style: italic;
+}
+
 .archived-actions {
     width: 100%;
     text-align: center;
@@ -2680,6 +2753,7 @@ body.header-lb-active {
 
 .admin-page .live-scores-section {
     flex: 1;
+    padding-bottom: 15px;
 }
 
 .admin-page .live-scores-section > .container {
@@ -2693,6 +2767,12 @@ body.header-lb-active {
 }
 
 .admin-page .my-rounds-list {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+.admin-page .admin-detail-list {
+    max-height: none;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch;
 }
@@ -3190,7 +3270,7 @@ body.header-lb-active {
 
     /* My Rounds Section Mobile */
     .my-rounds-section {
-        padding: 0 1rem 0 1rem;
+        padding: 0;
     }
 
     .my-rounds-tabs {
@@ -3685,7 +3765,7 @@ body.header-lb-active {
 .admin-auth-check {
     text-align: center;
     padding: 60px 20px;
-    color: #C9A227;
+    color: var(--masters-light-brown);
     font-size: 1.1rem;
 }
 
