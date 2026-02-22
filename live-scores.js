@@ -41,12 +41,12 @@ async function initAudio() {
             fetch(snakeHissSoundSrc),
             fetch(pickupSoundSrc)
         ]);
-        
+
         const [snakeArrayBuffer, pickupArrayBuffer] = await Promise.all([
             snakeResponse.arrayBuffer(),
             pickupResponse.arrayBuffer()
         ]);
-        
+
         [snakeAudioBuffer, pickupAudioBuffer] = await Promise.all([
             snakeAudioContext.decodeAudioData(snakeArrayBuffer),
             snakeAudioContext.decodeAudioData(pickupArrayBuffer)
@@ -96,7 +96,7 @@ function _playBuffer(soundType) {
     try {
         const audioBuffer = soundType === 'snake' ? snakeAudioBuffer : pickupAudioBuffer;
         const fallbackSrc = soundType === 'snake' ? snakeHissSoundSrc : pickupSoundSrc;
-        
+
         if (!snakeAudioContext || !audioBuffer) {
             // Fallback to basic Audio if Web Audio API failed to init
             const audio = new Audio(fallbackSrc);
@@ -1836,7 +1836,7 @@ function generateModalScorecard() {
             const emoji = p.type === 'ctp' ? '🎯' : '💪';
             const dataKey = p.type === 'ctp' ? 'ctp' : 'longestDrive';
             const value = modalRoundData[dataKey]?.[h] || '';
-            wonPrizes[h].push({ emoji, value: value + 'm' });
+            wonPrizes[h].push({ emoji, value: value + (p.type === 'ctp' ? 'cm' : 'm') });
         }
     }
 
