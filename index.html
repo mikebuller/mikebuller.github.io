@@ -40,8 +40,39 @@
         </div>
         <div class="video-overlay"></div>
         <div class="hero-content">
-            <h1>The Bonville G.C. Invitational</h1>
-            <p>Welcome to an exclusive golf experience set amongst the stunning natural beauty of Bonville Golf Resort</p>
+            <div class="hero-text">
+                <h1>The Bonville G.C. Invitational</h1>
+                <p>Welcome to an exclusive golf experience set amongst the stunning natural beauty of Bonville Golf Resort</p>
+            </div>
+            <div id="countdown-container" style="margin-top: 20px;">
+                <p style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 4px; color: var(--masters-gold); margin-bottom: 15px; font-weight: 400;">⛳ Tee Off In ⛳</p>
+                <div id="countdown-timer" style="display: inline-flex; justify-content: center; align-items: center; gap: 8px; background: rgba(0,0,0,0.35); border-radius: 12px; padding: 15px 25px; border: 1px solid rgba(201,162,39,0.3);">
+                    <div style="text-align: center; min-width: 52px;">
+                        <div id="cd-weeks" style="font-size: 2.2rem; font-weight: 700; color: var(--masters-gold); font-family: 'Courier New', monospace; line-height: 1;">--</div>
+                        <div style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.7); margin-top: 4px;">Weeks</div>
+                    </div>
+                    <span style="font-size: 1.8rem; color: rgba(201,162,39,0.5); font-weight: 300; align-self: flex-start; margin-top: 2px;">·</span>
+                    <div style="text-align: center; min-width: 38px;">
+                        <div id="cd-days" style="font-size: 2.2rem; font-weight: 700; color: var(--masters-gold); font-family: 'Courier New', monospace; line-height: 1;">--</div>
+                        <div style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.7); margin-top: 4px;">Days</div>
+                    </div>
+                    <span style="font-size: 1.8rem; color: rgba(201,162,39,0.5); font-weight: 300; align-self: flex-start; margin-top: 2px;">·</span>
+                    <div style="text-align: center; min-width: 52px;">
+                        <div id="cd-hours" style="font-size: 2.2rem; font-weight: 700; color: var(--masters-gold); font-family: 'Courier New', monospace; line-height: 1;">--</div>
+                        <div style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.7); margin-top: 4px;">Hours</div>
+                    </div>
+                    <span style="font-size: 2rem; color: var(--masters-gold); font-weight: 700; font-family: 'Courier New', monospace; align-self: flex-start; margin-top: 0;">:</span>
+                    <div style="text-align: center; min-width: 52px;">
+                        <div id="cd-mins" style="font-size: 2.2rem; font-weight: 700; color: var(--masters-gold); font-family: 'Courier New', monospace; line-height: 1;">--</div>
+                        <div style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.7); margin-top: 4px;">Mins</div>
+                    </div>
+                    <span style="font-size: 2rem; color: var(--masters-gold); font-weight: 700; font-family: 'Courier New', monospace; align-self: flex-start; margin-top: 0;">:</span>
+                    <div style="text-align: center; min-width: 52px;">
+                        <div id="cd-secs" style="font-size: 2.2rem; font-weight: 700; color: var(--masters-gold); font-family: 'Courier New', monospace; line-height: 1;">--</div>
+                        <div style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.7); margin-top: 4px;">Secs</div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="scroll-indicator">▼</div>
     </section>
@@ -290,7 +321,8 @@
                     rel: 0,
                     modestbranding: 1,
                     playsinline: 1,
-                    enablejsapi: 1
+                    enablejsapi: 1,
+                    start: 38
                 },
                 events: {
                     'onReady': onPlayerReady,
@@ -307,7 +339,7 @@
         function onPlayerStateChange(event) {
             // If video ends (shouldn't happen with our loop, but as fallback)
             if (event.data === YT.PlayerState.ENDED) {
-                player.seekTo(0);
+                player.seekTo(38);
                 player.playVideo();
             }
             // Restart loop check when video is playing
@@ -330,7 +362,7 @@
 
                     // Loop 15 seconds before the video ends
                     if (duration > 0 && currentTime >= duration - LOOP_BEFORE_END) {
-                        player.seekTo(0);
+                        player.seekTo(38);
                         player.playVideo();
                     }
                 }
@@ -537,6 +569,46 @@
         document.addEventListener('DOMContentLoaded', () => {
             populateCourseScorecard();
             populateHoleFlyovers();
+
+            // Countdown to 07:00 on June 27, 2026 (local time)
+            const countdownContainer = document.getElementById('countdown-container');
+            const cdWeeks = document.getElementById('cd-weeks');
+            const cdDays = document.getElementById('cd-days');
+            const cdHours = document.getElementById('cd-hours');
+            const cdMins = document.getElementById('cd-mins');
+            const cdSecs = document.getElementById('cd-secs');
+            const targetDate = new Date(2026, 5, 27, 10, 30, 0); // months are 0-indexed
+
+            function updateCountdown() {
+                const now = new Date();
+                const diff = targetDate - now;
+
+                if (diff <= 0) {
+                    cdWeeks.textContent = '00';
+                    cdDays.textContent = '0';
+                    cdHours.textContent = '00';
+                    cdMins.textContent = '00';
+                    cdSecs.textContent = '00';
+                    countdownContainer.querySelector('p').textContent = "It's Tee Time! ⛳";
+                    return;
+                }
+
+                const totalSeconds = Math.floor(diff / 1000);
+                const weeks = Math.floor(totalSeconds / (7 * 24 * 3600));
+                const days = Math.floor((totalSeconds % (7 * 24 * 3600)) / (24 * 3600));
+                const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+
+                cdWeeks.textContent = String(weeks).padStart(2, '0');
+                cdDays.textContent = String(days);
+                cdHours.textContent = String(hours).padStart(2, '0');
+                cdMins.textContent = String(minutes).padStart(2, '0');
+                cdSecs.textContent = String(seconds).padStart(2, '0');
+            }
+
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
         });
 
         // Play hole flyover video
