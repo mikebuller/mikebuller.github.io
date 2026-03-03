@@ -1007,6 +1007,7 @@ window.openRoundModal = openRoundModal;
 window.closeRoundModal = closeRoundModal;
 window.switchRoundModalTab = switchRoundModalTab;
 window.viewLeaderboard = viewLeaderboard;
+window.viewScorecardFromLeaderboard = viewScorecardFromLeaderboard;
 window.initializeRoundsPage = initializeRoundsPage;
 
 // Course data is loaded from course-data.js (shared with live-scores.js)
@@ -1090,6 +1091,13 @@ function switchRoundModalTab(tab) {
     }
 }
 
+// View a player's scorecard from the leaderboard (switches to scorecard tab)
+async function viewScorecardFromLeaderboard(scoreId) {
+    if (!scoreId) return;
+    await viewScorecard(scoreId);
+    switchRoundModalTab('scorecard');
+}
+
 // View leaderboard for a completed round (shows all players in that round)
 async function viewLeaderboard(roundId) {
     if (!window.db || !window.firestoreHelpers) {
@@ -1147,25 +1155,38 @@ async function viewLeaderboard(roundId) {
         }
 
         // Build leaderboard data
+        const useStableford = !!courseInfo; // Use stableford when course data is available
+
         const leaderboardData = allPlayers.map(round => {
             let holesPlayed = 0;
             let totalScore = 0;
             let totalPar = 0;
             let stablefordPoints = 0;
+            let front9Score = 0, back9Score = 0;
+            let front9Stableford = 0, back9Stableford = 0;
             const handicap = round.playerHandicap || round.handicap || 0;
+
+            // Helper to process a hole's score
+            function processHole(i, score) {
+                if (score === 'P') return;
+                totalScore += score;
+                if (i <= 9) front9Score += score;
+                else back9Score += score;
+                if (courseInfo) {
+                    totalPar += getHolePar(courseInfo.holes[i], round.tees) || 0;
+                    const pts = calcStablefordPoints(score, getHolePar(courseInfo.holes[i], round.tees), getHoleSI(courseInfo.holes[i], round.tees), handicap);
+                    stablefordPoints += pts;
+                    if (i <= 9) front9Stableford += pts;
+                    else back9Stableford += pts;
+                }
+            }
 
             // Calculate from holes data if available
             if (round.holes) {
                 for (let i = 1; i <= 18; i++) {
                     if (round.holes[i] && round.holes[i].score !== null && round.holes[i].score !== undefined) {
                         holesPlayed = i;
-                        if (round.holes[i].score !== 'P') {
-                            totalScore += round.holes[i].score;
-                            if (courseInfo) {
-                                totalPar += getHolePar(courseInfo.holes[i], round.tees) || 0;
-                                stablefordPoints += calcStablefordPoints(round.holes[i].score, getHolePar(courseInfo.holes[i], round.tees), getHoleSI(courseInfo.holes[i], round.tees), handicap);
-                            }
-                        }
+                        processHole(i, round.holes[i].score);
                     }
                 }
             } else if (round.scores) {
@@ -1173,13 +1194,7 @@ async function viewLeaderboard(roundId) {
                 for (let i = 1; i <= 18; i++) {
                     if (round.scores[i] !== undefined && round.scores[i] !== null) {
                         holesPlayed = i;
-                        if (round.scores[i] !== 'P') {
-                            totalScore += round.scores[i];
-                            if (courseInfo) {
-                                totalPar += getHolePar(courseInfo.holes[i], round.tees) || 0;
-                                stablefordPoints += calcStablefordPoints(round.scores[i], getHolePar(courseInfo.holes[i], round.tees), getHoleSI(courseInfo.holes[i], round.tees), handicap);
-                            }
-                        }
+                        processHole(i, round.scores[i]);
                     }
                 }
             }
@@ -1201,6 +1216,7 @@ async function viewLeaderboard(roundId) {
             }
 
             return {
+                id: round.id,
                 name: round.playerName || 'Unknown',
                 handicap: handicap,
                 holesPlayed: holesPlayed,
@@ -1209,6 +1225,10 @@ async function viewLeaderboard(roundId) {
                 totalPar: totalPar,
                 scoreToPar: totalScore - totalPar,
                 stablefordPoints: stablefordPoints,
+                front9Score: front9Score,
+                back9Score: back9Score,
+                front9Stableford: front9Stableford,
+                back9Stableford: back9Stableford,
                 isFinished: round._isCompleted || round.status === 'finished',
                 hasSnake: lastThreePuttHole > 0,
                 lastThreePuttHole: lastThreePuttHole
@@ -1237,16 +1257,69 @@ async function viewLeaderboard(roundId) {
             });
         }
 
-        // Sort by stableford points (highest first)
+        // Sort with countback tiebreaker logic
+        // Stableford: highest points wins, countback = highest back 9 stableford, then front 9
+        // Gross: lowest score wins, countback = lowest back 9 gross, then front 9
         leaderboardData.sort((a, b) => {
-            if (a.stablefordPoints !== b.stablefordPoints) return b.stablefordPoints - a.stablefordPoints;
+            if (useStableford) {
+                if (a.stablefordPoints !== b.stablefordPoints) return b.stablefordPoints - a.stablefordPoints;
+                // Countback: best back 9 stableford
+                if (a.back9Stableford !== b.back9Stableford) return b.back9Stableford - a.back9Stableford;
+                // Countback: best front 9 stableford
+                if (a.front9Stableford !== b.front9Stableford) return b.front9Stableford - a.front9Stableford;
+            } else {
+                if (a.totalScore !== b.totalScore) return a.totalScore - b.totalScore;
+                // Countback: best (lowest) back 9 gross
+                if (a.back9Score !== b.back9Score) return a.back9Score - b.back9Score;
+                // Countback: best (lowest) front 9 gross
+                if (a.front9Score !== b.front9Score) return a.front9Score - b.front9Score;
+            }
             return b.holesPlayed - a.holesPlayed;
+        });
+
+        // Determine positions with ties and countback indicators
+        leaderboardData.forEach((player, index) => {
+            if (index === 0) {
+                player.position = 1;
+                player.wonByCountback = false;
+            } else {
+                const prev = leaderboardData[index - 1];
+                const sameScore = useStableford
+                    ? player.stablefordPoints === prev.stablefordPoints
+                    : player.totalScore === prev.totalScore;
+
+                if (sameScore) {
+                    // Same primary score — check if countback resolved it
+                    const sameBack9 = useStableford
+                        ? player.back9Stableford === prev.back9Stableford
+                        : player.back9Score === prev.back9Score;
+                    const sameFront9 = useStableford
+                        ? player.front9Stableford === prev.front9Stableford
+                        : player.front9Score === prev.front9Score;
+
+                    if (sameBack9 && sameFront9) {
+                        // True tie — share position
+                        player.position = prev.position;
+                        player.wonByCountback = false;
+                    } else {
+                        // Resolved by countback — different position
+                        player.position = index + 1;
+                        player.wonByCountback = true;
+                        // Mark the player above as also won by countback
+                        if (!prev.wonByCountback) prev.wonByCountback = true;
+                    }
+                } else {
+                    player.position = index + 1;
+                    player.wonByCountback = false;
+                }
+            }
         });
 
         // Render leaderboard rows
         const body = document.getElementById('leaderboard-modal-body');
         body.innerHTML = leaderboardData.map((player, index) => {
-            const pos = index + 1;
+            const pos = player.position;
+            const countbackLabel = player.wonByCountback ? ' <span class="countback-label">c/b</span>' : '';
             let scoreClass = 'even-par';
             let scoreDisplay = '-';
 
@@ -1276,8 +1349,8 @@ async function viewLeaderboard(roundId) {
             if (!player.isFinished) playerClass += ' live';
 
             return `
-                <div class="${playerClass}">
-                    <span class="header-lb-pos">${pos}</span>
+                <div class="${playerClass}" style="cursor: pointer;" onclick="viewScorecardFromLeaderboard('${player.id}')">
+                    <span class="header-lb-pos">${pos}${countbackLabel}</span>
                     <span class="header-lb-snake">${snakeIcon}</span>
                     <span class="header-lb-name">${player.name}</span>
                     <span class="header-lb-hole">${holeDisplay}</span>

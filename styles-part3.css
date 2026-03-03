@@ -3781,6 +3781,15 @@ body.header-lb-active {
     text-align: center;
 }
 
+.countback-label {
+    display: block;
+    font-size: 0.6rem;
+    font-weight: 400;
+    color: var(--masters-gold);
+    opacity: 0.85;
+    letter-spacing: 0.5px;
+}
+
 .leaderboard-modal-body .header-lb-snake {
     font-size: 1rem;
     text-align: center;
