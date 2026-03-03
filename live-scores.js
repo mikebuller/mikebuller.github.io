@@ -253,7 +253,7 @@ async function loadRoundFromParams(roundId, scoreId) {
             playerName: scoreData.playerName,
             teamName: scoreData.teamName,
             handicap: scoreData.handicap || scoreData.playerHandicap || 18,
-            tees: scoreData.tees || roundData.settings?.tees || 'tallwood',
+            tees: scoreData.tees || roundData.settings?.tees || 'tallowwood',
             course: roundData.settings?.course || 'Unknown Course',
             roundName: roundData.name || 'Round',
             holePrizes: roundData.settings?.holePrizes || [],
@@ -986,7 +986,7 @@ function showHoleImage() {
 
     const hole = currentRound.currentHole;
     const holeData = courseData ? courseData.holes[hole] : null;
-    const tees = currentRound.tees || 'tallwood';
+    const tees = currentRound.tees || 'tallowwood';
     const imagePath = getHoleImagePath(currentRound.course, hole);
     const flyover = getHoleFlyover(currentRound.course, hole);
     const modal = document.getElementById('hole-image-modal');
@@ -1005,6 +1005,26 @@ function showHoleImage() {
         if (distance) parts.push(`${distance}m`);
     }
     caption.textContent = parts.join(' - ');
+
+    // Populate description and tip if available
+    const descriptionEl = document.getElementById('hole-description');
+    const tipEl = document.getElementById('hole-tip');
+    const description = courseData && courseData.descriptions ? courseData.descriptions[hole] : null;
+    const tip = courseData && courseData.tips ? courseData.tips[hole] : null;
+
+    if (description) {
+        descriptionEl.textContent = description;
+        descriptionEl.style.display = 'block';
+    } else {
+        descriptionEl.style.display = 'none';
+    }
+
+    if (tip) {
+        tipEl.innerHTML = `💡 <strong>Tip:</strong> ${tip}`;
+        tipEl.style.display = 'block';
+    } else {
+        tipEl.style.display = 'none';
+    }
 
     // Reset state
     videoContainer.style.display = 'none';
@@ -1048,6 +1068,10 @@ function switchToFlyover() {
     img.style.display = 'none';
     flyoverBtn.style.display = 'none';
     caption.style.display = 'none';
+    const descEl = document.getElementById('hole-description');
+    const tipEl = document.getElementById('hole-tip');
+    if (descEl) descEl.style.display = 'none';
+    if (tipEl) tipEl.style.display = 'none';
     modalContent.classList.add('fullscreen-video');
     showFlyoverVideo(flyover);
 }

@@ -2271,6 +2271,28 @@ input[type="date"].setup-input {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
+.hole-description {
+    color: var(--masters-cream, #f0ead6);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-top: 12px;
+    padding: 0 10px;
+    text-align: center;
+    opacity: 0.85;
+}
+
+.hole-tip {
+    color: var(--masters-gold);
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-top: 10px;
+    padding: 8px 14px;
+    text-align: center;
+    background: rgba(201, 162, 39, 0.12);
+    border: 1px solid rgba(201, 162, 39, 0.3);
+    border-radius: 8px;
+}
+
 @media (max-width: 768px) {
     .hole-image-close-btn {
         top: -35px;
@@ -2281,6 +2303,15 @@ input[type="date"].setup-input {
 
     .hole-image-caption {
         font-size: 1.1rem;
+    }
+
+    .hole-description {
+        font-size: 0.85rem;
+        padding: 0 5px;
+    }
+
+    .hole-tip {
+        font-size: 0.8rem;
     }
 }
 
