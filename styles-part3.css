@@ -531,7 +531,11 @@
 
     /* Hero Section */
     .hero-content {
-        padding: 20px;
+        padding: 20px 15px;
+    }
+
+    .hero-text {
+        padding: 0 25px;
     }
 
     .hero-content h1 {
@@ -703,6 +707,10 @@
 }
 
 @media (max-width: 480px) {
+    .hero-content {
+        padding: 15px 30px;
+    }
+
     .hero-content h1 {
         font-size: 1.6rem;
     }
