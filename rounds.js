@@ -629,7 +629,7 @@ async function createRound() {
     const course = document.getElementById('round-course').value;
     const date = document.getElementById('round-date').value;
     const holes = document.querySelector('input[name="holes"]:checked')?.value || '18';
-    const tees = document.querySelector('input[name="tees"]:checked')?.value || 'tallwood';
+    const tees = document.querySelector('input[name="tees"]:checked')?.value || 'tallowwood';
 
     // Validation
     if (!name) {

@@ -6,8 +6,10 @@ const allCourseData = [
     {
         name: 'Bonville Golf Resort',
         par: {
-            tallwood: 71,
-            bloodwood: 71
+            tallowwood: 71,
+            bloodwood: 71,
+            ironbark: 71,
+            flooded_gums: 71
         },
         holeImagePath: 'courses/bonville-golf-resort/hole-{hole}.jpg',
         holePageUrl: 'https://www.bonvillegolf.com.au/hole/hole-{hole}/',
@@ -32,28 +34,50 @@ const allCourseData = [
             18: {type: 'youtube', id: 'YKwE-HvdXqg'}
         },
         tees: [
-            {key: 'tallwood', label: 'Tallwood', totalDistance: 6146},
-            {key: 'bloodwood', label: 'Bloodwood', totalDistance: 5664}
+            {key: 'tallowwood', label: 'Tallowwood', totalDistance: 6000},
+            {key: 'bloodwood', label: 'Bloodwood', totalDistance: 5664},
+            {key: 'ironbark', label: 'Ironbark', totalDistance: 5205},
+            {key: 'flooded_gums', label: 'Flooded Gums', totalDistance: 4808}
         ],
+        descriptions: {
+            1:  "If played conservatively with a club that can't reach the left hand bunker the first fairway is quite generous, the water down the right is sure to add to the first tee nerves though. Take one extra club when approaching the green to avoid the cavernous bunkers.",
+            2:  "A short dogleg right requiring good positioning rather than distance off the tee. Longer hitters may try to carry the bunker, leaving them a shorter uphill second shot to a back to front sloping green.",
+            3:  "A tantalising par three with most of the trouble on the left side. Balls landing to the right side of the green may bounce down onto the putting surface.",
+            4:  "A unique par 5 that is split by a large gorge, the ideal tee shot will find the flat section in the middle of the fairway short of the drop off. From here longer hitters may be able to reach the green in two.",
+            5:  "A straight forward par 3, which penalises heavily for missing on the left side. Most important to try and hit your ball onto the same tier as the flag.",
+            6:  "A well struck drive will make its way over the rise in the fairway and down onto the flat, leaving a mid to short iron to a narrow green. If you want an uphill putt, you're going to have to narrowly avoid the bunkers to the right of the green.",
+            7:  "Not a long par 5 but still no push over. A good drive will avoid the fairway bunkers on the right-hand side leaving you with a perfect risk reward decision. Lay-up or take on the creek 70m short of the green.",
+            8:  "A tough par three to return you to the Clubhouse. With out of bounds long left and long and deep bunkers front and right a solid strike is important. Making sure you hit a club that will carry the front right bunker is sure to save shots here.",
+            9:  "With three large bunkers dissecting the fairway, placement is key here. For longer hitters who don't mind risking the OOB left, carrying the bunkers will be rewarded with a short pitch to the green.",
+            10: "With danger lurking on every shot this spectacular par 5 deserves respect. With two forced water carries, laying up to comfortable distances and island hopping your way to the green is the percentage play. For the longer hitter a 220m tee shot will leave a similar distance to reach the green in two.",
+            11: "A straightforward par three! A bail out left will usually roll onto the green, if it doesn't though your short game will be tested.",
+            12: "Bonville's toughest test will encourage most to take some sort of gamble. An aggressive player will attempt to carry the hazard and trees on the right leaving a much easier approach shot. Those who opt for safety off the tee will be faced with a long second shot to a green guarded by water.",
+            13: "The fairway bunker on the right side is reachable for most golfers, whereas the bunker on the left side will only be reached by the longer hitter. With only the top of the flag visible from the fairway make sure to take plenty of club to reach the green.",
+            14: "The longest par five on the course. No hidden traps, just avoid the water on the left and the trees on the right. When approaching the long and narrow green, be aware that any shot that goes long and left will usually come to rest in a watery grave.",
+            15: "A great dogleg par four which is a highlight of the course. A tee shot to the right of the fairway bunker, often with a club less than driver, to finish short of the creek, is the play from the tee. A solid strike and good club selection will be vital to hit this green in regulation, guarded by a large pond in front and a creek over the back.",
+            16: "Don't hit it left! For those who tend to draw or hook the ball, leave your driver in the bag. Keep it in play off the tee, and then take one extra club when approaching the green, which slopes to the left.",
+            17: "Don't be hypnotised by the reflections off the water. Take dead aim and make a confident swing! An exciting par three, which keeps all players in suspense until the ball finds land.",
+            18: "For long hitters seeking a grandstand finish it won't get much better than at Bonville. A solid drive past the fairway bunker and over the hill will be sure to leave your second shot within reach of the green and a potential eagle putt with the Clubhouse and its occupants looking on. Alternatively, it can be played as a relatively short three shot par 5 with generous green."
+        },
         holes: {
-            1: {tallwood: {par: 4, dist: 380, si: 2}, bloodwood: {par: 4, dist: 353, si: 2}},
-            2: {tallwood: {par: 4, dist: 346, si: 12}, bloodwood: {par: 4, dist: 308, si: 12}},
-            3: {tallwood: {par: 3, dist: 183, si: 8}, bloodwood: {par: 3, dist: 170, si: 8}},
-            4: {tallwood: {par: 5, dist: 485, si: 14}, bloodwood: {par: 5, dist: 465, si: 14}},
-            5: {tallwood: {par: 3, dist: 147, si: 16}, bloodwood: {par: 3, dist: 139, si: 16}},
-            6: {tallwood: {par: 4, dist: 335, si: 6}, bloodwood: {par: 4, dist: 328, si: 6}},
-            7: {tallwood: {par: 5, dist: 487, si: 18}, bloodwood: {par: 5, dist: 453, si: 18}},
-            8: {tallwood: {par: 3, dist: 182, si: 4}, bloodwood: {par: 3, dist: 158, si: 4}},
-            9: {tallwood: {par: 4, dist: 324, si: 10}, bloodwood: {par: 4, dist: 304, si: 10}},
-            10: {tallwood: {par: 5, dist: 456, si: 13}, bloodwood: {par: 5, dist: 419, si: 13}},
-            11: {tallwood: {par: 3, dist: 190, si: 9}, bloodwood: {par: 3, dist: 150, si: 9}},
-            12: {tallwood: {par: 4, dist: 425, si: 1}, bloodwood: {par: 4, dist: 372, si: 1}},
-            13: {tallwood: {par: 4, dist: 370, si: 3}, bloodwood: {par: 4, dist: 346, si: 3}},
-            14: {tallwood: {par: 5, dist: 505, si: 15}, bloodwood: {par: 5, dist: 466, si: 15}},
-            15: {tallwood: {par: 4, dist: 357, si: 7}, bloodwood: {par: 4, dist: 326, si: 7}},
-            16: {tallwood: {par: 4, dist: 372, si: 5}, bloodwood: {par: 4, dist: 340, si: 5}},
-            17: {tallwood: {par: 3, dist: 142, si: 11}, bloodwood: {par: 3, dist: 131, si: 11}},
-            18: {tallwood: {par: 4, dist: 460, si: 17}, bloodwood: {par: 4, dist: 436, si: 17}}
+            1:  {tallowwood: {par: 4, dist: 376, si: 2}, bloodwood: {par: 4, dist: 353, si: 2}, ironbark: {par: 4, dist: 320, si: 2}, flooded_gums: {par: 4, dist: 275, si: 2}},
+            2:  {tallowwood: {par: 4, dist: 332, si: 12}, bloodwood: {par: 4, dist: 308, si: 12}, ironbark: {par: 4, dist: 252, si: 12}, flooded_gums: {par: 4, dist: 244, si: 12}},
+            3:  {tallowwood: {par: 3, dist: 182, si: 8}, bloodwood: {par: 3, dist: 170, si: 8}, ironbark: {par: 3, dist: 122, si: 8}, flooded_gums: {par: 3, dist: 114, si: 8}},
+            4:  {tallowwood: {par: 5, dist: 481, si: 14}, bloodwood: {par: 5, dist: 465, si: 14}, ironbark: {par: 5, dist: 428, si: 14}, flooded_gums: {par: 5, dist: 366, si: 14}},
+            5:  {tallowwood: {par: 3, dist: 147, si: 16}, bloodwood: {par: 3, dist: 139, si: 16}, ironbark: {par: 3, dist: 130, si: 16}, flooded_gums: {par: 3, dist: 125, si: 16}},
+            6:  {tallowwood: {par: 4, dist: 335, si: 6}, bloodwood: {par: 4, dist: 328, si: 6}, ironbark: {par: 4, dist: 261, si: 6}, flooded_gums: {par: 4, dist: 251, si: 6}},
+            7:  {tallowwood: {par: 5, dist: 465, si: 18}, bloodwood: {par: 5, dist: 453, si: 18}, ironbark: {par: 5, dist: 434, si: 18}, flooded_gums: {par: 5, dist: 424, si: 18}},
+            8:  {tallowwood: {par: 3, dist: 177, si: 4}, bloodwood: {par: 3, dist: 158, si: 4}, ironbark: {par: 3, dist: 150, si: 4}, flooded_gums: {par: 3, dist: 126, si: 4}},
+            9:  {tallowwood: {par: 4, dist: 320, si: 10}, bloodwood: {par: 4, dist: 304, si: 10}, ironbark: {par: 4, dist: 282, si: 10}, flooded_gums: {par: 4, dist: 274, si: 10}},
+            10: {tallowwood: {par: 5, dist: 445, si: 13}, bloodwood: {par: 5, dist: 419, si: 13}, ironbark: {par: 5, dist: 398, si: 13}, flooded_gums: {par: 5, dist: 384, si: 13}},
+            11: {tallowwood: {par: 3, dist: 164, si: 9}, bloodwood: {par: 3, dist: 150, si: 9}, ironbark: {par: 3, dist: 133, si: 9}, flooded_gums: {par: 3, dist: 109, si: 9}},
+            12: {tallowwood: {par: 4, dist: 386, si: 1}, bloodwood: {par: 4, dist: 372, si: 1}, ironbark: {par: 4, dist: 350, si: 1}, flooded_gums: {par: 4, dist: 301, si: 1}},
+            13: {tallowwood: {par: 4, dist: 367, si: 3}, bloodwood: {par: 4, dist: 346, si: 3}, ironbark: {par: 4, dist: 320, si: 3}, flooded_gums: {par: 4, dist: 311, si: 3}},
+            14: {tallowwood: {par: 5, dist: 505, si: 15}, bloodwood: {par: 5, dist: 466, si: 15}, ironbark: {par: 5, dist: 442, si: 15}, flooded_gums: {par: 5, dist: 434, si: 15}},
+            15: {tallowwood: {par: 4, dist: 356, si: 7}, bloodwood: {par: 4, dist: 326, si: 7}, ironbark: {par: 4, dist: 313, si: 7}, flooded_gums: {par: 4, dist: 271, si: 7}},
+            16: {tallowwood: {par: 4, dist: 364, si: 5}, bloodwood: {par: 4, dist: 340, si: 5}, ironbark: {par: 4, dist: 337, si: 5}, flooded_gums: {par: 4, dist: 290, si: 5}},
+            17: {tallowwood: {par: 3, dist: 138, si: 11}, bloodwood: {par: 3, dist: 131, si: 11}, ironbark: {par: 3, dist: 113, si: 11}, flooded_gums: {par: 3, dist: 100, si: 11}},
+            18: {tallowwood: {par: 4, dist: 460, si: 17}, bloodwood: {par: 4, dist: 436, si: 17}, ironbark: {par: 4, dist: 420, si: 17}, flooded_gums: {par: 4, dist: 409, si: 17}}
         }
     },
     {
@@ -449,7 +473,7 @@ function getStablefordClass(pts) {
  * @param {Object} putts  - { 1: 2, 2: 1, ... } hole putts
  * @param {Object|null} courseData - course object from getCourseData(), or null
  * @param {number} handicap
- * @param {string} [tees] - tee key (e.g. 'blue', 'tallwood') for resolving SI
+ * @param {string} [tees] - tee key (e.g. 'blue', 'tallowwood') for resolving SI
  * @returns {string} HTML string with both table layouts
  */
 function generateScorecardHTML(scores, putts, courseData, handicap, tees, prizes) {
