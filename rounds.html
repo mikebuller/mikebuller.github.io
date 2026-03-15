@@ -350,15 +350,19 @@
                         </select>
                     </div>
 
-                    <!-- New Player Fields (Hidden initially) -->
+                    <!-- New Player Name (shown only for new players) -->
                     <div id="new-player-fields" style="display: none;">
                         <div class="setup-field">
                             <label for="new-player-name">Your Name</label>
                             <input type="text" id="new-player-name" class="setup-input" placeholder="Enter your name">
                         </div>
+                    </div>
+
+                    <!-- Handicap (shown for all player selections) -->
+                    <div id="player-handicap-field" style="display: none;">
                         <div class="setup-field">
-                            <label for="new-player-handicap">Handicap</label>
-                            <input type="number" id="new-player-handicap" class="setup-input" placeholder="e.g., 18" min="0" max="54">
+                            <label for="player-handicap">Handicap</label>
+                            <input type="number" id="player-handicap" class="setup-input" placeholder="e.g., 18" min="0" max="54" step="0.1">
                         </div>
                     </div>
 
