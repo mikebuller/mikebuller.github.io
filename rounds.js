@@ -908,15 +908,29 @@ function toggleJoinEntryType() {
         entryType === 'team' ? 'block' : 'none';
 }
 
-// Toggle new player input fields
+// Toggle new player input fields and handicap
 function toggleNewPlayerFields() {
     const select = document.getElementById('join-player-select');
     const newPlayerFields = document.getElementById('new-player-fields');
+    const handicapField = document.getElementById('player-handicap-field');
+    const handicapInput = document.getElementById('player-handicap');
 
     if (select.value === 'new') {
         newPlayerFields.style.display = 'block';
-    } else {
+        handicapField.style.display = 'block';
+        handicapInput.value = '';
+        handicapInput.placeholder = 'e.g., 18';
+    } else if (select.value) {
+        // Existing player selected — show handicap pre-filled with their default
         newPlayerFields.style.display = 'none';
+        handicapField.style.display = 'block';
+        const selectedOption = select.options[select.selectedIndex];
+        handicapInput.value = selectedOption.dataset.handicap || '';
+    } else {
+        // No selection
+        newPlayerFields.style.display = 'none';
+        handicapField.style.display = 'none';
+        handicapInput.value = '';
     }
 }
 
@@ -937,7 +951,7 @@ async function joinRound() {
         if (playerSelect.value === 'new') {
             // New player
             playerName = document.getElementById('new-player-name').value.trim();
-            handicap = parseInt(document.getElementById('new-player-handicap').value) || 18;
+            handicap = parseFloat(document.getElementById('player-handicap').value) || 18;
             playerId = null;
 
             if (!playerName) {
@@ -945,11 +959,11 @@ async function joinRound() {
                 return;
             }
         } else if (playerSelect.value) {
-            // Existing player
+            // Existing player (handicap may have been adjusted)
             playerId = parseInt(playerSelect.value);
             const player = allPlayers.find(p => p.id === playerId);
             playerName = player.name;
-            handicap = player.handicap;
+            handicap = parseFloat(document.getElementById('player-handicap').value) || player.handicap;
         } else {
             alert('Please select a player or enter your name');
             return;
