@@ -258,9 +258,16 @@ body {
 
 /* Page Sections */
 .page-section {
-    min-height: 100vh;
     padding: 100px 20px 60px;
     position: relative;
+}
+
+/* Landing page sections fill the viewport */
+.course-section,
+.players-section,
+.tournament-section,
+.dinner-section {
+    min-height: 100vh;
 }
 
 /* Subtle section dividers */
