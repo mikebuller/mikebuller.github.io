@@ -419,6 +419,98 @@ const allCourseData = [
             17: {blue: {par: 5, dist: 498, si: 2},  white: {par: 5, dist: 417, si: 7},  gold: {par: 4, dist: 402, si: 3},  red: {par: 5, dist: 403, si: 5}},
             18: {blue: {par: 4, dist: 402, si: 9},  white: {par: 4, dist: 375, si: 3},  gold: {par: 4, dist: 321, si: 9},  red: {par: 4, dist: 324, si: 6}}
         }
+    },
+    {
+        name: 'Muirfield Golf Club',
+        par: {
+            mens: 69,
+            ladies: 72
+        },
+        holePageUrl: 'https://www.muirfieldgolf.com.au/cms/course/hole-{hole}/',
+        holeFlyovers: {
+            1: {type: 'vimeo', id: '1100475152'},
+            2: {type: 'vimeo', id: '1100478197'},
+            3: {type: 'vimeo', id: '1100477569'},
+            4: {type: 'vimeo', id: '1100478087'},
+            5: {type: 'vimeo', id: '1100478141'},
+            6: {type: 'vimeo', id: '1100477980'},
+            7: {type: 'vimeo', id: '1100478027'},
+            8: {type: 'vimeo', id: '1100477943'},
+            9: {type: 'vimeo', id: '1100477852'},
+            10: {type: 'vimeo', id: '1100477898'},
+            11: {type: 'vimeo', id: '1100477754'},
+            12: {type: 'vimeo', id: '1100477798'},
+            13: {type: 'vimeo', id: '1100477637'},
+            14: {type: 'vimeo', id: '1100477698'},
+            15: {type: 'vimeo', id: '1100475230'},
+            16: {type: 'vimeo', id: '1100475269'},
+            17: {type: 'vimeo', id: '1100482201'},
+            18: {type: 'vimeo', id: '1100475197'}
+        },
+        tees: [
+            {key: 'mens', label: 'Mens', totalDistance: 5644},
+            {key: 'ladies', label: 'Ladies', totalDistance: 5161}
+        ],
+        descriptions: {
+            1:  "Straight away reachable par 5 at 485 metres with a fairway bunker on the right.",
+            2:  "Uphill par 3, 147 metres. Large, well bunkered green.",
+            3:  "Very tight par 4, 320 metres with fairway bunkers 200 metres out on the left side.",
+            4:  "Dogleg right par 4, 330 metres to a two tiered green.",
+            5:  "The best hole on the course, 415 metres. Long par 4 with a slight dogleg to the right and a flat green with one bunker on the right side.",
+            6:  "Short par 3, 150 metres. Wide kidney shaped green with many pin positions.",
+            7:  "Great dogleg to the right par 4 of 374 metres. Green slopes from front to back.",
+            8:  "Uphill par 4, 353 metres. The 2nd shot plays longer than you think.",
+            9:  "Par 3 over the car park entrance, 154 metres with a 2 tier green.",
+            10: "Slight dogleg to the right par 4, 379 metres.",
+            11: "Long straight away par 3, 201 metres.",
+            12: "Long par 4 over the hill, 420 metres. Index number 1 on the card.",
+            13: "Short par 5 of 470 metres. Fairway dips at about 1/3 of this distance with an uphill approach shot to the green.",
+            14: "Most picturesque par 4 at Muirfield, 284 metres with out of bounds running all the way down the right side.",
+            15: "Strong par 3, 175 metres. Very fast putting downhill.",
+            16: "Good par 4 with large wide green, 400 metres. Hazard runs across the fairway about 15 metres short of the green with the main dam on the left.",
+            17: "Straight away 297 metre par 4 to an elevated green.",
+            18: "The homeward run, 290 metre par 4. Driveable for big hitters but out of bounds right and water left."
+        },
+        tips: {
+            1:  "Place tee shot left of big gum, don't go left. Beware fairway bunker on the right for your 2nd shot.",
+            2:  "Club selection crucial - large green. Aim for the middle of the green.",
+            3:  "Tee shot position is key. Beware of fairway bunkers 200m out on the left. Long hitters may consider driver.",
+            4:  "Good tee shot crucial to set up approach to two tiered green. Don't go right from the tee.",
+            5:  "Long 2nd shot into a flat green with one bunker on the right side.",
+            6:  "Check hole distance as it can be deceiving. Wide kidney shaped green with many pin positions.",
+            7:  "220m to the corner of the dogleg is the perfect position. Beware of the green sloping front to back.",
+            8:  "Position tee shot based on pin position left or right. 2nd shot plays an extra club uphill.",
+            9:  "Club selection important because of the 2 tier green.",
+            10: "Position tee shot 200-220m out. Avoid back right of green - the ball won't stay on the putting surface.",
+            11: "Favour the right side as the ball will feed in from this side.",
+            12: "Favour left side with your approach shot to the green.",
+            13: "Don't go left from the tee or anywhere on this hole. Reachable in 2 with the correct tee shot.",
+            14: "Tee shot to around 200m for an easy pitch to the green. OB runs all the way down the right side.",
+            15: "Stay beneath the hole - it is very fast putting downhill.",
+            16: "Hazard runs across the fairway 15m short of the green. Main dam on the left of the green.",
+            17: "Must hit the fairway from the tee. Approach to an elevated green is deceiving.",
+            18: "Max 200m tee shot for a short pitch to a sloping green. OB right, water left. Birdie time!!"
+        },
+        holes: {
+            1:  {mens: {par: 5, dist: 485}, ladies: {par: 5, dist: 465}},
+            2:  {mens: {par: 3, dist: 147}, ladies: {par: 3, dist: 120}},
+            3:  {mens: {par: 4, dist: 320}, ladies: {par: 4, dist: 288}},
+            4:  {mens: {par: 4, dist: 330}, ladies: {par: 4, dist: 291}},
+            5:  {mens: {par: 4, dist: 415}, ladies: {par: 5, dist: 383}},
+            6:  {mens: {par: 3, dist: 150}, ladies: {par: 3, dist: 127}},
+            7:  {mens: {par: 4, dist: 374}, ladies: {par: 4, dist: 343}},
+            8:  {mens: {par: 4, dist: 353}, ladies: {par: 4, dist: 326}},
+            9:  {mens: {par: 3, dist: 154}, ladies: {par: 3, dist: 117}},
+            10: {mens: {par: 4, dist: 379}, ladies: {par: 4, dist: 360}},
+            11: {mens: {par: 3, dist: 201}, ladies: {par: 3, dist: 165}},
+            12: {mens: {par: 4, dist: 420}, ladies: {par: 5, dist: 380}},
+            13: {mens: {par: 5, dist: 470}, ladies: {par: 5, dist: 458}},
+            14: {mens: {par: 4, dist: 284}, ladies: {par: 4, dist: 247}},
+            15: {mens: {par: 3, dist: 175}, ladies: {par: 3, dist: 155}},
+            16: {mens: {par: 4, dist: 400}, ladies: {par: 5, dist: 374}},
+            17: {mens: {par: 4, dist: 297}, ladies: {par: 4, dist: 287}},
+            18: {mens: {par: 4, dist: 290}, ladies: {par: 4, dist: 275}}
+        }
     }
 ]
 
