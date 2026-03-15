@@ -131,11 +131,78 @@ function toggleOptionalSettings() {
     }
 }
 
+// Get holes already selected by other prize entries (excluding a given select element)
+function getSelectedHoles(excludeSelect) {
+    const selects = document.querySelectorAll('.prize-hole-select');
+    const selected = new Set();
+    selects.forEach(s => {
+        if (s !== excludeSelect) {
+            selected.add(parseInt(s.value));
+        }
+    });
+    return selected;
+}
+
+// Rebuild the options for a single prize-hole-select, keeping its current value
+function refreshHoleSelectOptions(select) {
+    const currentValue = parseInt(select.value);
+    const takenHoles = getSelectedHoles(select);
+
+    select.innerHTML = '';
+    for (let i = 1; i <= 18; i++) {
+        if (i === currentValue || !takenHoles.has(i)) {
+            const opt = document.createElement('option');
+            opt.value = i;
+            opt.textContent = `Hole ${i}`;
+            opt.selected = i === currentValue;
+            select.appendChild(opt);
+        }
+    }
+}
+
+// Refresh options on all prize-hole-selects
+function refreshAllHoleSelects() {
+    document.querySelectorAll('.prize-hole-select').forEach(refreshHoleSelectOptions);
+}
+
 // Add a hole prize entry
 let holePrizeCount = 0;
 function addHolePrize() {
-    holePrizeCount++;
     const list = document.getElementById('hole-prizes-list');
+    const existingEntries = list.querySelectorAll('.hole-prize-entry');
+
+    // Don't allow more than 18 hole prizes
+    if (existingEntries.length >= 18) return;
+
+    const takenHoles = getSelectedHoles(null);
+
+    // Determine the next hole to default to
+    let nextHole = null;
+    if (existingEntries.length > 0) {
+        const lastSelect = existingEntries[existingEntries.length - 1].querySelector('.prize-hole-select');
+        const lastHole = parseInt(lastSelect.value);
+        // Search forward from the last hole, wrapping around
+        for (let offset = 1; offset <= 18; offset++) {
+            const candidate = ((lastHole - 1 + offset) % 18) + 1;
+            if (!takenHoles.has(candidate)) {
+                nextHole = candidate;
+                break;
+            }
+        }
+    } else {
+        // First entry, pick hole 1 or first available
+        for (let i = 1; i <= 18; i++) {
+            if (!takenHoles.has(i)) {
+                nextHole = i;
+                break;
+            }
+        }
+    }
+
+    // Shouldn't happen given the >= 18 guard, but just in case
+    if (nextHole === null) return;
+
+    holePrizeCount++;
 
     const entry = document.createElement('div');
     entry.className = 'hole-prize-entry';
@@ -143,7 +210,10 @@ function addHolePrize() {
 
     let holeOptions = '';
     for (let i = 1; i <= 18; i++) {
-        holeOptions += `<option value="${i}">Hole ${i}</option>`;
+        if (i === nextHole || !takenHoles.has(i)) {
+            const selected = i === nextHole ? ' selected' : '';
+            holeOptions += `<option value="${i}"${selected}>Hole ${i}</option>`;
+        }
     }
 
     entry.innerHTML = `
@@ -158,12 +228,29 @@ function addHolePrize() {
     `;
 
     list.appendChild(entry);
+
+    // Listen for changes on the new select to refresh other selects
+    entry.querySelector('.prize-hole-select').addEventListener('change', refreshAllHoleSelects);
+
+    refreshAllHoleSelects();
+    updateAddPrizeButton();
 }
 
 // Remove a hole prize entry
 function removeHolePrize(id) {
     const entry = document.getElementById(id);
     if (entry) entry.remove();
+    refreshAllHoleSelects();
+    updateAddPrizeButton();
+}
+
+// Enable/disable the add prize button based on count
+function updateAddPrizeButton() {
+    const btn = document.querySelector('.add-prize-btn');
+    const count = document.querySelectorAll('.hole-prize-entry').length;
+    if (btn) {
+        btn.disabled = count >= 18;
+    }
 }
 
 // Get configured hole prizes
