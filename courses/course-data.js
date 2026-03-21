@@ -421,6 +421,200 @@ const allCourseData = [
         }
     },
     {
+        name: 'Campbelltown Golf Club',
+        holeImagePath: 'courses/campbelltown-golf-club/hole-{hole}.jpg',
+        holePageUrl: 'https://www.campbelltowngolfclub.com.au/cms/course/hole-{hole}/',
+        holeFlyovers: {
+            1: {type: 'vimeo', id: '368738369'},
+            2: {type: 'vimeo', id: '368738437'},
+            3: {type: 'vimeo', id: '368738469'},
+            4: {type: 'vimeo', id: '368738504'},
+            5: {type: 'vimeo', id: '368738528'},
+            6: {type: 'vimeo', id: '368738569'},
+            7: {type: 'vimeo', id: '368738598'},
+            8: {type: 'vimeo', id: '368738625'},
+            9: {type: 'vimeo', id: '368738660'},
+            10: {type: 'vimeo', id: '368738707'},
+            11: {type: 'vimeo', id: '368738739'},
+            12: {type: 'vimeo', id: '368738776'},
+            13: {type: 'vimeo', id: '368738812'},
+            14: {type: 'vimeo', id: '368738852'},
+            15: {type: 'vimeo', id: '368738882'},
+            16: {type: 'vimeo', id: '368738910'},
+            17: {type: 'vimeo', id: '368738942'},
+            18: {type: 'vimeo', id: '368738964'}
+        },
+        par: {
+            blue: 70,
+            white: 70,
+            red: 71,
+            yellow: 71
+        },
+        tees: [
+            {key: 'blue', label: 'Blue', totalDistance: 5626},
+            {key: 'white', label: 'White', totalDistance: 5180},
+            {key: 'red', label: 'Red', totalDistance: 5057},
+            {key: 'yellow', label: 'Yellow', totalDistance: 4891}
+        ],
+        descriptions: {
+            1:  "Plays longer than its metres due to a gradual uphill climb to the green. The drive over water can be daunting, and a bunker on the left will catch an errant tee shot. Any shot long of the green will test your short game.",
+            2:  "A generous driving area with the fairway cambering left to right. The hole doglegs downhill to the right to a generous green. Fierce bunkers guard the right side off the tee, and a hazard lurks just short and right of the green.",
+            3:  "The first of three par 5s, only reached in two by the mighty. Out-of-bounds guards the entire left side. A blind second shot over a crest must finish short of the fairway bunker. A large bunker at the front of the green catches errant pitches.",
+            4:  "Short but demands precision. A hazard guards the entire front of the green, a bunker guards the back, and trees left and right will deflect wayward shots. A 3 on the card here is a good score.",
+            5:  "A strong par 4 with a fairway bunker protecting the right side and trees punishing anything too far left. The green is well protected by bunkers short and right with an additional grass bunker on the left.",
+            6:  "A tricky par 3 generally played into the wind, causing most golfers to come up short. Two deep bunkers on the left and well placed rough areas short and long make recovery difficult.",
+            7:  "A par 5 that brings even the best to their knees. Generous off the tee with the fairway cambering right to left downhill, but it doglegs right to a green heavily protected by large trees up the right side.",
+            8:  "A straight, slightly uphill short par 4 through a corridor of trees. The concave fairway funnels good tee shots, leaving a short iron to the slightly elevated green.",
+            9:  "Stunning views over the large lake from the tee. The hole feeds downhill to a generous fairway, but the peninsula green is surrounded by water on 70% of its perimeter. A green side bunker on the left catches those who steer away from the lake. One of the top 18 public holes in NSW (2010).",
+            10: "A treacherous fairway bunker and hazard meandering up the right side demand an accurate tee shot left of centre. The approach is best played left of centre to avoid the green side bunker.",
+            11: "The longest par 4 on the course with hazard guarding the entire right side. The large mound left of the green will channel approach shots down onto a flat putting surface with fair, undulation-free putts.",
+            12: "A par 3 demanding accuracy. A bunker on the left high side and mounds front left and right catch mishits. A steep embankment on the right feeds down to a hazard.",
+            13: "The shortest par 5 and a genuine birdie chance. Hazard runs all down the right side. The hill on the left feeds tee shots to centre. An easy pitch over a narrow hazard reaches a relatively flat green.",
+            14: "Short but has ruined many good rounds. The tee shot crosses two water hazards to a green surrounded by sand. Club selection and a well-struck shot are essential.",
+            15: "A generous landing area over the hill, but the green is the real challenge \u2013 very narrow and undulating with almost 3 tiers. A poor approach makes chipping around this green one of the toughest tasks on the course.",
+            16: "A short downhill par 4 running parallel to the 9th with magnificent views. The green slopes severely front to back and is well protected by bunkers.",
+            17: "The first of the two \u2018destroyers\u2019. A long iron or metal over two water hazards to an undulating green surrounded by danger \u2013 hazard short right, hazard high left, and out of bounds.",
+            18: "Harrison\u2019s Revenge \u2013 the signature hole named after course architect Bob Harrison. Out of bounds right and water left demand a drive down the centre. The undulating green makes putting a final challenge."
+        },
+        tips: {
+            1:  "Aim up the right side of the fairway and take an extra club for the uphill approach.",
+            2:  "Aim left off the tee and let the camber roll the ball to centre. Take enough club on your approach to clear the hazard short right.",
+            3:  "Consider leaving the driver in the bag. Keep your second shot short of the crest bunker, leaving an easy pitch to the large green.",
+            4:  "Pick the right club and commit to the shot \u2013 there\u2019s no bail-out area here.",
+            5:  "Favour left of centre off the tee to avoid the fairway bunker on the right, but don\u2019t overcook it into the trees.",
+            6:  "Aim for the centre of the green and take extra club \u2013 the wind will likely knock it down. Don\u2019t go flag hunting.",
+            7:  "Play your second shot further left than you think. Cutting the corner into the trees is the biggest mistake on this hole.",
+            8:  "Always take more club than you think \u2013 the approach plays uphill and coming up short makes par very difficult.",
+            9:  "Commit to your approach into the peninsula green. Steering away from the water will find the bunker on the left.",
+            10: "Choose a club that keeps you short of the fairway bunker off the tee. Approach left of centre to avoid the green side bunker.",
+            11: "Aim your approach to the left of the green and let the mound feed the ball onto the putting surface.",
+            12: "Favour left of centre \u2013 the green will roll the ball towards the middle. Avoid the right side at all costs.",
+            13: "Tee shot up the left edge and let the hill feed it to centre. Lay up to the flat section if you can\u2019t reach in two.",
+            14: "Same as hole 4 \u2013 commit to your club selection and make a confident strike over the water.",
+            15: "Focus on your second shot and land on the correct tier. A poor drive is forgivable here, a poor approach is not.",
+            16: "Resist the temptation to drive the green. Lay up to 100m for a fuller approach with more spin to hold the sloping green.",
+            17: "Take enough club to clear the water hazards. A 3 here is a great score \u2013 aim for the middle of the green.",
+            18: "Drive down the centre. If you miss the fairway right, lay up rather than risk the water trying to reach the green in two."
+        },
+        holes: {
+            1:  {blue: {par: 4, dist: 314, si: 9},  white: {par: 4, dist: 294, si: 9},  red: {par: 4, dist: 200, si: 14}, yellow: {par: 4, dist: 200, si: 14}},
+            2:  {blue: {par: 4, dist: 375, si: 4},  white: {par: 4, dist: 350, si: 4},  red: {par: 4, dist: 346, si: 1},  yellow: {par: 4, dist: 336, si: 1}},
+            3:  {blue: {par: 5, dist: 491, si: 17}, white: {par: 5, dist: 475, si: 17}, red: {par: 5, dist: 450, si: 3},  yellow: {par: 5, dist: 449, si: 3}},
+            4:  {blue: {par: 3, dist: 130, si: 15}, white: {par: 3, dist: 115, si: 15}, red: {par: 3, dist: 92, si: 17},  yellow: {par: 3, dist: 85, si: 17}},
+            5:  {blue: {par: 4, dist: 353, si: 3},  white: {par: 4, dist: 339, si: 3},  red: {par: 4, dist: 305, si: 12}, yellow: {par: 4, dist: 305, si: 12}},
+            6:  {blue: {par: 3, dist: 152, si: 12}, white: {par: 3, dist: 138, si: 12}, red: {par: 3, dist: 134, si: 16}, yellow: {par: 3, dist: 126, si: 15}},
+            7:  {blue: {par: 5, dist: 491, si: 6},  white: {par: 5, dist: 471, si: 6},  red: {par: 5, dist: 458, si: 2},  yellow: {par: 5, dist: 458, si: 2}},
+            8:  {blue: {par: 4, dist: 339, si: 7},  white: {par: 4, dist: 312, si: 7},  red: {par: 4, dist: 311, si: 6},  yellow: {par: 4, dist: 277, si: 7}},
+            9:  {blue: {par: 4, dist: 361, si: 10}, white: {par: 4, dist: 337, si: 10}, red: {par: 4, dist: 359, si: 8},  yellow: {par: 4, dist: 359, si: 8}},
+            10: {blue: {par: 4, dist: 316, si: 13}, white: {par: 4, dist: 312, si: 13}, red: {par: 4, dist: 311, si: 10}, yellow: {par: 4, dist: 306, si: 10}},
+            11: {blue: {par: 4, dist: 394, si: 2},  white: {par: 4, dist: 379, si: 2},  red: {par: 5, dist: 380, si: 15}, yellow: {par: 5, dist: 341, si: 16}},
+            12: {blue: {par: 3, dist: 138, si: 11}, white: {par: 3, dist: 115, si: 11}, red: {par: 3, dist: 124, si: 18}, yellow: {par: 3, dist: 111, si: 18}},
+            13: {blue: {par: 5, dist: 441, si: 18}, white: {par: 5, dist: 435, si: 18}, red: {par: 5, dist: 438, si: 4},  yellow: {par: 5, dist: 428, si: 4}},
+            14: {blue: {par: 3, dist: 134, si: 14}, white: {par: 3, dist: 105, si: 14}, red: {par: 3, dist: 109, si: 7},  yellow: {par: 3, dist: 106, si: 6}},
+            15: {blue: {par: 4, dist: 326, si: 8},  white: {par: 4, dist: 313, si: 8},  red: {par: 4, dist: 307, si: 9},  yellow: {par: 4, dist: 293, si: 9}},
+            16: {blue: {par: 4, dist: 314, si: 16}, white: {par: 4, dist: 160, si: 16}, red: {par: 4, dist: 291, si: 13}, yellow: {par: 4, dist: 291, si: 13}},
+            17: {blue: {par: 3, dist: 181, si: 5},  white: {par: 3, dist: 170, si: 5},  red: {par: 3, dist: 180, si: 5},  yellow: {par: 3, dist: 167, si: 5}},
+            18: {blue: {par: 4, dist: 376, si: 1},  white: {par: 4, dist: 360, si: 1},  red: {par: 4, dist: 262, si: 11}, yellow: {par: 4, dist: 253, si: 11}}
+        }
+    },
+    {
+        name: 'Campbelltown Golf Club 2',
+        holeImagePath: 'courses/campbelltown-golf-club/hole-{hole}.jpg',
+        holePageUrl: 'https://www.campbelltowngolfclub.com.au/cms/course/hole-{hole}/',
+        holeFlyovers: {
+            1: {type: 'vimeo', id: '368738369'},
+            2: {type: 'vimeo', id: '368738437'},
+            3: {type: 'vimeo', id: '368738469'},
+            4: {type: 'vimeo', id: '368738504'},
+            5: {type: 'vimeo', id: '368738528'},
+            6: {type: 'vimeo', id: '368738569'},
+            7: {type: 'vimeo', id: '368738598'},
+            8: {type: 'vimeo', id: '368738625'},
+            9: {type: 'vimeo', id: '368738660'},
+            10: {type: 'vimeo', id: '368738707'},
+            11: {type: 'vimeo', id: '368738739'},
+            12: {type: 'vimeo', id: '368738776'},
+            13: {type: 'vimeo', id: '368738812'},
+            14: {type: 'vimeo', id: '368738852'},
+            15: {type: 'vimeo', id: '368738882'},
+            16: {type: 'vimeo', id: '368738910'},
+            17: {type: 'vimeo', id: '368738942'},
+            18: {type: 'vimeo', id: '368738964'}
+        },
+        par: {
+            black: 70,
+            gold: 70,
+            silver: 70,
+            bronze: 71
+        },
+        tees: [
+            {key: 'black', label: 'Black', totalDistance: 5844},
+            {key: 'gold', label: 'Gold', totalDistance: 5611},
+            {key: 'silver', label: 'Silver', totalDistance: 5029},
+            {key: 'bronze', label: 'Bronze', totalDistance: 4681}
+        ],
+        descriptions: {
+            1:  "Plays longer than its metres due to a gradual uphill climb to the green. The drive over water can be daunting, and a bunker on the left will catch an errant tee shot. Any shot long of the green will test your short game.",
+            2:  "A generous driving area with the fairway cambering left to right. The hole doglegs downhill to the right to a generous green. Fierce bunkers guard the right side off the tee, and a hazard lurks just short and right of the green.",
+            3:  "The first of three par 5s, only reached in two by the mighty. Out-of-bounds guards the entire left side. A blind second shot over a crest must finish short of the fairway bunker. A large bunker at the front of the green catches errant pitches.",
+            4:  "Short but demands precision. A hazard guards the entire front of the green, a bunker guards the back, and trees left and right will deflect wayward shots. A 3 on the card here is a good score.",
+            5:  "A strong par 4 with a fairway bunker protecting the right side and trees punishing anything too far left. The green is well protected by bunkers short and right with an additional grass bunker on the left.",
+            6:  "A tricky par 3 generally played into the wind, causing most golfers to come up short. Two deep bunkers on the left and well placed rough areas short and long make recovery difficult.",
+            7:  "A par 5 that brings even the best to their knees. Generous off the tee with the fairway cambering right to left downhill, but it doglegs right to a green heavily protected by large trees up the right side.",
+            8:  "A straight, slightly uphill short par 4 through a corridor of trees. The concave fairway funnels good tee shots, leaving a short iron to the slightly elevated green.",
+            9:  "Stunning views over the large lake from the tee. The hole feeds downhill to a generous fairway, but the peninsula green is surrounded by water on 70% of its perimeter. A green side bunker on the left catches those who steer away from the lake. One of the top 18 public holes in NSW (2010).",
+            10: "A treacherous fairway bunker and hazard meandering up the right side demand an accurate tee shot left of centre. The approach is best played left of centre to avoid the green side bunker.",
+            11: "The longest par 4 on the course with hazard guarding the entire right side. The large mound left of the green will channel approach shots down onto a flat putting surface with fair, undulation-free putts.",
+            12: "A par 3 demanding accuracy. A bunker on the left high side and mounds front left and right catch mishits. A steep embankment on the right feeds down to a hazard.",
+            13: "The shortest par 5 and a genuine birdie chance. Hazard runs all down the right side. The hill on the left feeds tee shots to centre. An easy pitch over a narrow hazard reaches a relatively flat green.",
+            14: "Short but has ruined many good rounds. The tee shot crosses two water hazards to a green surrounded by sand. Club selection and a well-struck shot are essential.",
+            15: "A generous landing area over the hill, but the green is the real challenge \u2013 very narrow and undulating with almost 3 tiers. A poor approach makes chipping around this green one of the toughest tasks on the course.",
+            16: "A short downhill par 4 running parallel to the 9th with magnificent views. The green slopes severely front to back and is well protected by bunkers.",
+            17: "The first of the two \u2018destroyers\u2019. A long iron or metal over two water hazards to an undulating green surrounded by danger \u2013 hazard short right, hazard high left, and out of bounds.",
+            18: "Harrison\u2019s Revenge \u2013 the signature hole named after course architect Bob Harrison. Out of bounds right and water left demand a drive down the centre. The undulating green makes putting a final challenge."
+        },
+        tips: {
+            1:  "Aim up the right side of the fairway and take an extra club for the uphill approach.",
+            2:  "Aim left off the tee and let the camber roll the ball to centre. Take enough club on your approach to clear the hazard short right.",
+            3:  "Consider leaving the driver in the bag. Keep your second shot short of the crest bunker, leaving an easy pitch to the large green.",
+            4:  "Pick the right club and commit to the shot \u2013 there\u2019s no bail-out area here.",
+            5:  "Favour left of centre off the tee to avoid the fairway bunker on the right, but don\u2019t overcook it into the trees.",
+            6:  "Aim for the centre of the green and take extra club \u2013 the wind will likely knock it down. Don\u2019t go flag hunting.",
+            7:  "Play your second shot further left than you think. Cutting the corner into the trees is the biggest mistake on this hole.",
+            8:  "Always take more club than you think \u2013 the approach plays uphill and coming up short makes par very difficult.",
+            9:  "Commit to your approach into the peninsula green. Steering away from the water will find the bunker on the left.",
+            10: "Choose a club that keeps you short of the fairway bunker off the tee. Approach left of centre to avoid the green side bunker.",
+            11: "Aim your approach to the left of the green and let the mound feed the ball onto the putting surface.",
+            12: "Favour left of centre \u2013 the green will roll the ball towards the middle. Avoid the right side at all costs.",
+            13: "Tee shot up the left edge and let the hill feed it to centre. Lay up to the flat section if you can\u2019t reach in two.",
+            14: "Same as hole 4 \u2013 commit to your club selection and make a confident strike over the water.",
+            15: "Focus on your second shot and land on the correct tier. A poor drive is forgivable here, a poor approach is not.",
+            16: "Resist the temptation to drive the green. Lay up to 100m for a fuller approach with more spin to hold the sloping green.",
+            17: "Take enough club to clear the water hazards. A 3 here is a great score \u2013 aim for the middle of the green.",
+            18: "Drive down the centre. If you miss the fairway right, lay up rather than risk the water trying to reach the green in two."
+        },
+        holes: {
+            1:  {black: {par: 4, dist: 333, si: 9},  gold: {par: 4, dist: 314, si: 9},  silver: {par: 4, dist: 255, si: 14}, bronze: {par: 4, dist: 201, si: 14}},
+            2:  {black: {par: 4, dist: 397, si: 4},  gold: {par: 4, dist: 381, si: 4},  silver: {par: 4, dist: 351, si: 1},  bronze: {par: 4, dist: 336, si: 1}},
+            3:  {black: {par: 5, dist: 495, si: 17}, gold: {par: 5, dist: 480, si: 17}, silver: {par: 5, dist: 448, si: 3},  bronze: {par: 5, dist: 419, si: 3}},
+            4:  {black: {par: 3, dist: 132, si: 15}, gold: {par: 3, dist: 127, si: 15}, silver: {par: 3, dist: 94, si: 17},  bronze: {par: 3, dist: 82, si: 17}},
+            5:  {black: {par: 4, dist: 359, si: 3},  gold: {par: 4, dist: 353, si: 3},  silver: {par: 4, dist: 307, si: 12}, bronze: {par: 3, dist: 291, si: 12}},
+            6:  {black: {par: 3, dist: 164, si: 12}, gold: {par: 3, dist: 151, si: 12}, silver: {par: 3, dist: 128, si: 16}, bronze: {par: 3, dist: 115, si: 16}},
+            7:  {black: {par: 5, dist: 493, si: 6},  gold: {par: 5, dist: 478, si: 6},  silver: {par: 5, dist: 448, si: 2},  bronze: {par: 5, dist: 425, si: 2}},
+            8:  {black: {par: 4, dist: 340, si: 7},  gold: {par: 4, dist: 332, si: 7},  silver: {par: 4, dist: 278, si: 6},  bronze: {par: 4, dist: 245, si: 6}},
+            9:  {black: {par: 4, dist: 369, si: 10}, gold: {par: 4, dist: 351, si: 10}, silver: {par: 4, dist: 333, si: 8},  bronze: {par: 4, dist: 319, si: 8}},
+            10: {black: {par: 4, dist: 338, si: 13}, gold: {par: 4, dist: 327, si: 13}, silver: {par: 4, dist: 312, si: 10}, bronze: {par: 4, dist: 299, si: 10}},
+            11: {black: {par: 4, dist: 398, si: 2},  gold: {par: 4, dist: 387, si: 2},  silver: {par: 4, dist: 370, si: 15}, bronze: {par: 5, dist: 332, si: 15}},
+            12: {black: {par: 3, dist: 172, si: 11}, gold: {par: 3, dist: 157, si: 11}, silver: {par: 3, dist: 125, si: 18}, bronze: {par: 3, dist: 105, si: 18}},
+            13: {black: {par: 5, dist: 488, si: 18}, gold: {par: 5, dist: 452, si: 18}, silver: {par: 5, dist: 438, si: 14}, bronze: {par: 5, dist: 428, si: 14}},
+            14: {black: {par: 3, dist: 134, si: 14}, gold: {par: 3, dist: 134, si: 14}, silver: {par: 3, dist: 114, si: 7},  bronze: {par: 3, dist: 107, si: 7}},
+            15: {black: {par: 4, dist: 344, si: 8},  gold: {par: 4, dist: 331, si: 8},  silver: {par: 4, dist: 307, si: 9},  bronze: {par: 4, dist: 289, si: 9}},
+            16: {black: {par: 4, dist: 303, si: 16}, gold: {par: 4, dist: 300, si: 16}, silver: {par: 4, dist: 294, si: 13}, bronze: {par: 4, dist: 287, si: 13}},
+            17: {black: {par: 3, dist: 200, si: 5},  gold: {par: 3, dist: 187, si: 5},  silver: {par: 3, dist: 171, si: 3},  bronze: {par: 3, dist: 163, si: 5}},
+            18: {black: {par: 4, dist: 385, si: 1},  gold: {par: 4, dist: 369, si: 1},  silver: {par: 4, dist: 256, si: 11}, bronze: {par: 5, dist: 238, si: 11}}
+        }
+    },
+    {
         name: 'Muirfield Golf Club',
         par: {
             mens: 69,
@@ -521,7 +715,12 @@ const allCourseData = [
 function getCourseData(courseName) {
     if (!courseName) return null;
     const lower = courseName.toLowerCase();
-    return allCourseData.find(c => lower.includes(c.name.toLowerCase())) || null;
+    // Prefer exact match, then longest partial match to avoid e.g. "Campbelltown Golf Club" matching before "Campbelltown Golf Club 2"
+    const exact = allCourseData.find(c => c.name.toLowerCase() === lower);
+    if (exact) return exact;
+    const matches = allCourseData.filter(c => lower.includes(c.name.toLowerCase()));
+    if (matches.length === 0) return null;
+    return matches.reduce((a, b) => a.name.length >= b.name.length ? a : b);
 }
 
 /**
