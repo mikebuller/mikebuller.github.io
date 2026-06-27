@@ -22,8 +22,9 @@
     });
   }
 
-  // --- Offline status banner ------------------------------------------------
-  var onlineHideTimer = null;
+  // --- Connectivity status banner ------------------------------------------
+  var AUTO_HIDE_MS = 4000;
+  var hideTimer = null;
 
   function ensureBanner() {
     var existing = document.getElementById('offline-banner');
@@ -34,42 +35,70 @@
     banner.setAttribute('aria-live', 'polite');
     banner.innerHTML =
       '<span class="offline-banner__dot"></span>' +
-      '<span class="offline-banner__text"></span>';
+      '<span class="offline-banner__title"></span>' +
+      '<span class="offline-banner__detail"></span>' +
+      '<span class="offline-banner__hint">Tap to dismiss</span>';
+    // Tap anywhere on the banner to dismiss it.
+    banner.addEventListener('click', function () { dismissBanner(banner); });
     document.body.appendChild(banner);
     return banner;
   }
 
-  function setBannerText(banner, text) {
-    var textEl = banner.querySelector('.offline-banner__text');
-    if (textEl) textEl.textContent = text;
+  function setBannerText(banner, title, detail) {
+    var titleEl = banner.querySelector('.offline-banner__title');
+    var detailEl = banner.querySelector('.offline-banner__detail');
+    if (titleEl) titleEl.textContent = title;
+    if (detailEl) detailEl.textContent = detail;
+  }
+
+  function dismissBanner(banner) {
+    if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+    banner.classList.remove('offline-banner--visible');
+  }
+
+  function scheduleAutoHide(banner) {
+    if (hideTimer) clearTimeout(hideTimer);
+    hideTimer = setTimeout(function () {
+      banner.classList.remove('offline-banner--visible');
+    }, AUTO_HIDE_MS);
+  }
+
+  // Persistent state on <body> so the current player's leaderboard tile can
+  // show red (offline) / green (online) even after the message is dismissed.
+  function setBodyConnectivity(isOnline) {
+    document.body.classList.toggle('app-offline', !isOnline);
+    document.body.classList.toggle('app-online', isOnline);
   }
 
   function showOffline(banner) {
-    if (onlineHideTimer) { clearTimeout(onlineHideTimer); onlineHideTimer = null; }
     banner.classList.remove('offline-banner--online');
     banner.classList.add('offline-banner--offline');
-    setBannerText(banner, 'Offline! Scores are saved and will sync when back online.');
+    setBannerText(
+      banner,
+      'Offline',
+      'Your scores are saved and will sync when you\u2019re back online.'
+    );
     banner.classList.add('offline-banner--visible');
+    scheduleAutoHide(banner);
   }
 
   function showOnline(banner) {
     banner.classList.remove('offline-banner--offline');
     banner.classList.add('offline-banner--online');
-    setBannerText(banner, 'Online! Scores are syncing.');
+    setBannerText(banner, 'Online', 'Your scores are syncing.');
     banner.classList.add('offline-banner--visible');
-    // Auto-hide the "Online" confirmation after a few seconds.
-    if (onlineHideTimer) clearTimeout(onlineHideTimer);
-    onlineHideTimer = setTimeout(function () {
-      banner.classList.remove('offline-banner--visible');
-    }, 4000);
+    scheduleAutoHide(banner);
   }
 
-  // initial=true on first load so we don't flash "Back online" on a normal load.
+  // initial=true on first load so we don't flash the "Online" message on a
+  // normal page load (but we still set the persistent body state).
   function updateOnlineStatus(initial) {
     var banner = ensureBanner();
-    if (navigator.onLine) {
+    var online = navigator.onLine;
+    setBodyConnectivity(online);
+    if (online) {
       if (initial) {
-        banner.classList.remove('offline-banner--visible');
+        dismissBanner(banner);
       } else {
         showOnline(banner);
       }
