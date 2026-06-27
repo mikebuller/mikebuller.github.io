@@ -34,10 +34,10 @@ const allCourseData = [
             18: {type: 'youtube', id: 'YKwE-HvdXqg'}
         },
         tees: [
-            {key: 'tallowwood', label: 'Tallowwood', totalDistance: 6000},
-            {key: 'bloodwood', label: 'Bloodwood', totalDistance: 5664},
-            {key: 'ironbark', label: 'Ironbark', totalDistance: 5205},
-            {key: 'flooded_gums', label: 'Flooded Gums', totalDistance: 4808}
+            {key: 'tallowwood', label: 'Tallowwood', totalDistance: 5991},
+            {key: 'bloodwood', label: 'Bloodwood', totalDistance: 5656},
+            {key: 'ironbark', label: 'Ironbark', totalDistance: 5208},
+            {key: 'flooded_gums', label: 'Flooded Gums', totalDistance: 4815}
         ],
         descriptions: {
             1:  "If played conservatively with a club that can't reach the left hand bunker the first fairway is quite generous, the water down the right is sure to add to the first tee nerves though. Take one extra club when approaching the green to avoid the cavernous bunkers.",
@@ -61,12 +61,12 @@ const allCourseData = [
         },
         holes: {
             1:  {tallowwood: {par: 4, dist: 376, si: 2}, bloodwood: {par: 4, dist: 353, si: 2}, ironbark: {par: 4, dist: 320, si: 2}, flooded_gums: {par: 4, dist: 275, si: 2}},
-            2:  {tallowwood: {par: 4, dist: 332, si: 12}, bloodwood: {par: 4, dist: 308, si: 12}, ironbark: {par: 4, dist: 252, si: 12}, flooded_gums: {par: 4, dist: 244, si: 12}},
-            3:  {tallowwood: {par: 3, dist: 182, si: 8}, bloodwood: {par: 3, dist: 170, si: 8}, ironbark: {par: 3, dist: 122, si: 8}, flooded_gums: {par: 3, dist: 114, si: 8}},
+            2:  {tallowwood: {par: 3, dist: 173, si: 8}, bloodwood: {par: 3, dist: 162, si: 8}, ironbark: {par: 3, dist: 125, si: 8}, flooded_gums: {par: 3, dist: 121, si: 8}},
+            3:  {tallowwood: {par: 4, dist: 332, si: 12}, bloodwood: {par: 4, dist: 308, si: 12}, ironbark: {par: 4, dist: 252, si: 12}, flooded_gums: {par: 4, dist: 244, si: 12}},
             4:  {tallowwood: {par: 5, dist: 481, si: 14}, bloodwood: {par: 5, dist: 465, si: 14}, ironbark: {par: 5, dist: 428, si: 14}, flooded_gums: {par: 5, dist: 366, si: 14}},
-            5:  {tallowwood: {par: 3, dist: 147, si: 16}, bloodwood: {par: 3, dist: 139, si: 16}, ironbark: {par: 3, dist: 130, si: 16}, flooded_gums: {par: 3, dist: 125, si: 16}},
+            5:  {tallowwood: {par: 3, dist: 147, si: 16}, bloodwood: {par: 3, dist: 139, si: 16}, ironbark: {par: 3, dist: 130, si: 16}, flooded_gums: {par: 3, dist: 125, si: 18}},
             6:  {tallowwood: {par: 4, dist: 335, si: 6}, bloodwood: {par: 4, dist: 328, si: 6}, ironbark: {par: 4, dist: 261, si: 6}, flooded_gums: {par: 4, dist: 251, si: 6}},
-            7:  {tallowwood: {par: 5, dist: 465, si: 18}, bloodwood: {par: 5, dist: 453, si: 18}, ironbark: {par: 5, dist: 434, si: 18}, flooded_gums: {par: 5, dist: 424, si: 18}},
+            7:  {tallowwood: {par: 5, dist: 465, si: 18}, bloodwood: {par: 5, dist: 453, si: 18}, ironbark: {par: 5, dist: 434, si: 18}, flooded_gums: {par: 5, dist: 424, si: 16}},
             8:  {tallowwood: {par: 3, dist: 177, si: 4}, bloodwood: {par: 3, dist: 158, si: 4}, ironbark: {par: 3, dist: 150, si: 4}, flooded_gums: {par: 3, dist: 126, si: 4}},
             9:  {tallowwood: {par: 4, dist: 320, si: 10}, bloodwood: {par: 4, dist: 304, si: 10}, ironbark: {par: 4, dist: 282, si: 10}, flooded_gums: {par: 4, dist: 274, si: 10}},
             10: {tallowwood: {par: 5, dist: 445, si: 13}, bloodwood: {par: 5, dist: 419, si: 13}, ironbark: {par: 5, dist: 398, si: 13}, flooded_gums: {par: 5, dist: 384, si: 13}},
