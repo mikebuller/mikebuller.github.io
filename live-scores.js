@@ -294,6 +294,11 @@ async function loadRoundFromParams(roundId, scoreId) {
         // Resolve course data from shared course-data.js
         courseData = getCourseData(currentRound.course);
 
+        // Pre-cache this course's hole images for offline use on the course
+        if (typeof window.precacheCourseImages === 'function') {
+            window.precacheCourseImages(currentRound.course);
+        }
+
         // Update UI
         document.getElementById('current-course-name').textContent = currentRound.course || 'Course';
         const teesDisplay = document.getElementById('current-tees-display');

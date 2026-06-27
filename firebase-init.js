@@ -3,7 +3,7 @@
 // Requires crypto-utils.js to be loaded first
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, deleteField, query, where, orderBy, onSnapshot, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, deleteField, query, where, orderBy, onSnapshot, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 // Encrypted Firebase configuration (AES-256-GCM with PBKDF2 key derivation, 100k iterations)
 const ENCRYPTED_CONFIG = "uKM6aVSB3RZSzPonDOS99pGpViMTWGDeVcpAhaN129HBEeUmEosPOI6vk3sMgpKmLSrWelZalynmgqJOfhFgyz3v+7I6y76nMOVCItP4VTep2pDzi9MZWynRqjo4nZPBa0DVzdWGJ2Gm+JAZ2lV8wNS6so0Qi4jAG0tebqoD/uIMxblgw3Kk5JfeDsgSiaBaG4PzHc7jO7oZNQ09+gZSYNxjPQGMydyAs2WNEf1Ix7slo4ERoYkIf5vSgdKCeJ9+fQh68wf8P6oYfu5sh86VT03QrCvBB9YB5F+/fodm40QaN3rlGDMc5GxPAzarcrM3sSKyxE0IHUIRK/HmP8kjB5n9cLT6YW2BwDLa6xb/mZmjpQGtls/0rFv6K2OndnMtZNX4dOKWHty3QqKi7GKJGoRE78beu5SDjKPPpN1HygQTfm7NSD8eXVCR1zjPXHDhU9I=";
@@ -41,7 +41,25 @@ async function initializeFirebase() {
     
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+
+    // Initialize Firestore with offline persistence so the app keeps working
+    // on the golf course where connectivity is poor. Cached reads are served
+    // from IndexedDB and writes are queued locally then auto-replayed when the
+    // connection returns. persistentMultipleTabManager allows multiple open
+    // tabs to share the same cache safely.
+    let db;
+    try {
+        db = initializeFirestore(app, {
+            localCache: persistentLocalCache({
+                tabManager: persistentMultipleTabManager()
+            })
+        });
+    } catch (e) {
+        // initializeFirestore throws if Firestore was already initialized
+        // (e.g. hot reload / double init). Fall back to the existing instance.
+        console.warn('Falling back to getFirestore (persistence may be unavailable):', e);
+        db = getFirestore(app);
+    }
     
     // Make Firestore available globally
     window.db = db;
