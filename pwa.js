@@ -90,29 +90,45 @@
     scheduleAutoHide(banner);
   }
 
-  // initial=true on first load so we don't flash the "Online" message on a
-  // normal page load (but we still set the persistent body state).
-  function updateOnlineStatus(initial) {
+  // React to a genuine connectivity *change* (driven by real online/offline
+  // events). Always updates the persistent body state and shows the banner.
+  function handleConnectivityChange() {
     var banner = ensureBanner();
     var online = navigator.onLine;
     setBodyConnectivity(online);
     if (online) {
-      if (initial) {
-        dismissBanner(banner);
-      } else {
-        showOnline(banner);
-      }
+      showOnline(banner);
     } else {
       showOffline(banner);
     }
   }
 
-  window.addEventListener('online', function () { updateOnlineStatus(false); });
-  window.addEventListener('offline', function () { updateOnlineStatus(false); });
+  // On first load we must NOT show the banner based on navigator.onLine alone:
+  // it is unreliable immediately after a page load/navigation (it often reads
+  // false for a moment while the connection/service worker spins up), which
+  // caused the offline message to flash on every round entry/exit even when
+  // online. So on load we only set the persistent body state. If it still
+  // reports offline after a short grace period, we then show the offline
+  // message (a genuine offline-at-load case).
+  function initConnectivity() {
+    ensureBanner();
+    setBodyConnectivity(navigator.onLine);
+    if (!navigator.onLine) {
+      setTimeout(function () {
+        if (!navigator.onLine) {
+          setBodyConnectivity(false);
+          showOffline(ensureBanner());
+        }
+      }, 2500);
+    }
+  }
+
+  window.addEventListener('online', handleConnectivityChange);
+  window.addEventListener('offline', handleConnectivityChange);
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function () { updateOnlineStatus(true); });
+    document.addEventListener('DOMContentLoaded', initConnectivity);
   } else {
-    updateOnlineStatus(true);
+    initConnectivity();
   }
 
   // --- Pre-cache a course's hole images ------------------------------------
