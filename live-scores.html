@@ -8,6 +8,13 @@
     <link rel="stylesheet" href="styles-part2.css">
     <link rel="stylesheet" href="styles-part3.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- PWA / offline support -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0b3d2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Bonville Inv.">
+    <link rel="apple-touch-icon" href="images/bonville-logo.jpg">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body class="live-scores-page">
@@ -206,5 +213,7 @@
     <script type="module" src="firebase-init.js"></script>
     <script src="courses/course-data.js"></script>
     <script src="live-scores.js"></script>
+    <!-- PWA: service worker registration + offline banner -->
+    <script src="pwa.js"></script>
 </body>
 </html>
